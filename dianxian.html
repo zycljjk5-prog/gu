@@ -1,0 +1,148 @@
+<!DOCTYPE html>
+<html lang="zh">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>儿童癫痫用药判断策略</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            line-height: 1.6;
+            margin: 0;
+            padding: 0;
+            background-color: #f4f4f4;
+        }
+        .container {
+            width: 80%;
+            margin: 20px auto;
+            background-color: #fff;
+            padding: 20px;
+            border-radius: 8px;
+            box-shadow: 0 4px 8px rgba(0,0,0,0.1);
+        }
+        h1 {
+            text-align: center;
+            color: #333;
+        }
+        .form-group {
+            margin-bottom: 15px;
+        }
+        .form-group label {
+            font-weight: bold;
+            display: block;
+        }
+        .form-group input, .form-group select {
+            width: 100%;
+            padding: 10px;
+            margin-top: 5px;
+            border: 1px solid #ccc;
+            border-radius: 4px;
+        }
+        .button-group {
+            text-align: center;
+        }
+        button {
+            padding: 10px 20px;
+            background-color: #4CAF50;
+            color: white;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+        }
+        button:hover {
+            background-color: #45a049;
+        }
+        .result {
+            margin-top: 20px;
+            background-color: #f9f9f9;
+            padding: 15px;
+            border: 1px solid #ccc;
+            border-radius: 4px;
+        }
+        .result h3 {
+            color: #333;
+        }
+    </style>
+</head>
+<body>
+
+    <div class="container">
+        <h1>儿童癫痫用药判断策略及剂量调整</h1>
+
+        <div class="form-group">
+            <label for="age">年龄 (岁)</label>
+            <input type="number" id="age" placeholder="请输入年龄" required>
+        </div>
+
+        <div class="form-group">
+            <label for="weight">体重 (kg)</label>
+            <input type="number" id="weight" placeholder="请输入体重" required>
+        </div>
+
+        <div class="form-group">
+            <label for="seizureType">发作类型</label>
+            <select id="seizureType" required>
+                <option value="tonicClonic">大发作（强直-阵挛性发作）</option>
+                <option value="absence">失神发作</option>
+                <option value="focal">局部发作</option>
+                <option value="myoclonic">肌阵挛发作</option>
+            </select>
+        </div>
+
+        <div class="button-group">
+            <button onclick="calculateDose()">计算用药方案</button>
+        </div>
+
+        <div id="result" class="result" style="display:none;">
+            <h3>用药方案:</h3>
+            <p id="medication"></p>
+            <p id="dosage"></p>
+        </div>
+    </div>
+
+    <script>
+        function calculateDose() {
+            const age = parseInt(document.getElementById('age').value);
+            const weight = parseFloat(document.getElementById('weight').value);
+            const seizureType = document.getElementById('seizureType').value;
+
+            if (isNaN(age) || isNaN(weight)) {
+                alert('请输入有效的年龄和体重');
+                return;
+            }
+
+            let medication = "";
+            let dosage = "";
+
+            // 根据发作类型选择药物
+            switch (seizureType) {
+                case 'tonicClonic':
+                    medication = "推荐用药: 卡马西平或苯妥英钠";
+                    dosage = `初始剂量: ${weight * 10}mg/kg/天（分次服用），维持剂量根据效果调整。`;
+                    break;
+                case 'absence':
+                    medication = "推荐用药: 丙戊酸钠或拉莫三嗪";
+                    dosage = `初始剂量: ${weight * 15}mg/kg/天（分次服用），维持剂量根据效果调整。`;
+                    break;
+                case 'focal':
+                    medication = "推荐用药: 拉莫三嗪或托吡酯";
+                    dosage = `初始剂量: ${weight * 10}mg/kg/天（分次服用），维持剂量根据效果调整。`;
+                    break;
+                case 'myoclonic':
+                    medication = "推荐用药: 丙戊酸钠或左乙拉西坦";
+                    dosage = `初始剂量: ${weight * 10}mg/kg/天（分次服用），维持剂量根据效果调整。`;
+                    break;
+                default:
+                    medication = "无法识别发作类型";
+                    dosage = "";
+            }
+
+            // 显示计算结果
+            document.getElementById('result').style.display = "block";
+            document.getElementById('medication').innerText = medication;
+            document.getElementById('dosage').innerText = dosage;
+        }
+    </script>
+
+</body>
+</html>
