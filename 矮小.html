@@ -1,0 +1,158 @@
+<!DOCTYPE html>
+<html lang="zh">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>儿童矮小症查因判断-张永超医生</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 0;
+            padding: 0;
+            background-color: #f4f4f4;
+        }
+        header {
+            background-color: #2c3e50;
+            color: white;
+            padding: 10px 20px;
+            text-align: center;
+        }
+        main {
+            padding: 20px;
+        }
+        h2 {
+            color: #34495e;
+        }
+        .question {
+            background-color: #fff;
+            padding: 10px;
+            border: 1px solid #ddd;
+            margin-bottom: 10px;
+        }
+        .answer-options {
+            margin: 10px 0;
+        }
+        .answer-options label {
+            display: block;
+            margin: 5px 0;
+        }
+        .submit-btn {
+            background-color: #27ae60;
+            color: white;
+            padding: 10px 20px;
+            border: none;
+            cursor: pointer;
+        }
+        .submit-btn:hover {
+            background-color: #2ecc71;
+        }
+        .result {
+            display: none;
+            background-color: #ecf0f1;
+            padding: 15px;
+            margin-top: 20px;
+            border-radius: 5px;
+        }
+    </style>
+</head>
+<body>
+
+<header>
+    <h1>儿童矮小症查因判断</h1>
+</header>
+
+<main>
+    <h2>请选择相关症状和背景信息</h2>
+
+    <!-- 问题1: 体重和身高发育 -->
+    <div class="question">
+        <label for="growth-history">1. 孩子是否有身高和体重增长缓慢的情况？</label>
+        <div class="answer-options">
+            <label><input type="radio" name="growth-history" value="yes"> 是</label>
+            <label><input type="radio" name="growth-history" value="no"> 否</label>
+        </div>
+    </div>
+
+    <!-- 问题2: 父母身高 -->
+    <div class="question">
+        <label for="parent-height">2. 父母身高是否较矮？</label>
+        <div class="answer-options">
+            <label><input type="radio" name="parent-height" value="yes"> 是</label>
+            <label><input type="radio" name="parent-height" value="no"> 否</label>
+        </div>
+    </div>
+
+    <!-- 问题3: 营养情况 -->
+    <div class="question">
+        <label for="nutrition">3. 孩子是否存在营养不良的情况？</label>
+        <div class="answer-options">
+            <label><input type="radio" name="nutrition" value="yes"> 是</label>
+            <label><input type="radio" name="nutrition" value="no"> 否</label>
+        </div>
+    </div>
+
+    <!-- 问题4: 激素水平 -->
+    <div class="question">
+        <label for="hormone-levels">4. 孩子是否有生长激素或甲状腺异常的情况？</label>
+        <div class="answer-options">
+            <label><input type="radio" name="hormone-levels" value="yes"> 是</label>
+            <label><input type="radio" name="hormone-levels" value="no"> 否</label>
+        </div>
+    </div>
+
+    <!-- 提交按钮 -->
+    <button class="submit-btn" onclick="submitForm()">提交</button>
+
+    <!-- 结果展示区域 -->
+    <div class="result" id="result">
+        <h3>判断结果:</h3>
+        <p id="result-text"></p>
+    </div>
+</main>
+
+<script>
+    function submitForm() {
+        var growthHistory = document.querySelector('input[name="growth-history"]:checked');
+        var parentHeight = document.querySelector('input[name="parent-height"]:checked');
+        var nutrition = document.querySelector('input[name="nutrition"]:checked');
+        var hormoneLevels = document.querySelector('input[name="hormone-levels"]:checked');
+
+        if (!growthHistory || !parentHeight || !nutrition || !hormoneLevels) {
+            alert("请完整回答所有问题！");
+            return;
+        }
+
+        var resultText = "";
+
+        // 判断逻辑
+        if (growthHistory.value === "yes") {
+            resultText += "孩子有身高和体重增长缓慢的情况。<br>";
+        }
+
+        if (parentHeight.value === "yes") {
+            resultText += "父母身高较矮，可能影响孩子的身高。<br>";
+        }
+
+        if (nutrition.value === "yes") {
+            resultText += "孩子可能存在营养不良的问题，影响其生长发育。<br>";
+        }
+
+        if (hormoneLevels.value === "yes") {
+            resultText += "孩子可能存在生长激素或甲状腺异常，需要进一步检查。<br>";
+        }
+
+        // 判断是否需要进一步检查
+        if (growthHistory.value === "yes" || nutrition.value === "yes" || hormoneLevels.value === "yes") {
+            resultText += "建议尽快就医，进行进一步检查（如生长激素检测、甲状腺功能检查等）。";
+        } else {
+            resultText += "孩子的身高发育可能与遗传因素或生活环境有关，暂时无需过度担忧。";
+        }
+
+        // 显示结果
+        document.getElementById('result-text').innerHTML = resultText;
+        document.getElementById('result').style.display = "block";
+    }
+</script>
+
+</body>
+</html>
