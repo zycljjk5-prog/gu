@@ -1,0 +1,293 @@
+
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>儿童肥胖管理计算器</title>
+    <style>
+        body {
+            font-family: 'Microsoft YaHei', sans-serif;
+            line-height: 1.6;
+            max-width: 800px;
+            margin: 0 auto;
+            padding: 20px;
+            color: #333;
+        }
+        h1 {
+            color: #2c7be5;
+            text-align: center;
+            margin-bottom: 30px;
+        }
+        .section {
+            background-color: #f8f9fa;
+            border-radius: 8px;
+            padding: 20px;
+            margin-bottom: 20px;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+        }
+        .form-group {
+            margin-bottom: 15px;
+        }
+        label {
+            display: block;
+            margin-bottom: 5px;
+            font-weight: bold;
+        }
+        input, select {
+            width: 100%;
+            padding: 8px;
+            border: 1px solid #ddd;
+            border-radius: 4px;
+            box-sizing: border-box;
+        }
+        button {
+            background-color: #2c7be5;
+            color: white;
+            border: none;
+            padding: 10px 15px;
+            border-radius: 4px;
+            cursor: pointer;
+            font-size: 16px;
+            width: 100%;
+        }
+        button:hover {
+            background-color: #1a68d1;
+        }
+        .result {
+            margin-top: 20px;
+            padding: 15px;
+            border-radius: 4px;
+            display: none;
+        }
+        .bmi-result {
+            background-color: #e8f4fd;
+            border-left: 4px solid #2c7be5;
+        }
+        .diet-plan {
+            background-color: #f0f8f0;
+            border-left: 4px solid #28a745;
+        }
+        .food-item {
+            display: flex;
+            justify-content: space-between;
+            margin-bottom: 5px;
+        }
+        .meal-section {
+            margin-bottom: 20px;
+        }
+        .meal-title {
+            font-weight: bold;
+            color: #2c7be5;
+            margin-bottom: 10px;
+        }
+        .warning {
+            color: #dc3545;
+            font-weight: bold;
+        }
+        .normal {
+            color: #28a745;
+            font-weight: bold;
+        }
+        .overweight {
+            color: #fd7e14;
+            font-weight: bold;
+        }
+        .obese {
+            color: #dc3545;
+            font-weight: bold;
+        }
+    </style>
+</head>
+<body>
+    <h1>儿童肥胖管理计算器</h1>
+    
+    <div class="section">
+        <h2>BMI计算器</h2>
+        <div class="form-group">
+            <label for="age">年龄(岁):</label>
+            <input type="number" id="age" min="2" max="18" step="1">
+        </div>
+        <div class="form-group">
+            <label for="gender">性别:</label>
+            <select id="gender">
+                <option value="male">男</option>
+                <option value="female">女</option>
+            </select>
+        </div>
+        <div class="form-group">
+            <label for="height">身高(cm):</label>
+            <input type="number" id="height" min="50" max="250" step="0.1">
+        </div>
+        <div class="form-group">
+            <label for="weight">体重(kg):</label>
+            <input type="number" id="weight" min="5" max="150" step="0.1">
+        </div>
+        <button onclick="calculateBMI()">计算BMI</button>
+        
+        <div id="bmiResult" class="result bmi-result">
+            <h3>计算结果</h3>
+            <p>BMI值: <span id="bmiValue"></span></p>
+            <p>肥胖程度: <span id="bmiStatus"></span></p>
+            <p id="bmiAdvice"></p>
+        </div>
+    </div>
+    
+    <div class="section">
+        <h2>个性化减肥食谱</h2>
+        <div class="form-group">
+            <label for="activity">日常活动量:</label>
+            <select id="activity">
+                <option value="low">低(很少运动)</option>
+                <option value="medium">中(每周运动1-3次)</option>
+                <option value="high">高(每周运动4次以上)</option>
+            </select>
+        </div>
+        <button onclick="generateDietPlan()">生成食谱</button>
+        
+        <div id="dietPlan" class="result diet-plan">
+            <h3>每日饮食建议</h3>
+            <p>总能量摄入: <span id="totalCalories"></span> 大卡</p>
+            
+            <div class="meal-section">
+                <div class="meal-title">早餐 (25%-30%)</div>
+                <div id="breakfastItems"></div>
+            </div>
+            
+            <div class="meal-section">
+                <div class="meal-title">午餐 (35%-40%)</div>
+                <div id="lunchItems"></div>
+            </div>
+            
+            <div class="meal-section">
+                <div class="meal-title">晚餐 (30%-35%)</div>
+                <div id="dinnerItems"></div>
+            </div>
+            
+            <div class="meal-section">
+                <div class="meal-title">加餐建议</div>
+                <p>• 奶制品: 300mL以上牛奶或酸奶</p>
+                <p>• 新鲜水果: 1个苹果/香蕉/橙子等</p>
+                <p>• 原味坚果: 10-15g</p>
+            </div>
+            
+            <h4>饮食原则</h4>
+            <ul>
+                <li>每天摄入12种以上食物，每周25种以上</li>
+                <li>控制精白米面，增加全谷物和杂豆摄入</li>
+                <li>进餐顺序: 先蔬菜→再鱼禽肉蛋→最后谷薯类</li>
+                <li>晚上9点后不进食</li>
+            </ul>
+        </div>
+    </div>
+
+    <script>
+        function calculateBMI() {
+            const age = parseFloat(document.getElementById('age').value);
+            const height = parseFloat(document.getElementById('height').value) / 100; // 转换为米
+            const weight = parseFloat(document.getElementById('weight').value);
+            
+            if (isNaN(age) || isNaN(height) || isNaN(weight)) {
+                alert('请输入有效的年龄、身高和体重');
+                return;
+            }
+            
+            const bmi = weight / (height * height);
+            document.getElementById('bmiValue').textContent = bmi.toFixed(1);
+            
+            let status, advice, statusClass;
+            if (age >= 2 && age <= 18) {
+                // 儿童BMI标准参考
+                if (bmi < 18.5) {
+                    status = '偏瘦';
+                    statusClass = 'warning';
+                    advice = '建议咨询医生或营养师，确保营养摄入充足';
+                } else if (bmi < 23) {
+                    status = '正常';
+                    statusClass = 'normal';
+                    advice = '保持健康饮食和适量运动';
+                } else if (bmi < 27) {
+                    status = '超重';
+                    statusClass = 'overweight';
+                    advice = '建议调整饮食结构，增加运动量';
+                } else {
+                    status = '肥胖';
+                    statusClass = 'obese';
+                    advice = '建议在医生或营养师指导下进行科学减重';
+                }
+            }
+            
+            document.getElementById('bmiStatus').textContent = status;
+            document.getElementById('bmiStatus').className = statusClass;
+            document.getElementById('bmiAdvice').textContent = advice;
+            document.getElementById('bmiResult').style.display = 'block';
+        }
+        
+        function generateDietPlan() {
+            const age = parseFloat(document.getElementById('age').value);
+            const gender = document.getElementById('gender').value;
+            const activity = document.getElementById('activity').value;
+            
+            if (isNaN(age)) {
+                alert('请先计算BMI');
+                return;
+            }
+            
+            // 根据年龄、性别和活动量计算每日能量需求 (减少20%左右)
+            let baseCalories;
+            if (age >= 2 && age <= 5) {
+                baseCalories = gender === 'male' ? 1300 : 1200;
+            } else if (age >= 6 && age <= 12) {
+                baseCalories = gender === 'male' ? 1800 : 1600;
+            } else {
+                baseCalories = gender === 'male' ? 2400 : 2000;
+            }
+            
+            // 根据活动量调整
+            if (activity === 'low') {
+                baseCalories *= 0.9;
+            } else if (activity === 'high') {
+                baseCalories *= 1.1;
+            }
+            
+            // 减肥建议减少20%能量摄入
+            const totalCalories = Math.round(baseCalories * 0.8);
+            document.getElementById('totalCalories').textContent = totalCalories;
+            
+            // 生成食谱 (示例)
+            const breakfastCalories = Math.round(totalCalories * 0.28);
+            const lunchCalories = Math.round(totalCalories * 0.38);
+            const dinnerCalories = Math.round(totalCalories * 0.34);
+            
+            // 早餐示例
+            document.getElementById('breakfastItems').innerHTML = `
+                <div class="food-item"><span>全麦面包</span><span>50g</span></div>
+                <div class="food-item"><span>水煮鸡蛋</span><span>1个(约50g)</span></div>
+                <div class="food-item"><span>牛奶</span><span>200mL</span></div>
+                <div class="food-item"><span>苹果</span><span>1个(约150g)</span></div>
+                <p>约${breakfastCalories}大卡</p>
+            `;
+            
+            // 午餐示例
+            document.getElementById('lunchItems').innerHTML = `
+                <div class="food-item"><span>杂粮饭(大米+藜麦)</span><span>80g</span></div>
+                <div class="food-item"><span>清蒸鲈鱼</span><span>150g</span></div>
+                <div class="food-item"><span>蒜蓉西兰花</span><span>200g</span></div>
+                <div class="food-item"><span>紫菜蛋花汤</span><span>1碗</span></div>
+                <p>约${lunchCalories}大卡</p>
+            `;
+            
+            // 晚餐示例
+            document.getElementById('dinnerItems').innerHTML = `
+                <div class="food-item"><span>荞麦面</span><span>80g</span></div>
+                <div class="food-item"><span>鸡胸肉</span><span>100g</span></div>
+                <div class="food-item"><span>清炒菠菜</span><span>200g</span></div>
+                <div class="food-item"><span>冬瓜汤</span><span>1碗</span></div>
+                <p>约${dinnerCalories}大卡</p>
+            `;
+            
+            document.getElementById('dietPlan').style.display = 'block';
+        }
+    </script>
+</body>
+</html>
