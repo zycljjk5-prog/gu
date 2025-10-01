@@ -1,0 +1,638 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>中医感冒辩证问答系统-张永超医生</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Microsoft YaHei', 'STHeiti', sans-serif;
+        }
+        
+        body {
+            background: linear-gradient(135deg, #f5f7fa 0%, #e4efe9 100%);
+            min-height: 100vh;
+            padding: 20px;
+            color: #333;
+        }
+        
+        .container {
+            max-width: 800px;
+            margin: 0 auto;
+            background: white;
+            border-radius: 15px;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
+            overflow: hidden;
+        }
+        
+        header {
+            background: linear-gradient(to right, #2c7744, #4CAF50);
+            color: white;
+            padding: 25px 30px;
+            text-align: center;
+            position: relative;
+        }
+        
+        header h1 {
+            font-size: 28px;
+            margin-bottom: 10px;
+            letter-spacing: 1px;
+        }
+        
+        header p {
+            font-size: 16px;
+            opacity: 0.9;
+            max-width: 600px;
+            margin: 0 auto;
+        }
+        
+        .yin-yang {
+            position: absolute;
+            top: 15px;
+            right: 20px;
+            width: 50px;
+            height: 50px;
+            background: radial-gradient(circle at 50% 25%, white 12.5%, black 12.5%, black 37.5%, white 37.5%, white 62.5%, black 62.5%, black 87.5%, white 87.5%);
+            border-radius: 50%;
+            border: 2px solid #2c7744;
+        }
+        
+        .content {
+            padding: 30px;
+        }
+        
+        .step {
+            display: none;
+            animation: fadeIn 0.5s ease;
+        }
+        
+        .step.active {
+            display: block;
+        }
+        
+        .question {
+            margin-bottom: 25px;
+        }
+        
+        .question h3 {
+            font-size: 20px;
+            color: #2c7744;
+            margin-bottom: 15px;
+            padding-bottom: 8px;
+            border-bottom: 1px dashed #e0e0e0;
+        }
+        
+        .options {
+            display: grid;
+            grid-template-columns: 1fr;
+            gap: 12px;
+        }
+        
+        @media (min-width: 600px) {
+            .options {
+                grid-template-columns: 1fr 1fr;
+            }
+        }
+        
+        .option {
+            background: #f8f9fa;
+            border: 2px solid #e9ecef;
+            border-radius: 10px;
+            padding: 15px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            display: flex;
+            align-items: center;
+        }
+        
+        .option:hover {
+            background: #e9f5eb;
+            border-color: #4CAF50;
+            transform: translateY(-2px);
+        }
+        
+        .option.selected {
+            background: #d4edda;
+            border-color: #4CAF50;
+            box-shadow: 0 0 0 2px rgba(76, 175, 80, 0.3);
+        }
+        
+        .option input {
+            margin-right: 10px;
+        }
+        
+        .navigation {
+            display: flex;
+            justify-content: space-between;
+            margin-top: 30px;
+            padding-top: 20px;
+            border-top: 1px solid #eee;
+        }
+        
+        button {
+            background: #4CAF50;
+            color: white;
+            border: none;
+            padding: 12px 25px;
+            border-radius: 8px;
+            cursor: pointer;
+            font-size: 16px;
+            font-weight: 500;
+            transition: all 0.3s ease;
+            min-width: 120px;
+        }
+        
+        button:hover {
+            background: #3d8b40;
+            transform: translateY(-2px);
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+        }
+        
+        button:disabled {
+            background: #cccccc;
+            cursor: not-allowed;
+            transform: none;
+            box-shadow: none;
+        }
+        
+        button.secondary {
+            background: #6c757d;
+        }
+        
+        button.secondary:hover {
+            background: #5a6268;
+        }
+        
+        .result-container {
+            text-align: center;
+            padding: 30px;
+        }
+        
+        .result-title {
+            font-size: 24px;
+            color: #2c7744;
+            margin-bottom: 20px;
+        }
+        
+        .diagnosis {
+            background: #f8f9fa;
+            border-radius: 10px;
+            padding: 25px;
+            margin-bottom: 30px;
+            text-align: left;
+        }
+        
+        .diagnosis h3 {
+            color: #2c7744;
+            margin-bottom: 15px;
+            font-size: 22px;
+        }
+        
+        .diagnosis p {
+            margin-bottom: 15px;
+            line-height: 1.6;
+        }
+        
+        .herb-img {
+            width: 100px;
+            height: 100px;
+            margin: 20px auto;
+            background: #e9f5eb;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 40px;
+            color: #4CAF50;
+        }
+        
+        .progress-container {
+            margin: 20px 0 30px;
+        }
+        
+        .progress-bar {
+            height: 10px;
+            background: #e9ecef;
+            border-radius: 5px;
+            overflow: hidden;
+        }
+        
+        .progress {
+            height: 100%;
+            background: linear-gradient(to right, #2c7744, #4CAF50);
+            border-radius: 5px;
+            width: 0%;
+            transition: width 0.5s ease;
+        }
+        
+        .progress-text {
+            text-align: right;
+            font-size: 14px;
+            color: #6c757d;
+            margin-top: 5px;
+        }
+        
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(10px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+        
+        .recommendation {
+            background: #e9f5eb;
+            border-radius: 10px;
+            padding: 20px;
+            margin-top: 20px;
+        }
+        
+        .recommendation h4 {
+            color: #2c7744;
+            margin-bottom: 10px;
+        }
+        
+        .recommendation ul {
+            padding-left: 20px;
+        }
+        
+        .recommendation li {
+            margin-bottom: 8px;
+            line-height: 1.5;
+        }
+        
+        .disclaimer {
+            font-size: 12px;
+            color: #6c757d;
+            margin-top: 30px;
+            text-align: center;
+            padding: 10px;
+            border-top: 1px solid #eee;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <header>
+            <div class="yin-yang"></div>
+            <h1>中医感冒辩证问答系统</h1>
+            <p>通过回答几个简单问题，初步判断您的感冒类型</p>
+        </header>
+        
+        <div class="content">
+            <div class="progress-container">
+                <div class="progress-bar">
+                    <div class="progress" id="progress-bar"></div>
+                </div>
+                <div class="progress-text">步骤 <span id="current-step">1</span>/<span id="total-steps">6</span></div>
+            </div>
+            
+            <div id="step-1" class="step active">
+                <div class="question">
+                    <h3>1. 您的主要症状是什么？</h3>
+                    <div class="options">
+                        <label class="option">
+                            <input type="radio" name="symptom" value="chill"> 怕冷明显，发热轻
+                        </label>
+                        <label class="option">
+                            <input type="radio" name="symptom" value="fever"> 发热明显，怕冷轻
+                        </label>
+                        <label class="option">
+                            <input type="radio" name="symptom" value="both"> 又怕冷又发热
+                        </label>
+                        <label class="option">
+                            <input type="radio" name="symptom" value="cough"> 咳嗽为主，痰多
+                        </label>
+                    </div>
+                </div>
+                
+                <div class="navigation">
+                    <button disabled>上一步</button>
+                    <button onclick="nextStep(1, 2)">下一步</button>
+                </div>
+            </div>
+            
+            <div id="step-2" class="step">
+                <div class="question">
+                    <h3>2. 您有汗还是无汗？</h3>
+                    <div class="options">
+                        <label class="option">
+                            <input type="radio" name="sweat" value="no"> 无汗
+                        </label>
+                        <label class="option">
+                            <input type="radio" name="sweat" value="little"> 有汗但不多
+                        </label>
+                        <label class="option">
+                            <input type="radio" name="sweat" value="much"> 汗多
+                        </label>
+                        <label class="option">
+                            <input type="radio" name="sweat" value="night"> 夜间盗汗
+                        </label>
+                    </div>
+                </div>
+                
+                <div class="navigation">
+                    <button class="secondary" onclick="prevStep(2, 1)">上一步</button>
+                    <button onclick="nextStep(2, 3)">下一步</button>
+                </div>
+            </div>
+            
+            <div id="step-3" class="step">
+                <div class="question">
+                    <h3>3. 您的鼻涕和痰是什么状态？</h3>
+                    <div class="options">
+                        <label class="option">
+                            <input type="radio" name="mucus" value="clear"> 清鼻涕，白痰
+                        </label>
+                        <label class="option">
+                            <input type="radio" name="mucus" value="yellow"> 黄鼻涕，黄痰
+                        </label>
+                        <label class="option">
+                            <input type="radio" name="mucus" value="thick"> 粘稠难咳
+                        </label>
+                        <label class="option">
+                            <input type="radio" name="mucus" value="none"> 无鼻涕，干咳
+                        </label>
+                    </div>
+                </div>
+                
+                <div class="navigation">
+                    <button class="secondary" onclick="prevStep(3, 2)">上一步</button>
+                    <button onclick="nextStep(3, 4)">下一步</button>
+                </div>
+            </div>
+            
+            <div id="step-4" class="step">
+                <div class="question">
+                    <h3>4. 您的咽喉感觉如何？</h3>
+                    <div class="options">
+                        <label class="option">
+                            <input type="radio" name="throat" value="pain"> 咽喉肿痛
+                        </label>
+                        <label class="option">
+                            <input type="radio" name="throat" value="itch"> 咽喉发痒
+                        </label>
+                        <label class="option">
+                            <input type="radio" name="throat" value="dry"> 咽喉干燥
+                        </label>
+                        <label class="option">
+                            <input type="radio" name="throat" value="normal"> 咽喉正常
+                        </label>
+                    </div>
+                </div>
+                
+                <div class="navigation">
+                    <button class="secondary" onclick="prevStep(4, 3)">上一步</button>
+                    <button onclick="nextStep(4, 5)">下一步</button>
+                </div>
+            </div>
+            
+            <div id="step-5" class="step">
+                <div class="question">
+                    <h3>5. 您的舌苔是什么颜色？</h3>
+                    <div class="options">
+                        <label class="option">
+                            <input type="radio" name="tongue" value="white"> 舌苔薄白
+                        </label>
+                        <label class="option">
+                            <input type="radio" name="tongue" value="yellow"> 舌苔薄黄
+                        </label>
+                        <label class="option">
+                            <input type="radio" name="tongue" value="thickYellow"> 舌苔黄厚
+                        </label>
+                        <label class="option">
+                            <input type="radio" name="tongue" value="thickWhite"> 舌苔白厚
+                        </label>
+                    </div>
+                </div>
+                
+                <div class="navigation">
+                    <button class="secondary" onclick="prevStep(5, 4)">上一步</button>
+                    <button onclick="nextStep(5, 6)">下一步</button>
+                </div>
+            </div>
+            
+            <div id="step-6" class="step">
+                <div class="question">
+                    <h3>6. 您是否有以下伴随症状？</h3>
+                    <div class="options">
+                        <label class="option">
+                            <input type="radio" name="additional" value="headache"> 头痛，全身酸痛
+                        </label>
+                        <label class="option">
+                            <input type="radio" name="additional" value="thirst"> 口渴想喝水
+                        </label>
+                        <label class="option">
+                            <input type="radio" name="additional" value="appetite"> 食欲不振，腹胀
+                        </label>
+                        <label class="option">
+                            <input type="radio" name="additional" value"> 胸闷，呼吸不畅
+                        </label>
+                    </div>
+                </div>
+                
+                <div class="navigation">
+                    <button class="secondary" onclick="prevStep(6, 5)">上一步</button>
+                    <button onclick="calculateDiagnosis()">查看诊断结果</button>
+                </div>
+            </div>
+            
+            <div id="result-step" class="step">
+                <div class="result-container">
+                    <div class="herb-img">🌿</div>
+                    <h2 class="result-title">中医辩证结果</h2>
+                    
+                    <div class="diagnosis">
+                        <h3 id="diagnosis-type">风寒感冒</h3>
+                        <p id="diagnosis-description">根据您的症状描述，初步判断为风寒感冒。风寒感冒多因感受风寒邪气所致，主要表现为怕冷重、发热轻、无汗、头痛身痛、鼻塞流清涕等症状。</p>
+                        
+                        <div class="recommendation">
+                            <h4>调理建议：</h4>
+                            <ul id="recommendation-list">
+                                <li>饮食宜温热，可喝姜汤、葱白水</li>
+                                <li>避免生冷食物，注意保暖</li>
+                                <li>可考虑使用荆防败毒散等辛温解表方剂</li>
+                                <li>适当休息，避免劳累</li>
+                            </ul>
+                        </div>
+                    </div>
+                    
+                    <button onclick="restartQuiz()" style="margin-top: 20px;">重新测试</button>
+                </div>
+            </div>
+        </div>
+        
+        <div class="disclaimer">
+            注意：本测试结果仅供参考，不能替代专业医疗诊断。如有严重症状，请及时就医。
+        </div>
+    </div>
+
+    <script>
+        // 更新进度条
+        function updateProgress(currentStep) {
+            const totalSteps = 6;
+            const progressPercent = (currentStep / totalSteps) * 100;
+            document.getElementById('progress-bar').style.width = progressPercent + '%';
+            document.getElementById('current-step').textContent = currentStep;
+            document.getElementById('total-steps').textContent = totalSteps;
+        }
+        
+        // 下一步
+        function nextStep(current, next) {
+            document.getElementById(`step-${current}`).classList.remove('active');
+            document.getElementById(`step-${next}`).classList.add('active');
+            updateProgress(next);
+        }
+        
+        // 上一步
+        function prevStep(current, prev) {
+            document.getElementById(`step-${current}`).classList.remove('active');
+            document.getElementById(`step-${prev}`).classList.add('active');
+            updateProgress(prev);
+        }
+        
+        // 收集答案并计算诊断结果
+        function calculateDiagnosis() {
+            const answers = {
+                symptom: document.querySelector('input[name="symptom"]:checked')?.value,
+                sweat: document.querySelector('input[name="sweat"]:checked')?.value,
+                mucus: document.querySelector('input[name="mucus"]:checked')?.value,
+                throat: document.querySelector('input[name="throat"]:checked')?.value,
+                tongue: document.querySelector('input[name="tongue"]:checked')?.value,
+                additional: document.querySelector('input[name="additional"]:checked')?.value
+            };
+            
+            // 根据答案判断感冒类型（简化逻辑）
+            let diagnosis = "风寒感冒";
+            let description = "";
+            let recommendations = [];
+            
+            // 风寒感冒
+            if (answers.symptom === 'chill' && answers.sweat === 'no' && answers.mucus === 'clear') {
+                diagnosis = "风寒感冒";
+                description = "根据您的症状描述，初步判断为风寒感冒。风寒感冒多因感受风寒邪气所致，主要表现为怕冷重、发热轻、无汗、头痛身痛、鼻塞流清涕等症状。";
+                recommendations = [
+                    "饮食宜温热，可喝姜汤、葱白水",
+                    "避免生冷食物，注意保暖",
+                    "可考虑使用荆防败毒散等辛温解表方剂",
+                    "适当休息，避免劳累"
+                ];
+            } 
+            // 风热感冒
+            else if (answers.symptom === 'fever' && answers.mucus === 'yellow' && answers.throat === 'pain') {
+                diagnosis = "风热感冒";
+                description = "根据您的症状描述，初步判断为风热感冒。风热感冒多因感受风热邪气所致，主要表现为发热重、怕冷轻、有汗、咽喉肿痛、鼻塞流黄涕等症状。";
+                recommendations = [
+                    "饮食宜清淡，可喝菊花茶、薄荷茶",
+                    "避免辛辣油腻食物",
+                    "可考虑使用银翘散等辛凉解表方剂",
+                    "多饮水，保持室内通风"
+                ];
+            }
+            // 寒包热感冒
+            else if (answers.symptom === 'both' && answers.sweat === 'no' && answers.mucus === 'yellow') {
+                diagnosis = "寒包热感冒";
+                description = "根据您的症状描述，初步判断为寒包热感冒（外寒内热）。这种感冒类型既有风寒表证，又有内热症状，表现为怕冷无汗、发热、咽喉肿痛、流黄涕等。";
+                recommendations = [
+                    "饮食宜清淡，避免寒凉和燥热食物",
+                    "可考虑使用麻杏石甘汤等解表清里方剂",
+                    "注意保暖同时避免过热",
+                    "多饮温水，适当休息"
+                ];
+            }
+            // 肺热感冒
+            else if (answers.symptom === 'cough' && answers.mucus === 'thick' && answers.tongue === 'yellow') {
+                diagnosis = "肺热感冒";
+                description = "根据您的症状描述，初步判断为肺热感冒。主要表现为咳嗽剧烈、痰黄粘稠、发热、口渴、咽喉肿痛等症状。";
+                recommendations = [
+                    "饮食宜清淡，可食梨、百合等润肺食物",
+                    "避免辛辣、油炸食物",
+                    "可考虑使用清金化痰汤等清肺化痰方剂",
+                    "保持空气湿润，多饮水"
+                ];
+            }
+            // 痰热感冒
+            else if (answers.symptom === 'cough' && answers.mucus === 'thick' && answers.additional === 'appetite') {
+                diagnosis = "痰热感冒";
+                description = "根据您的症状描述，初步判断为痰热感冒。主要表现为咳嗽痰多、痰黄粘稠、胸闷、食欲不振、舌苔黄厚等症状。";
+                recommendations = [
+                    "饮食宜清淡易消化，避免肥甘厚味",
+                    "可食萝卜、薏米等化痰食物",
+                    "可考虑使用清气化痰丸等清热化痰方剂",
+                    "适当运动促进痰液排出"
+                ];
+            }
+            // 积食感冒
+            else if (answers.additional === 'appetite' && answers.tongue === 'thickWhite') {
+                diagnosis = "积食感冒";
+                description = "根据您的症状描述，初步判断为积食感冒。多因饮食不节导致食积，复感外邪，表现为发热、咳嗽、腹胀、食欲不振、大便异常等症状。";
+                recommendations = [
+                    "饮食宜清淡易消化，少量多餐",
+                    "可食山楂、陈皮等消食导滞食物",
+                    "可考虑使用保和丸等消食导滞方剂",
+                    "适当运动促进消化"
+                ];
+            }
+            // 默认情况
+            else {
+                diagnosis = "感冒证型待辨";
+                description = "根据您的症状描述，目前无法明确判断感冒类型。中医辩证需要综合考虑多方面因素，建议咨询专业中医师进行详细诊断。";
+                recommendations = [
+                    "注意休息，多饮水",
+                    "饮食宜清淡易消化",
+                    "避免过度劳累",
+                    "如症状加重，请及时就医"
+                ];
+            }
+            
+            // 显示结果
+            document.getElementById('diagnosis-type').textContent = diagnosis;
+            document.getElementById('diagnosis-description').textContent = description;
+            
+            const recommendationList = document.getElementById('recommendation-list');
+            recommendationList.innerHTML = '';
+            recommendations.forEach(item => {
+                const li = document.createElement('li');
+                li.textContent = item;
+                recommendationList.appendChild(li);
+            });
+            
+            // 跳转到结果页
+            document.getElementById('step-6').classList.remove('active');
+            document.getElementById('result-step').classList.add('active');
+        }
+        
+        // 重新开始测试
+        function restartQuiz() {
+            // 重置所有选择
+            const allInputs = document.querySelectorAll('input[type="radio"]');
+            allInputs.forEach(input => input.checked = false);
+            
+            // 回到第一步
+            document.getElementById('result-step').classList.remove('active');
+            document.getElementById('step-1').classList.add('active');
+            updateProgress(1);
+        }
+        
+        // 初始化进度条
+        window.onload = function() {
+            updateProgress(1);
+            
+            // 添加选项选择效果
+            const options = document.querySelectorAll('.option');
+            options.forEach(option => {
+                option.addEventListener('click', function() {
+                    // 移除同组其他选项的选中状态
+                    const groupName = this.querySelector('input').name;
+                    document.querySelectorAll(`.option input[name="${groupName}"]`).forEach(input => {
+                        input.closest('.option').classList.remove('selected');
+                    });
+                    
+                    // 添加当前选项的选中状态
+                    this.classList.add('selected');
+                });
+            });
+        };
+    </script>
+</body>
+</html>
