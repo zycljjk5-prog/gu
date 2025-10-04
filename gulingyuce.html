@@ -224,4 +224,30 @@
             if (!isValid) return;
             
             // 查找对应的生长潜势百分比
-            const percentage = boneAg
+            const percentage = boneAgeData[gender][boneAge];
+            
+            if (!percentage) {
+                document.getElementById('resultValue').innerText = 
+                    `未找到骨龄${boneAge}岁（${gender === 'male' ? '男' : '女'}）对应的生长潜势数据`;
+                document.getElementById('result').style.display = 'block';
+                return;
+            }
+            
+            // 计算成年终身高
+            const adultHeight = height / (percentage / 100);
+            
+            // 显示结果
+            document.getElementById('resultValue').innerText = 
+                `预测成年终身高：${adultHeight.toFixed(1)} cm（基于${percentage}%生长潜势）`;
+            document.getElementById('result').style.display = 'block';
+        }
+
+        // 添加键盘事件支持
+        document.addEventListener('keypress', function(event) {
+            if (event.key === 'Enter') {
+                predictHeight();
+            }
+        });
+    </script>
+</body>
+</html>
