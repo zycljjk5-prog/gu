@@ -1,0 +1,119 @@
+<!DOCTYPE html>
+<html lang="zh">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>张永超医生自用导航</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 0;
+            padding: 0;
+            background-color: #f4f4f9;
+        }
+        header {
+            background-color: #4CAF50;
+            color: white;
+            padding: 1rem;
+            text-align: center;
+        }
+        .container {
+            display: flex;
+            flex-wrap: wrap;
+            justify-content: center;
+            padding: 1rem;
+        }
+        .category {
+            background-color: white;
+            border-radius: 8px;
+            box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+            margin: 1rem;
+            padding: 1rem;
+            width: 300px;
+        }
+        .category h2 {
+            border-bottom: 2px solid #4CAF50;
+            padding-bottom: 0.5rem;
+        }
+        .links {
+            list-style: none;
+            padding: 0;
+        }
+        .links li {
+            margin: 0.5rem 0;
+        }
+        .links a {
+            color: #333;
+            text-decoration: none;
+            display: block;
+            padding: 0.5rem;
+            border-radius: 4px;
+            transition: background-color 0.3s;
+        }
+        .links a:hover {
+            background-color: #e0e0e0;
+        }
+        footer {
+            text-align: center;
+            padding: 1rem;
+            background-color: #333;
+            color: white;
+        }
+    </style>
+</head>
+<body>
+    <header>
+        <h1>张永超医生自用网站导航</h1>
+    </header>
+    <div class="container">
+        <div class="category">
+            <h2>临床常用</h2>
+            <ul class="links">
+                <li><a href="https://www.yanshu.net" target="_blank">鼹鼠网</a></li>
+                <li><a href="https://zycljjk5-prog.github.io/gu/gulingyuce.html" target="_blank">根据骨龄预测身高</a></li>
+                <li><a href="https://zycljjk5-prog.github.io/gu/dianxian.html" target="_blank">儿童癫痫用药判断策略及剂量调整</a></li>
+                <li><a href="https://zycljjk5-prog.github.io/gu/dzhpx.html" target="_blank">缺铁性贫血与地中海贫血鉴别计算器</a></li>
+                <li><a href="https://zycljjk5-prog.github.io/gu/igf.html" target="_blank">igf-1百分比</a></li>
+                <li><a href="https://zycljjk5-prog.github.io/gu/igfsd.html" target="_blank">igf-1标准差</a></li>
+                <li><a href="https://zycljjk5-prog.github.io/gu/ydsdk.html" target="_blank">胰岛素抵抗指数(HOMA-IR)计算器</a></li>
+				<li><a href="https://zycljjk5-prog.github.io/gu/zybz.html" target="_blank">中医感冒辩证问答系统</a></li>
+				<li><a href="https://zycljjk5-prog.github.io/gu/%E5%AD%A4%E7%8B%AC%E7%97%87%E8%AF%84%E6%B5%8B.html" target="_blank">胰岛素抵抗指数(HOMA-IR)计算器</a></li>
+				<li><a href="https://zycljjk5-prog.github.io/gu/%E7%9F%AE%E5%B0%8F.html" target="_blank">儿童矮小症查因判断</a></li>
+				<li><a href="https://mp.weixin.qq.com/s?__biz=MzI5MzEzMTAzNw==&mid=2649284872&idx=3&sn=c5ada49edb2b4395e4c74589e877f98c&chksm=f5cfb785cd30accded9c6ea609220eb16e07935cd965e084a4442e17f72840bdadfd68cc041b&scene=27" target="_blank">骨龄图谱</a></li>
+            </ul>
+        </div>
+        <div class="category">
+            <h2>工具</h2>
+            <ul class="links">
+                <li><a href="https://knightyun.github.io/markdown-to-richtext/" target="_blank">markdown转富文本</a></li>
+                <li><a href="https://zycljjk5-prog.github.io/gu/index1.html" target="_blank">收藏夹</a></li>
+            </ul>
+        </div>
+        <div class="category">
+            <h2>关注张大夫</h2>
+            <ul class="links">
+               <li><a href="https://author.baidu.com/home?from=bjh_article&app_id=1749823844536682" target="_blank">百家号</a></li>
+                <li><a href="https://www.baidu.com" target="_blank">待填写</a></li>
+                <li><a href="https://www.baidu.com" target="_blank">待填写</a></li>
+                <li><a href="https://www.baidu.com" target="_blank">待填写</a></li>
+                <li><a href="https://www.baidu.com" target="_blank">待填写</a></li>
+                <li><a href="https://www.baidu.com" target="_blank">待填写</a></li>
+            </ul>
+        </div>
+        <div class="category">
+            <h2>视频</h2>
+            <ul class="links">
+               <li><a href="https://www.bing.com" target="_blank">待填写</a></li>
+                <li><a href="https://www.baidu.com" target="_blank">待填写</a></li>
+                <li><a href="https://www.baidu.com" target="_blank">待填写</a></li>
+                <li><a href="https://www.baidu.com" target="_blank">待填写</a></li>
+                <li><a href="https://www.baidu.com" target="_blank">待填写</a></li>
+                <li><a href="https://www.baidu.com" target="_blank">待填写</a></li>
+            </ul>
+        </div>
+    </div>
+    <footer>
+        <p>&copy; 2025 张永超医生自用网站导航</p>
+    </footer>
+</body>
+</html>
