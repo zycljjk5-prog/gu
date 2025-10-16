@@ -1,0 +1,165 @@
+<!DOCTYPE html>
+<html lang="zh">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>哮喘预测指数计算器-张永超医生自用</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 0;
+            padding: 0;
+            background-color: #f4f4f9;
+        }
+        header {
+            background-color: #4CAF50;
+            color: white;
+            padding: 1rem;
+            text-align: center;
+        }
+        .container {
+            max-width: 800px;
+            margin: 2rem auto;
+            padding: 1rem;
+            background-color: white;
+            border-radius: 8px;
+            box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+        }
+        .form-group {
+            margin-bottom: 1rem;
+        }
+        label {
+            display: block;
+            margin-bottom: 0.5rem;
+            font-weight: bold;
+        }
+        input[type="checkbox"], input[type="radio"] {
+            margin-right: 0.5rem;
+        }
+        button {
+            padding: 0.5rem 1rem;
+            background-color: #4CAF50;
+            color: white;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+            font-size: 1rem;
+        }
+        button:hover {
+            background-color: #45a049;
+        }
+        .result {
+            margin-top: 1rem;
+            padding: 1rem;
+            background-color: #f9f9f9;
+            border-radius: 4px;
+            display: none;
+        }
+        .result h3 {
+            margin-top: 0;
+        }
+        .risk-high {
+            color: #e74c3c;
+            font-weight: bold;
+        }
+        .risk-medium {
+            color: #f39c12;
+            font-weight: bold;
+        }
+        .risk-low {
+            color: #2ecc71;
+            font-weight: bold;
+        }
+        footer {
+            text-align: center;
+            padding: 1rem;
+            background-color: #333;
+            color: white;
+        }
+    </style>
+</head>
+<body>
+    <header>
+        <h1>哮喘预测指数计算器</h1>
+    </header>
+    <div class="container">
+        <form id="predictionForm">
+            <div class="form-group">
+                <label>1. 是否有医生诊断的湿疹？</label>
+                <label><input type="radio" name="eczema" value="yes"> 是</label>
+                <label><input type="radio" name="eczema" value="no"> 否</label>
+            </div>
+            <div class="form-group">
+                <label>2. 父母是否有哮喘病史？</label>
+                <label><input type="radio" name="parent_asthma" value="yes"> 是</label>
+                <label><input type="radio" name="parent_asthma" value="no"> 否</label>
+            </div>
+            <div class="form-group">
+                <label>3. 是否有过敏性鼻炎？</label>
+                <label><input type="radio" name="rhinitis" value="yes"> 是</label>
+                <label><input type="radio" name="rhinitis" value="no"> 否</label>
+            </div>
+            <div class="form-group">
+                <label>4. 是否有喘息症状（每年 ≥ 4 次）？</label>
+                <label><input type="radio" name="wheezing" value="yes"> 是</label>
+                <label><input type="radio" name="wheezing" value="no"> 否</label>
+            </div>
+            <div class="form-group">
+                <label>5. 是否有食物过敏？</label>
+                <label><input type="radio" name="food_allergy" value="yes"> 是</label>
+                <label><input type="radio" name="food_allergy" value="no"> 否</label>
+            </div>
+            <button type="button" onclick="calculatePrediction()">计算预测指数</button>
+        </form>
+
+        <div id="result" class="result">
+            <h3>预测结果</h3>
+            <p id="apiResult"></p>
+            <p id="mapiResult"></p>
+            <p id="riskLevel"></p>
+        </div>
+    </div>
+    <footer>
+        <p>&copy; 2025 哮喘预测指数计算器-张永超医生自用版本</p>
+    </footer>
+
+    <script>
+        function calculatePrediction() {
+            const form = document.getElementById("predictionForm");
+            const resultDiv = document.getElementById("result");
+            const apiResult = document.getElementById("apiResult");
+            const mapiResult = document.getElementById("mapiResult");
+            const riskLevel = document.getElementById("riskLevel");
+
+            // 获取用户输入
+            const eczema = form.elements["eczema"].value === "yes";
+            const parentAsthma = form.elements["parent_asthma"].value === "yes";
+            const rhinitis = form.elements["rhinitis"].value === "yes";
+            const wheezing = form.elements["wheezing"].value === "yes";
+            const foodAllergy = form.elements["food_allergy"].value === "yes";
+
+            // 计算 API 和 mAPI
+            const apiScore = (eczema || parentAsthma) ? 1 : 0;
+            const mapiScore = (eczema ? 1 : 0) + (parentAsthma ? 1 : 0) + (rhinitis ? 1 : 0) + (wheezing ? 1 : 0) + (foodAllergy ? 1 : 0);
+
+            // 显示结果
+            apiResult.textContent = `哮喘预测指数（API）: ${apiScore >= 1 ? "阳性" : "阴性"}`;
+            mapiResult.textContent = `改良哮喘预测指数（mAPI）: ${mapiScore} 分`;
+
+            // 风险等级评估
+            if (mapiScore >= 4) {
+                riskLevel.textContent = "风险等级: 高";
+                riskLevel.className = "risk-high";
+            } else if (mapiScore >= 2) {
+                riskLevel.textContent = "风险等级: 中";
+                riskLevel.className = "risk-medium";
+            } else {
+                riskLevel.textContent = "风险等级: 低";
+                riskLevel.className = "risk-low";
+            }
+
+            resultDiv.style.display = "block";
+        }
+    </script>
+</body>
+</html>
