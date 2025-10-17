@@ -1,0 +1,156 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>GH激发试验记录表-张永超医生</title>
+  <style>
+    :root { --blue: #1e88e5; --dark: #1565c0; --muted: #666; }
+    body { font-family: "Microsoft YaHei", Segoe UI, Helvetica, Arial, sans-serif; background: #f6f9fc; margin: 0; color: #222; }
+    header { background: linear-gradient(90deg, var(--blue), #42a5f5); color: #fff; padding: 18px 16px; text-align: center; font-weight: 700; }
+    .container { max-width: 800px; margin: 18px auto; padding: 12px; }
+    .card { background: #fff; border-radius: 12px; box-shadow: 0 2px 8px rgba(0, 0, 0, 0.06); padding: 16px; margin-bottom: 14px; }
+    h2 { color: var(--dark); margin: 6px 0 10px; }
+    .desc { color: var(--muted); font-size: 0.92rem; margin-bottom: 10px; }
+    label { display: block; margin-top: 8px; font-size: 0.88rem; color: #333; }
+    input, select { width: 100%; padding: 8px; border-radius: 8px; border: 1px solid #dfe7f5; margin-top: 6px; box-sizing: border-box; }
+    .btn { display: inline-block; background: var(--blue); color: #fff; padding: 8px 12px; border-radius: 8px; border: none; cursor: pointer; margin-top: 10px; text-decoration: none; }
+    .result { background: #fff; padding: 10px; border-radius: 8px; margin-top: 8px; border: 1px dashed #e1efff; }
+    .small { font-size: 0.85rem; color: #555; }
+    table { width: 100%; border-collapse: collapse; margin-top: 10px; }
+    th, td { border: 1px solid #ddd; padding: 8px; text-align: center; }
+    thead { background: #f2f7ff; }
+  </style>
+</head>
+<body>
+  <header>GH激发试验记录表</header>
+  <div class="container">
+    <div class="card">
+      <h2>GH激发试验记录</h2>
+      <p class="desc">填写患者信息和时间点数据，生成打印页或导出PDF。</p>
+
+      <label>患者姓名<input id="ptName" placeholder="示例：张三"></label>
+      <label>年龄<input id="ptAge" type="number" step="0.1" placeholder="岁"></label>
+      <label>性别<select id="ptSex"><option value="男">男</option><option value="女">女</option></select></label>
+
+      <div style="margin-top: 8px; display: flex; gap: 8px; align-items: center;">
+        <button class="btn" onclick="addTimepoint()">添加时间点</button>
+        <button class="btn" onclick="clearTimepoints()" style="background: #777;">清除时间点</button>
+        <button class="btn" onclick="printGH()" style="background: #2e7d32;">生成打印页 / 导出 PDF</button>
+      </div>
+
+      <div id="timepoints" style="margin-top: 10px;"></div>
+      <div id="ghNotice" class="small muted" style="margin-top: 8px;">建议添加常见时间点：0, 15, 30, 60, 90, 120（单位：分钟）。</div>
+    </div>
+  </div>
+
+  <script>
+    let tpCount = 0;
+
+    // 添加时间点
+    function addTimepoint() {
+      tpCount++;
+      const container = document.getElementById('timepoints');
+      const div = document.createElement('div');
+      div.style.marginTop = '8px';
+      div.id = 'tp' + tpCount;
+      div.innerHTML = `
+        <div style="display: flex; gap: 8px; flex-wrap: wrap; align-items: center;">
+          <label style="flex: 1 1 120px;">时间（分钟）<input type="number" class="tpTime" value="${tpCount === 1 ? 0 : ''}" style="width: 110px;"></label>
+          <label style="flex: 1 1 140px;">GH (ng/mL)<input type="number" class="tpGH" step="0.01" style="width: 120px;"></label>
+          <label style="flex: 1 1 160px;">备注<input class="tpNote" style="width: 160px;"></label>
+          <button class="btn" onclick="removeTP('${div.id}')" style="background: #c62828;">删除</button>
+        </div>
+      `;
+      container.appendChild(div);
+    }
+
+    // 删除时间点
+    function removeTP(id) {
+      const el = document.getElementById(id);
+      if (el) el.remove();
+    }
+
+    // 清除所有时间点
+    function clearTimepoints() {
+      document.getElementById('timepoints').innerHTML = '';
+      tpCount = 0;
+    }
+
+    // 生成打印页
+    function printGH() {
+      const name = document.getElementById('ptName').value || '';
+      const age = document.getElementById('ptAge').value || '';
+      const sex = document.getElementById('ptSex').value || '';
+      const tps = [];
+      const container = document.getElementById('timepoints');
+      const times = container.querySelectorAll('.tpTime');
+      const ghs = container.querySelectorAll('.tpGH');
+      const notes = container.querySelectorAll('.tpNote');
+
+      for (let i = 0; i < times.length; i++) {
+        tps.push({ t: times[i].value, gh: ghs[i].value, note: notes[i].value });
+      }
+
+      // 构建打印页HTML
+      let html = `
+        <!doctype html>
+        <html>
+        <head>
+          <meta charset='utf-8'>
+          <title>GH激发试验记录</title>
+          <style>
+            body { font-family: Helvetica, Arial; padding: 18px; color: #222; }
+            h2 { color: #1565c0; }
+            table { width: 100%; border-collapse: collapse; margin-top: 10px; }
+            td, th { border: 1px solid #ddd; padding: 8px; text-align: center; }
+            thead { background: #f2f7ff; }
+            .muted { color: #666; font-size: 0.9rem; }
+          </style>
+        </head>
+        <body>
+          <h2>GH激发试验记录表</h2>
+          <div class='muted'>姓名：${escapeHtml(name)} &nbsp;&nbsp; 年龄：${escapeHtml(age)} &nbsp;&nbsp; 性别：${escapeHtml(sex)}</div>
+          <table>
+            <thead>
+              <tr>
+                <th>时间 (min)</th>
+                <th>GH (ng/mL)</th>
+                <th>备注</th>
+              </tr>
+            </thead>
+            <tbody>
+      `;
+
+      if (tps.length === 0) {
+        html += `<tr><td colspan='3'>未填写时间点</td></tr>`;
+      } else {
+        for (const r of tps) {
+          html += `<tr><td>${escapeHtml(r.t)}</td><td>${escapeHtml(r.gh)}</td><td>${escapeHtml(r.note)}</td></tr>`;
+        }
+      }
+
+      html += `
+            </tbody>
+          </table>
+          <p style='margin-top: 18px;' class='muted'>医生签名：__________________ &nbsp;&nbsp; 日期：____年__月__日</p>
+        </body>
+        </html>
+      `;
+
+      const w = window.open('', '_blank');
+      w.document.write(html);
+      w.document.close();
+      setTimeout(() => { w.focus(); }, 200);
+    }
+
+    // 转义HTML特殊字符
+    function escapeHtml(str) {
+      if (!str) return '';
+      return String(str).replace(/[&<>"']/g, function(m) {
+        return { '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[m];
+      });
+    }
+  </script>
+</body>
+</html>
