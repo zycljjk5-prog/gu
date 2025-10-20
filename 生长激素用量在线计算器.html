@@ -1,0 +1,103 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>生长激素用量计算器</title>
+  <style>
+    :root { --blue: #1e88e5; --dark: #1565c0; --muted: #666; }
+    body { font-family: "Microsoft YaHei", Segoe UI, Helvetica, Arial, sans-serif; background: #f6f9fc; margin: 0; color: #222; }
+    header { background: linear-gradient(90deg, var(--blue), #42a5f5); color: #fff; padding: 18px 16px; text-align: center; font-weight: 700; }
+    .container { max-width: 800px; margin: 18px auto; padding: 12px; }
+    .card { background: #fff; border-radius: 12px; box-shadow: 0 2px 8px rgba(0, 0, 0, 0.06); padding: 16px; margin-bottom: 14px; }
+    h2 { color: var(--dark); margin: 6px 0 10px; }
+    .desc { color: var(--muted); font-size: 0.92rem; margin-bottom: 10px; }
+    label { display: block; margin-top: 8px; font-size: 0.88rem; color: #333; }
+    input, select { width: 100%; padding: 8px; border-radius: 8px; border: 1px solid #dfe7f5; margin-top: 6px; box-sizing: border-box; }
+    .btn { display: inline-block; background: var(--blue); color: #fff; padding: 8px 12px; border-radius: 8px; border: none; cursor: pointer; margin-top: 10px; text-decoration: none; }
+    .result { background: #fff; padding: 10px; border-radius: 8px; margin-top: 8px; border: 1px dashed #e1efff; }
+    .small { font-size: 0.85rem; color: #555; }
+  </style>
+</head>
+<body>
+  <header>生长激素用量计算器</header>
+  <div class="container">
+    <div class="card">
+      <h2>生长激素用量计算</h2>
+      <p class="desc">根据疾病诊断和体重计算生长激素的推荐用量。</p>
+
+      <label>疾病诊断<select id="diagnosis">
+        <option value="GHD">生长激素缺乏症（GHD）</option>
+        <option value="ISS">特发性矮小（ISS）</option>
+        <option value="TS">Turner综合征（TS）</option>
+        <option value="PWS">Prader-Willi综合征（PWS）</option>
+        <option value="SGA">小于胎龄儿（SGA）</option>
+      </select></label>
+      <label>体重（kg）<input type="number" id="weight" step="0.1" value="20"></label>
+      <button class="btn" onclick="calculateDose()">计算用量</button>
+      <div id="result" class="result" style="display:none"></div>
+    </div>
+  </div>
+
+  <script>
+    // 计算生长激素用量
+    function calculateDose() {
+      const diagnosis = document.getElementById('diagnosis').value;
+      const weight = parseFloat(document.getElementById('weight').value);
+      const resultDiv = document.getElementById('result');
+
+      if (isNaN(weight) || weight <= 0) {
+        resultDiv.style.display = 'block';
+        resultDiv.innerHTML = '<strong>错误：</strong>请输入有效的体重。';
+        return;
+      }
+
+      // 根据不同疾病类型计算剂量
+      let dose = 0;
+      let unit = 'μg/kg/天';
+      let notes = '';
+
+      switch (diagnosis) {
+        case 'GHD':
+          dose = 25; // 0.025 mg/kg/天 = 25 μg/kg/天
+          notes = '生长激素缺乏症的标准剂量范围为0.025-0.035 mg/kg/天 (25-35 μg/kg/天, 0.075-0.105 IU/kg/天)。青春期或性发育后剂量可增加至0.035-0.050 mg/kg/天 (35-50 μg/kg/天, 0.105-0.15 IU/kg/天)。';
+          break;
+        case 'ISS':
+          dose = 33; // 0.033 mg/kg/天 = 33 μg/kg/天
+          notes = '特发性矮小的标准剂量范围为0.033-0.047 mg/kg/天 (33-47 μg/kg/天, 0.1-0.14 IU/kg/天)。青春期或性发育后剂量可增加至0.047-0.067 mg/kg/天 (47-67 μg/kg/天, 0.14-0.2 IU/kg/天)。';
+          break;
+        case 'TS':
+          dose = 45; // 0.045 mg/kg/天 = 45 μg/kg/天
+          notes = 'Turner综合征的标准剂量范围为0.045-0.050 mg/kg/天 (45-50 μg/kg/天, 0.135-0.15 IU/kg/天)。青春期或性发育后剂量可增加至0.050-0.067 mg/kg/天 (50-67 μg/kg/天, 0.15-0.2 IU/kg/天)。';
+          break;
+        case 'PWS':
+          dose = 35; // 0.035 mg/kg/天 = 35 μg/kg/天
+          notes = 'Prader-Willi综合征的标准剂量范围为0.035-0.050 mg/kg/天 (35-50 μg/kg/天, 0.105-0.15 IU/kg/天)，需注意肥胖和呼吸风险。青春期或性发育后剂量可增加至0.050-0.067 mg/kg/天 (50-67 μg/kg/天, 0.15-0.2 IU/kg/天)。';
+          break;
+        case 'SGA':
+          dose = 33; // 0.033 mg/kg/天 = 33 μg/kg/天
+          notes = '小于胎龄儿的标准剂量范围为0.033-0.047 mg/kg/天 (33-47 μg/kg/天, 0.1-0.14 IU/kg/天)。青春期或性发育后剂量可增加至0.047-0.067 mg/kg/天 (47-67 μg/kg/天, 0.14-0.2 IU/kg/天)。';
+          break;
+      }
+
+      // 计算总剂量
+      const totalDoseUg = dose * weight;
+      const totalDoseMg = Math.round((totalDoseUg / 1000) * 10) / 10; // 转换为mg
+      const totalDoseIu = Math.round(totalDoseMg * 3 * 10) / 10; // 1 mg ≈ 3 IU
+
+      // 生成结果HTML
+      let resultHtml = `
+        <h3>计算结果</h3>
+        <div><strong>推荐剂量：</strong>${dose} ${unit}</div>
+        <div><strong>总剂量：</strong>${Math.round(totalDoseUg)} μg/天 (约 ${totalDoseMg} mg/天, ${totalDoseIu} IU/天)</div>
+        <div class="small">${notes}</div>
+        <div class="small">注：1 mg ≈ 3 IU</div>
+      `;
+
+      // 显示结果
+      resultDiv.style.display = 'block';
+      resultDiv.innerHTML = resultHtml;
+    }
+  </script>
+</body>
+</html>
