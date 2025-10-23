@@ -1,0 +1,909 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>儿童功能性腹痛量表(CFAPS)评估系统-张永超医生</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        }
+        
+        body {
+            background: linear-gradient(135deg, #e6f7ff 0%, #f0f9ff 100%);
+            color: #333;
+            line-height: 1.6;
+            min-height: 100vh;
+            padding: 20px;
+        }
+        
+        .container {
+            max-width: 900px;
+            margin: 0 auto;
+            background: white;
+            border-radius: 20px;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
+            overflow: hidden;
+        }
+        
+        header {
+            background: linear-gradient(135deg, #1e88e5 0%, #0d47a1 100%);
+            color: white;
+            padding: 30px 20px;
+            text-align: center;
+        }
+        
+        header h1 {
+            font-size: 28px;
+            margin-bottom: 10px;
+        }
+        
+        header p {
+            font-size: 16px;
+            opacity: 0.9;
+            max-width: 700px;
+            margin: 0 auto;
+        }
+        
+        .info-box {
+            background: #e3f2fd;
+            padding: 15px;
+            margin: 15px;
+            border-radius: 10px;
+            border-left: 5px solid #1e88e5;
+            font-size: 14px;
+        }
+        
+        .progress-container {
+            background-color: #e9ecef;
+            height: 10px;
+            width: 100%;
+        }
+        
+        .progress-bar {
+            height: 100%;
+            background: linear-gradient(90deg, #1e88e5 0%, #0d47a1 100%);
+            width: 0%;
+            transition: width 0.5s ease;
+        }
+        
+        .step-container {
+            padding: 30px;
+            display: none;
+        }
+        
+        .step-container.active {
+            display: block;
+            animation: fadeIn 0.5s ease;
+        }
+        
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(10px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+        
+        .step-title {
+            font-size: 22px;
+            margin-bottom: 20px;
+            color: #0d47a1;
+            display: flex;
+            align-items: center;
+        }
+        
+        .step-title i {
+            margin-right: 10px;
+            color: #1e88e5;
+        }
+        
+        .dimension-container {
+            margin: 25px 0;
+            padding: 20px;
+            background: #f8f9fa;
+            border-radius: 12px;
+        }
+        
+        .dimension-title {
+            font-size: 18px;
+            margin-bottom: 15px;
+            color: #1565c0;
+            font-weight: 600;
+        }
+        
+        .options-container {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 15px;
+            margin-top: 15px;
+        }
+        
+        .option-card {
+            background: white;
+            border: 2px solid #e9ecef;
+            border-radius: 12px;
+            padding: 15px;
+            text-align: center;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+        
+        .option-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
+        }
+        
+        .option-card.selected {
+            border-color: #1e88e5;
+            background: rgba(30, 136, 229, 0.1);
+        }
+        
+        .option-title {
+            font-weight: 600;
+            margin-bottom: 8px;
+            font-size: 16px;
+        }
+        
+        .option-desc {
+            font-size: 14px;
+            color: #6c757d;
+        }
+        
+        .vas-container {
+            margin: 20px 0;
+            padding: 20px;
+            background: white;
+            border-radius: 12px;
+            border: 1px solid #e9ecef;
+        }
+        
+        .vas-slider {
+            width: 100%;
+            margin: 20px 0;
+            -webkit-appearance: none;
+            height: 10px;
+            border-radius: 5px;
+            background: #e0e0e0;
+            outline: none;
+        }
+        
+        .vas-slider::-webkit-slider-thumb {
+            -webkit-appearance: none;
+            width: 24px;
+            height: 24px;
+            border-radius: 50%;
+            background: #1e88e5;
+            cursor: pointer;
+            border: 3px solid white;
+            box-shadow: 0 2px 5px rgba(0,0,0,0.2);
+        }
+        
+        .vas-labels {
+            display: flex;
+            justify-content: space-between;
+            margin-top: 10px;
+            font-size: 14px;
+            color: #6c757d;
+        }
+        
+        .vas-value {
+            text-align: center;
+            font-size: 18px;
+            font-weight: 600;
+            color: #1e88e5;
+            margin-top: 10px;
+        }
+        
+        .checkbox-container {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 15px;
+            margin-top: 15px;
+        }
+        
+        .checkbox-item {
+            display: flex;
+            align-items: center;
+            padding: 12px;
+            background: white;
+            border-radius: 8px;
+            border: 1px solid #e9ecef;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+        
+        .checkbox-item:hover {
+            background: #f0f7ff;
+        }
+        
+        .checkbox-item.selected {
+            border-color: #1e88e5;
+            background: rgba(30, 136, 229, 0.1);
+        }
+        
+        .checkbox-item input {
+            margin-right: 10px;
+        }
+        
+        .buttons-container {
+            display: flex;
+            justify-content: space-between;
+            margin-top: 30px;
+        }
+        
+        .btn {
+            padding: 12px 25px;
+            border: none;
+            border-radius: 8px;
+            font-size: 16px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+        
+        .btn-prev {
+            background: #e9ecef;
+            color: #495057;
+        }
+        
+        .btn-next {
+            background: #1e88e5;
+            color: white;
+        }
+        
+        .btn:hover {
+            opacity: 0.9;
+            transform: translateY(-2px);
+        }
+        
+        .result-container {
+            padding: 30px;
+            text-align: center;
+            display: none;
+        }
+        
+        .score-display {
+            font-size: 72px;
+            font-weight: 700;
+            color: #1e88e5;
+            margin: 20px 0;
+        }
+        
+        .severity-level {
+            font-size: 24px;
+            margin-bottom: 30px;
+            padding: 15px;
+            border-radius: 10px;
+            font-weight: 600;
+        }
+        
+        .severity-mild {
+            background: rgba(76, 175, 80, 0.2);
+            color: #4caf50;
+        }
+        
+        .severity-moderate {
+            background: rgba(255, 152, 0, 0.2);
+            color: #ff9800;
+        }
+        
+        .severity-severe {
+            background: rgba(244, 67, 54, 0.2);
+            color: #f44336;
+        }
+        
+        .dimension-scores {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 15px;
+            margin: 30px 0;
+        }
+        
+        .dimension-score {
+            background: #f8f9fa;
+            padding: 15px;
+            border-radius: 10px;
+            text-align: center;
+        }
+        
+        .dimension-score-title {
+            font-size: 14px;
+            color: #6c757d;
+            margin-bottom: 5px;
+        }
+        
+        .dimension-score-value {
+            font-size: 24px;
+            font-weight: 700;
+            color: #1e88e5;
+        }
+        
+        .recommendations {
+            text-align: left;
+            background: #f8f9fa;
+            padding: 20px;
+            border-radius: 12px;
+            margin-top: 30px;
+        }
+        
+        .recommendations h3 {
+            color: #0d47a1;
+            margin-bottom: 15px;
+        }
+        
+        .recommendations ul {
+            padding-left: 20px;
+        }
+        
+        .recommendations li {
+            margin-bottom: 10px;
+        }
+        
+        .restart-btn {
+            background: #0d47a1;
+            color: white;
+            margin-top: 30px;
+        }
+        
+        @media (max-width: 600px) {
+            .options-container, .checkbox-container {
+                grid-template-columns: 1fr;
+            }
+            
+            .step-container, .result-container {
+                padding: 20px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <header>
+            <h1>儿童功能性腹痛量表(CFAPS)评估系统</h1>
+            <p>基于罗马IV标准及儿童功能胃肠病评估框架设计，适用于4-18岁儿童</p>
+        </header>
+        
+        <div class="info-box">
+            <i class="fas fa-info-circle"></i> 本量表包含6个维度，请根据儿童过去2周的情况如实填写。总分≥8分提示中重度功能性腹痛，需要医疗干预。
+        </div>
+        
+        <div class="progress-container">
+            <div class="progress-bar" id="progressBar"></div>
+        </div>
+        
+        <!-- 步骤1：疼痛频率 -->
+        <div class="step-container active" id="step1">
+            <h2 class="step-title"><i class="fas fa-calendar-week"></i> 1. 疼痛频率</h2>
+            <p>请选择过去2周内孩子腹痛发作的天数</p>
+            
+            <div class="dimension-container">
+                <div class="dimension-title">过去2周内腹痛发作天数</div>
+                <div class="options-container">
+                    <div class="option-card" data-value="0">
+                        <div class="option-title">0-1天</div>
+                        <div class="option-desc">几乎无发作</div>
+                    </div>
+                    <div class="option-card" data-value="1">
+                        <div class="option-title">2-3天</div>
+                        <div class="option-desc">偶尔发作</div>
+                    </div>
+                    <div class="option-card" data-value="3">
+                        <div class="option-title">4-5天</div>
+                        <div class="option-desc">经常发作</div>
+                    </div>
+                    <div class="option-card" data-value="5">
+                        <div class="option-title">6-7天</div>
+                        <div class="option-desc">频繁发作</div>
+                    </div>
+                    <div class="option-card" data-value="7">
+                        <div class="option-title">几乎每天</div>
+                        <div class="option-desc">持续发作</div>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="buttons-container">
+                <button class="btn btn-prev" disabled>上一步</button>
+                <button class="btn btn-next">下一步</button>
+            </div>
+        </div>
+        
+        <!-- 步骤2：疼痛强度 -->
+        <div class="step-container" id="step2">
+            <h2 class="step-title"><i class="fas fa-heartbeat"></i> 2. 疼痛强度</h2>
+            <p>请评估孩子腹痛发作时的平均疼痛强度</p>
+            
+            <div class="dimension-container">
+                <div class="dimension-title">疼痛强度视觉模拟评分(VAS)</div>
+                <div class="vas-container">
+                    <p>请拖动滑块选择疼痛程度，0表示无痛，10表示最剧烈的疼痛</p>
+                    <input type="range" min="0" max="10" value="0" class="vas-slider" id="painIntensity">
+                    <div class="vas-labels">
+                        <span>0 (无痛)</span>
+                        <span>10 (剧痛)</span>
+                    </div>
+                    <div class="vas-value">当前选择: <span id="painValue">0</span> 分</div>
+                </div>
+            </div>
+            
+            <div class="buttons-container">
+                <button class="btn btn-prev">上一步</button>
+                <button class="btn btn-next">下一步</button>
+            </div>
+        </div>
+        
+        <!-- 步骤3：疼痛持续时间 -->
+        <div class="step-container" id="step3">
+            <h2 class="step-title"><i class="fas fa-clock"></i> 3. 疼痛持续时间</h2>
+            <p>请选择孩子单次腹痛发作的平均持续时间</p>
+            
+            <div class="dimension-container">
+                <div class="dimension-title">单次疼痛持续时间</div>
+                <div class="options-container">
+                    <div class="option-card" data-value="0">
+                        <div class="option-title">少于30分钟</div>
+                        <div class="option-desc">短暂疼痛</div>
+                    </div>
+                    <div class="option-card" data-value="1">
+                        <div class="option-title">30分钟或更长</div>
+                        <div class="option-desc">持续较久</div>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="buttons-container">
+                <button class="btn btn-prev">上一步</button>
+                <button class="btn btn-next">下一步</button>
+            </div>
+        </div>
+        
+        <!-- 步骤4：伴随症状 -->
+        <div class="step-container" id="step4">
+            <h2 class="step-title"><i class="fas fa-stethoscope"></i> 4. 疼痛伴随症状</h2>
+            <p>请选择孩子腹痛时是否伴有以下症状</p>
+            
+            <div class="dimension-container">
+                <div class="dimension-title">伴随症状（可多选）</div>
+                <div class="checkbox-container">
+                    <div class="checkbox-item" data-value="nausea">
+                        <input type="checkbox" id="nausea">
+                        <label for="nausea">恶心</label>
+                    </div>
+                    <div class="checkbox-item" data-value="vomiting">
+                        <input type="checkbox" id="vomiting">
+                        <label for="vomiting">呕吐</label>
+                    </div>
+                    <div class="checkbox-item" data-value="appetite">
+                        <input type="checkbox" id="appetite">
+                        <label for="appetite">食欲下降</label>
+                    </div>
+                    <div class="checkbox-item" data-value="other">
+                        <input type="checkbox" id="other">
+                        <label for="other">其他症状</label>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="buttons-container">
+                <button class="btn btn-prev">上一步</button>
+                <button class="btn btn-next">下一步</button>
+            </div>
+        </div>
+        
+        <!-- 步骤5：对日常活动的影响 -->
+        <div class="step-container" id="step5">
+            <h2 class="step-title"><i class="fas fa-home"></i> 5. 对日常活动的影响</h2>
+            <p>请选择腹痛对孩子日常活动的影响程度</p>
+            
+            <div class="dimension-container">
+                <div class="dimension-title">影响领域（可多选）</div>
+                <div class="checkbox-container">
+                    <div class="checkbox-item" data-value="school">
+                        <input type="checkbox" id="school">
+                        <label for="school">上学</label>
+                    </div>
+                    <div class="checkbox-item" data-value="play">
+                        <input type="checkbox" id="play">
+                        <label for="play">玩耍</label>
+                    </div>
+                    <div class="checkbox-item" data-value="sleep">
+                        <input type="checkbox" id="sleep">
+                        <label for="sleep">睡眠</label>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="buttons-container">
+                <button class="btn btn-prev">上一步</button>
+                <button class="btn btn-next">下一步</button>
+            </div>
+        </div>
+        
+        <!-- 步骤6：焦虑程度 -->
+        <div class="step-container" id="step6">
+            <h2 class="step-title"><i class="fas fa-brain"></i> 6. 家长/儿童焦虑程度</h2>
+            <p>请评估腹痛问题引起的焦虑程度</p>
+            
+            <div class="dimension-container">
+                <div class="dimension-title">焦虑程度</div>
+                <div class="options-container">
+                    <div class="option-card" data-value="0">
+                        <div class="option-title">无明显焦虑</div>
+                        <div class="option-desc">不影响情绪状态</div>
+                    </div>
+                    <div class="option-card" data-value="1">
+                        <div class="option-title">轻度焦虑</div>
+                        <div class="option-desc">偶尔担心</div>
+                    </div>
+                    <div class="option-card" data-value="2">
+                        <div class="option-title">中度焦虑</div>
+                        <div class="option-desc">经常担心，影响部分生活</div>
+                    </div>
+                    <div class="option-card" data-value="3">
+                        <div class="option-title">重度焦虑</div>
+                        <div class="option-desc">严重影响生活和情绪</div>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="buttons-container">
+                <button class="btn btn-prev">上一步</button>
+                <button class="btn btn-next">查看结果</button>
+            </div>
+        </div>
+        
+        <!-- 结果页面 -->
+        <div class="result-container" id="result">
+            <h2 class="step-title"><i class="fas fa-clipboard-check"></i> 评估结果</h2>
+            <p>根据您的选择，孩子的功能性腹痛量表(CFAPS)评分为：</p>
+            
+            <div class="score-display" id="finalScore">0</div>
+            
+            <div class="dimension-scores">
+                <div class="dimension-score">
+                    <div class="dimension-score-title">疼痛频率</div>
+                    <div class="dimension-score-value" id="scoreFrequency">0</div>
+                </div>
+                <div class="dimension-score">
+                    <div class="dimension-score-title">疼痛强度</div>
+                    <div class="dimension-score-value" id="scoreIntensity">0</div>
+                </div>
+                <div class="dimension-score">
+                    <div class="dimension-score-title">持续时间</div>
+                    <div class="dimension-score-value" id="scoreDuration">0</div>
+                </div>
+                <div class="dimension-score">
+                    <div class="dimension-score-title">伴随症状</div>
+                    <div class="dimension-score-value" id="scoreSymptoms">0</div>
+                </div>
+                <div class="dimension-score">
+                    <div class="dimension-score-title">活动影响</div>
+                    <div class="dimension-score-value" id="scoreActivity">0</div>
+                </div>
+                <div class="dimension-score">
+                    <div class="dimension-score-title">焦虑程度</div>
+                    <div class="dimension-score-value" id="scoreAnxiety">0</div>
+                </div>
+            </div>
+            
+            <div class="severity-level" id="severityLevel">
+                <!-- 这里会动态显示严重程度 -->
+            </div>
+            
+            <div class="recommendations">
+                <h3>建议与指导</h3>
+                <ul id="recommendationsList">
+                    <!-- 这里会动态显示建议 -->
+                </ul>
+            </div>
+            
+            <button class="btn restart-btn" id="restartBtn">重新评估</button>
+        </div>
+    </div>
+
+    <script>
+        // 当前步骤和用户选择
+        let currentStep = 1;
+        const totalSteps = 6;
+        const userSelections = {
+            step1: null,  // 疼痛频率
+            step2: null,  // 疼痛强度
+            step3: null,  // 疼痛持续时间
+            step4: {      // 伴随症状
+                nausea: false,
+                vomiting: false,
+                appetite: false,
+                other: false
+            },
+            step5: {      // 对日常活动的影响
+                school: false,
+                play: false,
+                sleep: false
+            },
+            step6: null   // 焦虑程度
+        };
+        
+        // 初始化
+        document.addEventListener('DOMContentLoaded', function() {
+            updateProgressBar();
+            setupOptionCards();
+            setupCheckboxItems();
+            setupVASSlider();
+            setupNavigationButtons();
+        });
+        
+        // 设置选项卡片点击事件
+        function setupOptionCards() {
+            const optionCards = document.querySelectorAll('.option-card');
+            optionCards.forEach(card => {
+                card.addEventListener('click', function() {
+                    const stepContainer = this.closest('.step-container');
+                    const stepId = stepContainer.id;
+                    
+                    // 移除同一步骤中其他卡片的选中状态
+                    const siblings = stepContainer.querySelectorAll('.option-card');
+                    siblings.forEach(sibling => {
+                        sibling.classList.remove('selected');
+                    });
+                    
+                    // 选中当前卡片
+                    this.classList.add('selected');
+                    
+                    // 保存选择
+                    const stepNumber = stepId.replace('step', '');
+                    userSelections[`step${stepNumber}`] = parseInt(this.getAttribute('data-value'));
+                });
+            });
+        }
+        
+        // 设置复选框项目
+        function setupCheckboxItems() {
+            const checkboxItems = document.querySelectorAll('.checkbox-item');
+            checkboxItems.forEach(item => {
+                item.addEventListener('click', function() {
+                    const checkbox = this.querySelector('input[type="checkbox"]');
+                    checkbox.checked = !checkbox.checked;
+                    
+                    // 更新样式
+                    if (checkbox.checked) {
+                        this.classList.add('selected');
+                    } else {
+                        this.classList.remove('selected');
+                    }
+                    
+                    // 保存选择
+                    const stepContainer = this.closest('.step-container');
+                    const stepId = stepContainer.id;
+                    const stepNumber = stepId.replace('step', '');
+                    const symptom = this.getAttribute('data-value');
+                    
+                    userSelections[`step${stepNumber}`][symptom] = checkbox.checked;
+                });
+            });
+        }
+        
+        // 设置VAS滑块
+        function setupVASSlider() {
+            const vasSlider = document.getElementById('painIntensity');
+            const painValue = document.getElementById('painValue');
+            
+            vasSlider.addEventListener('input', function() {
+                painValue.textContent = this.value;
+                userSelections.step2 = parseInt(this.value);
+            });
+        }
+        
+        // 设置导航按钮
+        function setupNavigationButtons() {
+            // 下一步按钮
+            const nextButtons = document.querySelectorAll('.btn-next');
+            nextButtons.forEach(button => {
+                button.addEventListener('click', function() {
+                    const currentContainer = this.closest('.step-container');
+                    const currentStepId = currentContainer.id;
+                    
+                    // 检查是否已选择
+                    const stepNumber = parseInt(currentStepId.replace('step', ''));
+                    if (!validateStep(stepNumber)) {
+                        alert('请完成当前步骤的所有问题后再继续');
+                        return;
+                    }
+                    
+                    // 如果是最后一步，显示结果
+                    if (stepNumber === totalSteps) {
+                        showResults();
+                        return;
+                    }
+                    
+                    // 否则，进入下一步
+                    goToStep(stepNumber + 1);
+                });
+            });
+            
+            // 上一步按钮
+            const prevButtons = document.querySelectorAll('.btn-prev');
+            prevButtons.forEach(button => {
+                button.addEventListener('click', function() {
+                    const currentContainer = this.closest('.step-container');
+                    const currentStepId = currentContainer.id;
+                    const stepNumber = parseInt(currentStepId.replace('step', ''));
+                    
+                    goToStep(stepNumber - 1);
+                });
+            });
+            
+            // 重新评估按钮
+            document.getElementById('restartBtn').addEventListener('click', function() {
+                // 重置所有选择
+                resetSelections();
+                
+                // 回到第一步
+                goToStep(1);
+            });
+        }
+        
+        // 验证步骤是否完成
+        function validateStep(stepNumber) {
+            switch(stepNumber) {
+                case 1:
+                case 3:
+                case 6:
+                    return userSelections[`step${stepNumber}`] !== null;
+                case 2:
+                    return userSelections.step2 !== null;
+                case 4:
+                    return Object.values(userSelections.step4).some(val => val === true);
+                case 5:
+                    return Object.values(userSelections.step5).some(val => val === true);
+                default:
+                    return false;
+            }
+        }
+        
+        // 重置所有选择
+        function resetSelections() {
+            userSelections.step1 = null;
+            userSelections.step2 = null;
+            userSelections.step3 = null;
+            userSelections.step4 = {
+                nausea: false,
+                vomiting: false,
+                appetite: false,
+                other: false
+            };
+            userSelections.step5 = {
+                school: false,
+                play: false,
+                sleep: false
+            };
+            userSelections.step6 = null;
+            
+            // 重置UI
+            const optionCards = document.querySelectorAll('.option-card');
+            optionCards.forEach(card => {
+                card.classList.remove('selected');
+            });
+            
+            const checkboxItems = document.querySelectorAll('.checkbox-item');
+            checkboxItems.forEach(item => {
+                item.classList.remove('selected');
+                const checkbox = item.querySelector('input[type="checkbox"]');
+                checkbox.checked = false;
+            });
+            
+            document.getElementById('painIntensity').value = 0;
+            document.getElementById('painValue').textContent = '0';
+        }
+        
+        // 跳转到指定步骤
+        function goToStep(stepNumber) {
+            // 隐藏所有步骤
+            const stepContainers = document.querySelectorAll('.step-container');
+            stepContainers.forEach(container => {
+                container.classList.remove('active');
+            });
+            
+            // 显示目标步骤
+            document.getElementById(`step${stepNumber}`).classList.add('active');
+            
+            // 更新当前步骤
+            currentStep = stepNumber;
+            
+            // 更新进度条
+            updateProgressBar();
+        }
+        
+        // 更新进度条
+        function updateProgressBar() {
+            const progressPercentage = ((currentStep - 1) / totalSteps) * 100;
+            document.getElementById('progressBar').style.width = `${progressPercentage}%`;
+        }
+        
+        // 显示结果
+        function showResults() {
+            // 计算各维度得分
+            const frequencyScore = userSelections.step1 || 0;
+            const intensityScore = userSelections.step2 || 0;
+            const durationScore = userSelections.step3 || 0;
+            
+            // 计算伴随症状得分
+            const symptomsScore = Object.values(userSelections.step4).filter(val => val === true).length;
+            
+            // 计算活动影响得分
+            const activityScore = Object.values(userSelections.step5).filter(val => val === true).length;
+            
+            const anxietyScore = userSelections.step6 || 0;
+            
+            // 计算总分
+            const totalScore = frequencyScore + intensityScore + durationScore + symptomsScore + activityScore + anxietyScore;
+            
+            // 显示总分
+            document.getElementById('finalScore').textContent = totalScore;
+            
+            // 显示各维度得分
+            document.getElementById('scoreFrequency').textContent = frequencyScore;
+            document.getElementById('scoreIntensity').textContent = intensityScore;
+            document.getElementById('scoreDuration').textContent = durationScore;
+            document.getElementById('scoreSymptoms').textContent = symptomsScore;
+            document.getElementById('scoreActivity').textContent = activityScore;
+            document.getElementById('scoreAnxiety').textContent = anxietyScore;
+            
+            // 确定严重程度
+            let severity, severityClass, recommendations;
+            
+            if (totalScore < 8) {
+                severity = "轻度功能性腹痛";
+                severityClass = "severity-mild";
+                recommendations = [
+                    "症状较轻，可能与饮食或轻微压力有关",
+                    "建议记录饮食日记，找出可能的诱因",
+                    "保持规律作息和适当运动",
+                    "观察症状变化，如加重请及时就医"
+                ];
+            } else if (totalScore >= 8 && totalScore <= 15) {
+                severity = "中度功能性腹痛";
+                severityClass = "severity-moderate";
+                recommendations = [
+                    "症状已对日常生活产生一定影响",
+                    "建议咨询儿科医生进行全面评估",
+                    "可能需要调整饮食和生活方式",
+                    "学习压力管理和放松技巧",
+                    "定期随访，监测症状变化"
+                ];
+            } else {
+                severity = "重度功能性腹痛";
+                severityClass = "severity-severe";
+                recommendations = [
+                    "症状严重影响孩子的日常生活和学习",
+                    "强烈建议尽快咨询儿科消化专科医生",
+                    "可能需要进一步检查和综合治疗",
+                    "关注孩子的心理健康，必要时寻求心理支持",
+                    "制定个性化的综合管理计划"
+                ];
+            }
+            
+            // 显示严重程度
+            const severityElement = document.getElementById('severityLevel');
+            severityElement.textContent = `诊断结果：${severity}`;
+            severityElement.className = `severity-level ${severityClass}`;
+            
+            // 显示建议
+            const recommendationsList = document.getElementById('recommendationsList');
+            recommendationsList.innerHTML = '';
+            recommendations.forEach(rec => {
+                const li = document.createElement('li');
+                li.textContent = rec;
+                recommendationsList.appendChild(li);
+            });
+            
+            // 显示结果页面
+            document.querySelectorAll('.step-container').forEach(container => {
+                container.classList.remove('active');
+            });
+            document.getElementById('result').style.display = 'block';
+        }
+    </script>
+</body>
+</html>
