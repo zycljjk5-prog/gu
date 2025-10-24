@@ -1,0 +1,120 @@
+import React, { useState } from 'react';
+
+export default function AsthmaStatusDosingCalculator() {
+  const [weight, setWeight] = useState('');
+  const [age, setAge] = useState('');
+  const [med, setMed] = useState('methylprednisolone');
+  const kg = parseFloat(weight) || 0;
+
+  const meds = {
+    methylprednisolone: {
+      label: '甲泼尼龙 (Methylprednisolone)',
+      calc: (kg) => {
+        // 1-2 mg/kg per dose (q8-24h depending on practice)
+        const low = (1 * kg).toFixed(2);
+        const high = (2 * kg).toFixed(2);
+        return `${low} - ${high} mg per dose`;
+      },
+      note: '常用 1–2 mg/kg 每次, 视情况每8–24小时给药；以临床指南为准。'
+    },
+    hydrocortisone: {
+      label: '氢化可的松 (Hydrocortisone)',
+      calc: (kg) => {
+        // 5-10 mg/kg per dose (as in some ED protocols)
+        const low = (5 * kg).toFixed(0);
+        const high = (10 * kg).toFixed(0);
+        return `${low} - ${high} mg per dose`;
+      },
+      note: '常见急性哮喘用量范围 5–10 mg/kg (有不同指南建议) 。'
+    },
+    dexamethasone: {
+      label: '地塞米松 (Dexamethasone)',
+      calc: (kg) => {
+        // 0.3-0.6 mg/kg (single or short course)
+        const low = (0.3 * kg).toFixed(2);
+        const high = (0.6 * kg).toFixed(2);
+        return `${low} - ${high} mg（单次或每日）`;
+      },
+      note: '常见短程剂量 0.3–0.6 mg/kg。'
+    },
+    aminophylline: {
+      label: '氨茶碱/安可林 (Aminophylline)',
+      calc: (kg) => {
+        // loading 4-6 mg/kg, maintenance example 0.7-1 mg/kg/hr or 3-6 mg/kg/day
+        const loadLow = (4 * kg).toFixed(2);
+        const loadHigh = (6 * kg).toFixed(2);
+        const maintLow = (0.7 * kg).toFixed(2);
+        const maintHigh = (1 * kg).toFixed(2);
+        return `负荷: ${loadLow} - ${loadHigh} mg; 维持输注约 ${maintLow} - ${maintHigh} mg/hr (示例)`;
+      },
+      note: '负荷通常 4–6 mg/kg（各中心略有不同）；维持输注需按血药浓度调整。'
+    },
+    magnesium: {
+      label: '硫酸镁 (Magnesium sulfate)',
+      calc: (kg) => {
+        // 25-75 mg/kg up to 2 g over 20-30 min
+        const low = (25 * kg).toFixed(0);
+        const high = Math.min(75 * kg, 2000).toFixed(0);
+        return `${low} - ${high} mg（单次, 最大 2000 mg），静脉滴注 20–30 分钟`;
+      },
+      note: '常用 25–75 mg/kg, 单次最大约 2 g，静脉推注/滴注需监测生命体征。'
+    },
+    epinephrine: {
+      label: '肾上腺素 1:1000 (Epinephrine, SC/IM)',
+      calc: (kg) => {
+        // 0.01 ml/kg of 1:1000 (i.e., 0.01 mg/kg) subcut up to 0.3 ml
+        const vol = (0.01 * kg).toFixed(2); // ml of 1:1000
+        const doseMg = (0.01 * kg).toFixed(3); // mg
+        const maxVol = 0.3;
+        return `体积: ${vol} ml (1:1000)，相当于 ${doseMg} mg；每 20 分钟可重复，单次体积不超过 ${maxVol} ml`;
+      },
+      note: '急性气道梗阻合并过敏时常用；按体重和制剂浓度计算，遵循急救规范。'
+    }
+  };
+
+  const selected = meds[med];
+
+  return (
+    <div className="min-h-screen bg-gray-50 p-6">
+      <div className="mx-auto max-w-3xl bg-white shadow-lg rounded-2xl p-6">
+        <h1 className="text-2xl font-semibold mb-2">哮喘持续状态用药剂量计算器-张永超医生自用</h1>
+        <p className="text-sm text-gray-600 mb-4">输入体重并选择药物，计算常见参考剂量（仅供参考）。</p>
+
+        <div className="grid grid-cols-1 md:grid-cols-3 gap-3 mb-4">
+          <div>
+            <label className="block text-sm">体重 (kg)</label>
+            <input type="number" step="0.1" min="0" value={weight} onChange={e => setWeight(e.target.value)} className="mt-1 w-full p-2 border rounded" placeholder="例如: 12.5" />
+          </div>
+
+          <div>
+            <label className="block text-sm">年龄 (可选)</label>
+            <input type="number" step="1" min="0" value={age} onChange={e => setAge(e.target.value)} className="mt-1 w-full p-2 border rounded" placeholder="年龄(岁)" />
+          </div>
+
+          <div>
+            <label className="block text-sm">选择药物</label>
+            <select value={med} onChange={e => setMed(e.target.value)} className="mt-1 w-full p-2 border rounded">
+              {Object.keys(meds).map(k => (
+                <option key={k} value={k}>{meds[k].label}</option>
+              ))}
+            </select>
+          </div>
+        </div>
+
+        <div className="bg-gray-100 rounded p-4">
+          <h2 className="font-medium">计算结果</h2>
+          <p className="mt-2 text-lg">{kg > 0 ? selected.calc(kg) : '请输入有效体重以显示剂量。'}</p>
+          <p className="mt-2 text-sm text-gray-600">说明: {selected.note}</p>
+        </div>
+
+        <div className="mt-4 text-xs text-red-600">
+          <strong>重要声明：</strong> 本计算器基于常见临床参考范围，仅供教育参考，不能替代临床判断。用药前请务必核对处方、制剂浓度以及当地指南并咨询负责医师或药师。对儿童、孕妇、肾功能不全或合并用药者需特别谨慎。
+        </div>
+
+        <div className="mt-4 text-sm text-gray-500">
+          参考: 多个急诊/儿科指南和文献建议的剂量范围（界面内并未完全覆盖所有情形）。
+        </div>
+      </div>
+    </div>
+  );
+}
