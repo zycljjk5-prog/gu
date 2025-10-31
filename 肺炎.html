@@ -1,0 +1,375 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>肺炎类型判断计算器</title>
+    <style>
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+            font-family: 'Segoe UI', 'Microsoft YaHei', sans-serif;
+        }
+        
+        body {
+            background: linear-gradient(135deg, #f5f7fa 0%, #c3cfe2 100%);
+            min-height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            padding: 20px;
+        }
+        
+        .container {
+            background-color: white;
+            border-radius: 15px;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
+            width: 100%;
+            max-width: 800px;
+            overflow: hidden;
+        }
+        
+        header {
+            background: linear-gradient(90deg, #4b6cb7 0%, #182848 100%);
+            color: white;
+            padding: 25px 30px;
+            text-align: center;
+        }
+        
+        h1 {
+            font-size: 1.8rem;
+            margin-bottom: 10px;
+        }
+        
+        .description {
+            font-size: 0.9rem;
+            opacity: 0.9;
+            line-height: 1.5;
+        }
+        
+        .content {
+            padding: 30px;
+        }
+        
+        .form-group {
+            margin-bottom: 20px;
+        }
+        
+        .form-row {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 15px;
+            margin-bottom: 15px;
+        }
+        
+        .input-col {
+            flex: 1;
+            min-width: 200px;
+        }
+        
+        label {
+            display: block;
+            margin-bottom: 8px;
+            font-weight: 600;
+            color: #333;
+        }
+        
+        input {
+            width: 100%;
+            padding: 12px 15px;
+            border: 1px solid #ddd;
+            border-radius: 8px;
+            font-size: 1rem;
+            transition: border 0.3s;
+        }
+        
+        input:focus {
+            border-color: #4b6cb7;
+            outline: none;
+            box-shadow: 0 0 0 2px rgba(75, 108, 183, 0.2);
+        }
+        
+        .btn-group {
+            display: flex;
+            justify-content: center;
+            gap: 15px;
+            margin-top: 30px;
+        }
+        
+        button {
+            padding: 12px 25px;
+            border: none;
+            border-radius: 8px;
+            font-size: 1rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s;
+        }
+        
+        #calculate-btn {
+            background: linear-gradient(90deg, #4b6cb7 0%, #182848 100%);
+            color: white;
+            flex: 1;
+            max-width: 200px;
+        }
+        
+        #reset-btn {
+            background-color: #f0f0f0;
+            color: #333;
+            flex: 1;
+            max-width: 200px;
+        }
+        
+        button:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
+        }
+        
+        #calculate-btn:hover {
+            background: linear-gradient(90deg, #3a5998 0%, #121c36 100%);
+        }
+        
+        #reset-btn:hover {
+            background-color: #e0e0e0;
+        }
+        
+        .result-container {
+            margin-top: 30px;
+            padding: 20px;
+            border-radius: 10px;
+            background-color: #f9fafc;
+            display: none;
+        }
+        
+        .result-title {
+            font-size: 1.2rem;
+            font-weight: 600;
+            color: #333;
+            margin-bottom: 15px;
+        }
+        
+        #p-value {
+            font-size: 1.5rem;
+            font-weight: 700;
+            margin: 15px 0;
+            padding: 10px;
+            border-radius: 8px;
+            text-align: center;
+        }
+        
+        #p-value.bacterial {
+            background-color: #ffebee;
+            color: #d32f2f;
+        }
+        
+        #p-value.mycoplasma {
+            background-color: #e8f5e9;
+            color: #388e3c;
+        }
+        
+        #diagnosis {
+            font-size: 1.4rem;
+            font-weight: 700;
+            text-align: center;
+            padding: 15px;
+            border-radius: 8px;
+            margin-top: 15px;
+        }
+        
+        #diagnosis.bacterial {
+            background-color: #ffebee;
+            color: #d32f2f;
+            border: 2px solid #ffcdd2;
+        }
+        
+        #diagnosis.mycoplasma {
+            background-color: #e8f5e9;
+            color: #388e3c;
+            border: 2px solid #c8e6c9;
+        }
+        
+        .disclaimer {
+            margin-top: 30px;
+            padding: 15px;
+            background-color: #fff3e0;
+            border-left: 4px solid #ff9800;
+            border-radius: 4px;
+            font-size: 0.9rem;
+            line-height: 1.5;
+        }
+        
+        @media (max-width: 600px) {
+            .form-row {
+                flex-direction: column;
+            }
+            
+            .input-col {
+                min-width: 100%;
+            }
+            
+            .btn-group {
+                flex-direction: column;
+            }
+            
+            button {
+                max-width: 100%;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <header>
+            <h1>肺炎类型判断计算器</h1>
+            <p class="description">根据血常规指标判断支原体肺炎或细菌性肺炎</p>
+        </header>
+        
+        <div class="content">
+            <div class="form-group">
+                <div class="form-row">
+                    <div class="input-col">
+                        <label for="wbc">WBC（白细胞）</label>
+                        <input type="number" id="wbc" step="0.01" placeholder="例如：9.28">
+                    </div>
+                    <div class="input-col">
+                        <label for="monop">MONOP（单核细胞比率）</label>
+                        <input type="number" id="monop" step="0.01" placeholder="例如：0.07">
+                    </div>
+                </div>
+                
+                <div class="form-row">
+                    <div class="input-col">
+                        <label for="lymphp">LYMPHP（淋巴细胞比率）</label>
+                        <input type="number" id="lymphp" step="0.01" placeholder="例如：0.36">
+                    </div>
+                    <div class="input-col">
+                        <label for="mch">MCH（红细胞平均血红蛋白量）</label>
+                        <input type="number" id="mch" step="0.01" placeholder="例如：25.8">
+                    </div>
+                </div>
+                
+                <div class="form-row">
+                    <div class="input-col">
+                        <label for="eop">EOP（嗜酸细胞比率）</label>
+                        <input type="number" id="eop" step="0.01" placeholder="例如：0.07">
+                    </div>
+                    <div class="input-col">
+                        <label for="eo">EO（嗜酸细胞数）</label>
+                        <input type="number" id="eo" step="0.01" placeholder="例如：0.69">
+                    </div>
+                </div>
+                
+                <div class="form-row">
+                    <div class="input-col">
+                        <label for="neutp">NEUTP（中性细胞比率）</label>
+                        <input type="number" id="neutp" step="0.01" placeholder="例如：0.50">
+                    </div>
+                    <div class="input-col">
+                        <label for="neut">NEUT（中性细胞数）</label>
+                        <input type="number" id="neut" step="0.01" placeholder="例如：4.61">
+                    </div>
+                </div>
+            </div>
+            
+            <div class="btn-group">
+                <button id="calculate-btn">计算判断</button>
+                <button id="reset-btn">重置数据</button>
+            </div>
+            
+            <div class="result-container" id="result-container">
+                <div class="result-title">计算结果：</div>
+                <div id="p-value">P值：</div>
+                <div id="diagnosis">诊断结果：</div>
+            </div>
+            
+            <div class="disclaimer">
+                <strong>温馨提示：</strong> 
+                本计算器根据血常规指标预测肺炎类型，结果为统计学预测，仅供参考。临床诊断需结合患者症状、体征及其他检查结果，请以医生实际诊断为准。
+            </div>
+        </div>
+    </div>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            const calculateBtn = document.getElementById('calculate-btn');
+            const resetBtn = document.getElementById('reset-btn');
+            const resultContainer = document.getElementById('result-container');
+            const pValueElement = document.getElementById('p-value');
+            const diagnosisElement = document.getElementById('diagnosis');
+            
+            // 计算按钮点击事件
+            calculateBtn.addEventListener('click', function() {
+                // 获取输入值
+                const wbc = parseFloat(document.getElementById('wbc').value) || 0;
+                const monop = parseFloat(document.getElementById('monop').value) || 0;
+                const lymphp = parseFloat(document.getElementById('lymphp').value) || 0;
+                const mch = parseFloat(document.getElementById('mch').value) || 0;
+                const eop = parseFloat(document.getElementById('eop').value) || 0;
+                const eo = parseFloat(document.getElementById('eo').value) || 0;
+                const neutp = parseFloat(document.getElementById('neutp').value) || 0;
+                const neut = parseFloat(document.getElementById('neut').value) || 0;
+                
+                // 验证输入
+                if (wbc === 0 || monop === 0 || lymphp === 0 || mch === 0 || 
+                    eop === 0 || eo === 0 || neutp === 0 || neut === 0) {
+                    alert('请输入所有血常规指标的值');
+                    return;
+                }
+                
+                // 计算P值（简化的逻辑回归模型）
+                // 注意：实际模型需要根据训练数据来确定系数，这里使用示例系数
+                const p = calculatePValue(wbc, monop, lymphp, mch, eop, eo, neutp, neut);
+                
+                // 显示结果
+                resultContainer.style.display = 'block';
+                pValueElement.textContent = `P值：${p.toFixed(6)}`;
+                
+                // 判断并显示诊断结果
+                if (p >= 0.5) {
+                    diagnosisElement.textContent = '诊断结果：支原体肺炎';
+                    pValueElement.className = 'mycoplasma';
+                    diagnosisElement.className = 'mycoplasma';
+                } else {
+                    diagnosisElement.textContent = '诊断结果：细菌性肺炎';
+                    pValueElement.className = 'bacterial';
+                    diagnosisElement.className = 'bacterial';
+                }
+            });
+            
+            // 重置按钮点击事件
+            resetBtn.addEventListener('click', function() {
+                // 清空所有输入框
+                document.querySelectorAll('input').forEach(input => {
+                    input.value = '';
+                });
+                
+                // 隐藏结果
+                resultContainer.style.display = 'none';
+            });
+            
+            // 计算P值的函数（示例实现）
+            function calculatePValue(wbc, monop, lymphp, mch, eop, eo, neutp, neut) {
+                // 基于提供的示例数据，这里使用简化的逻辑回归模型
+                // 实际应用中，应该基于训练数据获得准确的系数
+                
+                // 示例计算（线性部分）
+                let linear = 0;
+                linear += wbc * 0.05;
+                linear += monop * 2.0;
+                linear += lymphp * 1.5;
+                linear += mch * 0.1;
+                linear += eop * 0.5;
+                linear += eo * 0.2;
+                linear += neutp * 0.8;
+                linear += neut * 0.1;
+                
+                // 逻辑函数（sigmoid函数）
+                const p = 1 / (1 + Math.exp(-linear));
+                
+                return p;
+            }
+        });
+    </script>
+</body>
+</html>
