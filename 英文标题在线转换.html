@@ -1,0 +1,83 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>英文标题大写格式在线转换器</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            max-width: 600px;
+            margin: 0 auto;
+            padding: 20px;
+            text-align: center;
+        }
+        h1 {
+            color: #333;
+        }
+        input, button {
+            padding: 10px;
+            margin: 10px 0;
+            width: 100%;
+            box-sizing: border-box;
+        }
+        button {
+            background-color: #4CAF50;
+            color: white;
+            border: none;
+            cursor: pointer;
+        }
+        button:hover {
+            background-color: #45a049;
+        }
+        #result {
+            margin-top: 20px;
+            padding: 10px;
+            border: 1px solid #ddd;
+            background-color: #f9f9f9;
+        }
+    </style>
+</head>
+<body>
+    <h1>英文标题大写格式转换器-张永超医生自用</h1>
+    <p>输入英文标题，点击转换按钮将其转换为标准的大写格式（Title Case）。</p>
+    <input type="text" id="inputTitle" placeholder="输入英文标题...">
+    <button onclick="convertToTitleCase()">转换</button>
+    <button onclick="copyResult()" id="copyButton" disabled>一键复制</button>
+    <div id="result"></div>
+
+    <script>
+        function convertToTitleCase() {
+            const input = document.getElementById('inputTitle').value;
+            const resultDiv = document.getElementById('result');
+
+            if (!input.trim()) {
+                resultDiv.textContent = '请输入有效的英文标题。';
+                return;
+            }
+
+            // 转换为Title Case
+            const titleCase = input.toLowerCase().split(' ')
+                .map(word => word.charAt(0).toUpperCase() + word.slice(1))
+                .join(' ');
+
+            resultDiv.textContent = `转换结果: ${titleCase}`;
+            document.getElementById('copyButton').disabled = false;
+        }
+
+        function copyResult() {
+            const resultDiv = document.getElementById('result');
+            const textToCopy = resultDiv.textContent.replace('转换结果: ', '');
+            
+            navigator.clipboard.writeText(textToCopy)
+                .then(() => {
+                    alert('标题已复制到剪贴板！');
+                })
+                .catch(err => {
+                    alert('复制失败，请手动复制。');
+                    console.error('复制失败:', err);
+                });
+        }
+    </script>
+</body>
+</html>
