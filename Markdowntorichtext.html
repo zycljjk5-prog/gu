@@ -1,6 +1,6 @@
 <!DOCTYPE html>
 <!-- saved from url=(0046)https://web.yanshu.net/Markdowntorichtext.html -->
-<html lang="zh"><script src="chrome-extension://fgkojgifbdaadmodbppebpghpololldg/js/ajax-listener-other.js"></script><head><meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+<html lang="zh"><head><meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
     
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Markdown 转富文本</title>
@@ -103,7 +103,11 @@
         // 实时转换 Markdown 为富文本
         markdownInput.addEventListener("input", () => {
             const markdown = markdownInput.value;
-            previewDiv.innerHTML = marked.parse(markdown);
+            if (typeof marked !== 'undefined') {
+                previewDiv.innerHTML = marked.parse(markdown);
+            } else {
+                previewDiv.innerHTML = '<p style="color:red;">Marked.js 加载失败，请刷新页面重试</p>';
+            }
         });
 
         // 复制富文本
@@ -117,7 +121,45 @@
             alert("富文本已复制到剪贴板！");
         });
     </script>
-    <script src="./Markdown 转富文本_files/marked.min.js.下载"></script>
+    <script>
+        function loadMarked() {
+            const script = document.createElement('script');
+            script.src = 'https://cdn.jsdelivr.net/npm/marked/marked.min.js';
+            script.onload = () => {
+                if (typeof marked !== 'undefined') {
+                    console.log('Marked.js 加载成功');
+                } else {
+                    console.error('Marked.js 加载失败，尝试备用方案');
+                    loadFallbackMarked();
+                }
+            };
+            script.onerror = () => {
+                console.error('Marked.js 加载失败，尝试备用方案');
+                loadFallbackMarked();
+            };
+            document.head.appendChild(script);
+        }
+
+        function loadFallbackMarked() {
+            const fallbackScript = document.createElement('script');
+            fallbackScript.src = './marked.min.js';
+            fallbackScript.onload = () => {
+                if (typeof marked !== 'undefined') {
+                    console.log('备用 Marked.js 加载成功');
+                } else {
+                    console.error('备用 Marked.js 加载失败');
+                    document.getElementById('preview').innerHTML = '<p style="color:red;">Marked.js 加载失败，请检查网络或刷新页面</p>';
+                }
+            };
+            fallbackScript.onerror = () => {
+                console.error('备用 Marked.js 加载失败');
+                document.getElementById('preview').innerHTML = '<p style="color:red;">Marked.js 加载失败，请检查网络或刷新页面</p>';
+            };
+            document.head.appendChild(fallbackScript);
+        }
+
+        loadMarked();
+    </script>
 
 
 <div id="videoPopupMenu" style="display: none;"></div><style>
