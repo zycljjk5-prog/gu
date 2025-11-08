@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>胰岛素剂量计算器</title>
+    <title>胰岛素剂量计算器（年龄适配版）</title>
     <style>
         * {
             box-sizing: border-box;
@@ -125,6 +125,13 @@
         .tab-content.active {
             display: block;
         }
+        .age-info {
+            background: #e8f4fc;
+            padding: 10px;
+            border-radius: 5px;
+            margin-top: 10px;
+            font-size: 14px;
+        }
         @media (max-width: 600px) {
             .container {
                 padding: 15px;
@@ -134,7 +141,7 @@
 </head>
 <body>
     <div class="container">
-        <h1>胰岛素剂量计算器</h1>
+        <h1>胰岛素剂量计算器（年龄适配版）</h1>
         
         <div class="warning">
             <strong>重要提示：</strong> 本计算器结果仅供参考，不能替代专业医疗建议。胰岛素剂量调整必须在医生指导下进行，警惕低血糖风险。
@@ -147,6 +154,20 @@
         
         <form id="insulinCalculator">
             <div class="tab-content active" id="basic-tab">
+                <div class="form-group">
+                    <label for="ageGroup">年龄区间</label>
+                    <select id="ageGroup" required>
+                        <option value="">请选择</option>
+                        <option value="toddler">7岁以下（幼儿）</option>
+                        <option value="child">7-12岁（儿童）</option>
+                        <option value="teen">13-17岁（青少年）</option>
+                        <option value="adult">18岁及以上（成人）</option>
+                    </select>
+                    <div class="age-info" id="ageInfo">
+                        请选择年龄区间，系统将自动采用相应的胰岛素敏感系数计算常数。
+                    </div>
+                </div>
+                
                 <div class="form-group">
                     <label for="weight">体重 (kg)</label>
                     <input type="number" id="weight" min="1" max="200" step="0.1" required>
@@ -263,7 +284,7 @@
             <div class="result-item">
                 <span>胰岛素敏感系数 (ISF): </span>
                 <span class="result-value" id="isfResult">--</span> 
-                <div class="unit-info">1单位胰岛素可降低的血糖值</div>
+                <div class="unit-info">使用的ISF计算常数: <span id="isfConstant">--</span></div>
             </div>
             
             <div class="result-item" id="correctionDoseItem">
@@ -284,7 +305,39 @@
     </div>
 
     <script>
+        // 不同年龄区间的ISF计算常数（基于1800法则的调整）
+        const ageConstants = {
+            'toddler': {  // 7岁以下幼儿
+                constant: 2200,
+                description: '7岁以下幼儿对胰岛素更敏感，采用较高常数(2200)计算ISF'
+            },
+            'child': {    // 7-12岁儿童
+                constant: 2000,
+                description: '7-12岁儿童，采用中等常数(2000)计算ISF'
+            },
+            'teen': {     // 13-17岁青少年
+                constant: 1800,
+                description: '13-17岁青少年，采用标准常数(1800)计算ISF'
+            },
+            'adult': {    // 18岁及以上成人
+                constant: 1800,
+                description: '18岁及以上成人，采用标准常数(1800)计算ISF'
+            }
+        };
+
         document.addEventListener('DOMContentLoaded', function() {
+            // 年龄区间选择变化事件
+            document.getElementById('ageGroup').addEventListener('change', function() {
+                const ageGroup = this.value;
+                const ageInfo = document.getElementById('ageInfo');
+                
+                if (ageGroup && ageConstants[ageGroup]) {
+                    ageInfo.textContent = ageConstants[ageGroup].description;
+                } else {
+                    ageInfo.textContent = '请选择年龄区间，系统将自动采用相应的胰岛素敏感系数计算常数。';
+                }
+            });
+            
             // 标签切换功能
             const tabs = document.querySelectorAll('.tab');
             tabs.forEach(tab => {
@@ -313,8 +366,6 @@
             // 血糖单位切换
             document.getElementById('glucoseUnit').addEventListener('change', function() {
                 const unit = this.value;
-                const fastingGlucose = document.getElementById('fastingGlucose');
-                const currentGlucose = document.getElementById('currentGlucose');
                 const targetGlucose = document.getElementById('targetGlucose');
                 
                 // 转换示例值
@@ -332,6 +383,7 @@
             // 计算胰岛素剂量函数
             function calculateInsulinDose() {
                 // 获取输入值
+                const ageGroup = document.getElementById('ageGroup').value;
                 const weight = parseFloat(document.getElementById('weight').value);
                 const diabetesType = document.getElementById('diabetesType').value;
                 const fastingGlucose = parseFloat(document.getElementById('fastingGlucose').value);
@@ -349,10 +401,14 @@
                 const dinnerRatio = parseFloat(document.getElementById('dinnerRatio').value) / 100;
                 
                 // 验证输入
-                if (!weight || !diabetesType || !fastingGlucose) {
-                    alert('请填写必填字段：体重、糖尿病类型和空腹血糖值');
+                if (!ageGroup || !weight || !diabetesType || !fastingGlucose) {
+                    alert('请填写必填字段：年龄区间、体重、糖尿病类型和空腹血糖值');
                     return;
                 }
+                
+                // 获取对应年龄区间的ISF计算常数
+                const isfConstant = ageConstants[ageGroup].constant;
+                document.getElementById('isfConstant').textContent = isfConstant;
                 
                 // 计算每日胰岛素总量 (TDD)
                 let tdd;
@@ -392,12 +448,13 @@
                 // 计算碳水化合物系数 (CIR)
                 const cir = 500 / tdd; // 标准公式: CIR = 500 / TDD
                 
-                // 计算胰岛素敏感系数 (ISF)
+                // 计算胰岛素敏感系数 (ISF) - 使用年龄适配的常数
                 let isf;
                 if (insulinType === 'rapid') {
-                    isf = 100 / tdd; // 速效胰岛素: ISF = 100 / TDD (单位: mmol/L/单位)
+                    isf = isfConstant / 18 / tdd; // 转换为mmol/L单位: 常数/18/TDD
                 } else {
-                    isf = 83 / tdd; // 短效胰岛素: ISF = 83 / TDD (单位: mmol/L/单位)
+                    // 短效胰岛素的常数通常比速效低约300
+                    isf = (isfConstant - 300) / 18 / tdd;
                 }
                 
                 // 计算碳水化合物剂量
@@ -429,19 +486,21 @@
                 document.getElementById('lunchResult').textContent = lunchDose.toFixed(1);
                 document.getElementById('dinnerResult').textContent = dinnerDose.toFixed(1);
                 document.getElementById('cirResult').textContent = cir.toFixed(1);
-                document.getElementById('isfResult').textContent = isf.toFixed(1) + ' mmol/L';
+                document.getElementById('isfResult').textContent = isf.toFixed(2) + ' mmol/L';
                 document.getElementById('correctionResult').textContent = correctionDose.toFixed(1);
                 document.getElementById('totalMealResult').textContent = totalMealDose.toFixed(1);
                 
                 // 显示计算详情
-                let details = calculationMethod;
+                let details = `年龄区间: ${document.getElementById('ageGroup').options[document.getElementById('ageGroup').selectedIndex].text}\n`;
+                details += `采用的ISF计算常数: ${isfConstant}\n\n`;
+                details += calculationMethod;
                 details += `\n\n基础胰岛素剂量: ${tdd.toFixed(1)} × ${basalRatio*100}% = ${basalDose.toFixed(1)} 单位`;
                 details += `\n餐时胰岛素剂量: ${tdd.toFixed(1)} × ${(1-basalRatio)*100}% = ${mealDose.toFixed(1)} 单位`;
                 details += `\n  - 早餐: ${mealDose.toFixed(1)} × ${breakfastRatio*100}% = ${breakfastDose.toFixed(1)} 单位`;
                 details += `\n  - 午餐: ${mealDose.toFixed(1)} × ${lunchRatio*100}% = ${lunchDose.toFixed(1)} 单位`;
                 details += `\n  - 晚餐: ${mealDose.toFixed(1)} × ${dinnerRatio*100}% = ${dinnerDose.toFixed(1)} 单位`;
                 details += `\n\n碳水化合物系数 (CIR): 500 ÷ ${tdd.toFixed(1)} = ${cir.toFixed(1)} g/单位`;
-                details += `\n胰岛素敏感系数 (ISF): ${insulinType === 'rapid' ? '100' : '83'} ÷ ${tdd.toFixed(1)} = ${isf.toFixed(1)} mmol/L/单位`;
+                details += `\n胰岛素敏感系数 (ISF): ${isfConstant} ÷ 18 ÷ ${tdd.toFixed(1)} = ${isf.toFixed(2)} mmol/L/单位`;
                 
                 if (carbs > 0) {
                     details += `\n\n碳水化合物剂量: ${carbs} g ÷ ${cir.toFixed(1)} g/单位 = ${carbDose.toFixed(1)} 单位`;
@@ -458,7 +517,7 @@
                         unitText = 'mmol/L (转换后)';
                     }
                     
-                    details += `\n校正剂量: (${current.toFixed(1)} ${unitText} - ${target.toFixed(1)} ${unitText}) ÷ ${isf.toFixed(1)} mmol/L/单位 = ${correctionDose.toFixed(1)} 单位`;
+                    details += `\n校正剂量: (${current.toFixed(1)} ${unitText} - ${target.toFixed(1)} ${unitText}) ÷ ${isf.toFixed(2)} mmol/L/单位 = ${correctionDose.toFixed(1)} 单位`;
                 }
                 
                 if (carbs > 0 || correctionDose > 0) {
