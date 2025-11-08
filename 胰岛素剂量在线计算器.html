@@ -1,0 +1,479 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>胰岛素剂量计算器</title>
+    <style>
+        * {
+            box-sizing: border-box;
+            font-family: 'Segoe UI', 'Microsoft YaHei', sans-serif;
+        }
+        body {
+            background-color: #f0f7ff;
+            color: #333;
+            line-height: 1.6;
+            margin: 0;
+            padding: 20px;
+        }
+        .container {
+            max-width: 800px;
+            margin: 0 auto;
+            background: white;
+            border-radius: 10px;
+            box-shadow: 0 0 20px rgba(0, 0, 0, 0.1);
+            padding: 30px;
+        }
+        h1 {
+            color: #2c3e50;
+            text-align: center;
+            margin-bottom: 30px;
+            border-bottom: 2px solid #3498db;
+            padding-bottom: 10px;
+        }
+        .form-group {
+            margin-bottom: 20px;
+        }
+        label {
+            display: block;
+            margin-bottom: 8px;
+            font-weight: 600;
+            color: #2c3e50;
+        }
+        input, select {
+            width: 100%;
+            padding: 10px;
+            border: 1px solid #ddd;
+            border-radius: 5px;
+            font-size: 16px;
+        }
+        .unit-info {
+            font-size: 14px;
+            color: #7f8c8d;
+            margin-top: 5px;
+        }
+        .btn {
+            background: #3498db;
+            color: white;
+            border: none;
+            padding: 12px 20px;
+            border-radius: 5px;
+            cursor: pointer;
+            font-size: 16px;
+            width: 100%;
+            margin-top: 10px;
+            transition: background 0.3s;
+        }
+        .btn:hover {
+            background: #2980b9;
+        }
+        .result-section {
+            margin-top: 30px;
+            padding: 20px;
+            background: #f8f9fa;
+            border-radius: 5px;
+            display: none;
+        }
+        .result-item {
+            margin-bottom: 15px;
+            padding-bottom: 10px;
+            border-bottom: 1px dashed #ddd;
+        }
+        .result-value {
+            font-weight: bold;
+            color: #e74c3c;
+            font-size: 18px;
+        }
+        .warning {
+            background: #fff3cd;
+            border-left: 4px solid #ffc107;
+            padding: 15px;
+            margin: 20px 0;
+            border-radius: 0 5px 5px 0;
+        }
+        .formula {
+            background: #f8f9fa;
+            padding: 15px;
+            border-radius: 5px;
+            margin: 15px 0;
+            font-family: monospace;
+            white-space: pre-wrap;
+        }
+        .tabs {
+            display: flex;
+            margin-bottom: 20px;
+            border-bottom: 1px solid #ddd;
+        }
+        .tab {
+            padding: 10px 20px;
+            cursor: pointer;
+            border: 1px solid transparent;
+            border-bottom: none;
+            border-radius: 5px 5px 0 0;
+            margin-right: 5px;
+        }
+        .tab.active {
+            border-color: #ddd;
+            border-bottom: 1px solid white;
+            margin-bottom: -1px;
+            background: white;
+            font-weight: bold;
+        }
+        .tab-content {
+            display: none;
+        }
+        .tab-content.active {
+            display: block;
+        }
+        @media (max-width: 600px) {
+            .container {
+                padding: 15px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>胰岛素剂量计算器</h1>
+        
+        <div class="warning">
+            <strong>重要提示：</strong> 本计算器结果仅供参考，不能替代专业医疗建议。胰岛素剂量调整必须在医生指导下进行，警惕低血糖风险。
+        </div>
+        
+        <div class="tabs">
+            <div class="tab active" data-tab="basic">基本信息</div>
+            <div class="tab" data-tab="advanced">高级计算</div>
+        </div>
+        
+        <form id="insulinCalculator">
+            <div class="tab-content active" id="basic-tab">
+                <div class="form-group">
+                    <label for="weight">体重 (kg)</label>
+                    <input type="number" id="weight" min="1" max="200" step="0.1" required>
+                </div>
+                
+                <div class="form-group">
+                    <label for="diabetesType">糖尿病类型</label>
+                    <select id="diabetesType" required>
+                        <option value="">请选择</option>
+                        <option value="type1">1型糖尿病</option>
+                        <option value="type2">2型糖尿病</option>
+                    </select>
+                </div>
+                
+                <div class="form-group">
+                    <label for="fastingGlucose">空腹血糖值</label>
+                    <input type="number" id="fastingGlucose" min="1" step="0.1" required>
+                    <select id="glucoseUnit" style="margin-top: 10px;">
+                        <option value="mmolL">mmol/L</option>
+                        <option value="mgdL">mg/dL</option>
+                    </select>
+                </div>
+                
+                <div class="form-group">
+                    <label for="currentGlucose">当前血糖值 (用于校正剂量)</label>
+                    <input type="number" id="currentGlucose" min="1" step="0.1">
+                    <div class="unit-info">如果不需校正剂量，可留空</div>
+                </div>
+                
+                <div class="form-group">
+                    <label for="targetGlucose">目标血糖值</label>
+                    <input type="number" id="targetGlucose" min="1" step="0.1" value="6.5">
+                    <div class="unit-info">通常设为5.0-7.8 mmol/L</div>
+                </div>
+                
+                <div class="form-group">
+                    <label for="carbs">计划摄入碳水化合物 (g)</label>
+                    <input type="number" id="carbs" min="0" step="1" value="0">
+                    <div class="unit-info">例如：半个馒头约含23g碳水化合物</div>
+                </div>
+                
+                <div class="form-group">
+                    <label for="insulinType">胰岛素类型</label>
+                    <select id="insulinType" required>
+                        <option value="rapid">速效胰岛素</option>
+                        <option value="short">短效胰岛素</option>
+                    </select>
+                </div>
+            </div>
+            
+            <div class="tab-content" id="advanced-tab">
+                <div class="form-group">
+                    <label for="customTDD">自定义每日胰岛素总量 (TDD) (单位)</label>
+                    <input type="number" id="customTDD" min="1" step="0.1">
+                    <div class="unit-info">如果已知您的TDD，可直接输入</div>
+                </div>
+                
+                <div class="form-group">
+                    <label for="basalRatio">基础胰岛素比例 (%)</label>
+                    <input type="number" id="basalRatio" min="10" max="90" value="50">
+                    <div class="unit-info">通常为40%-60%</div>
+                </div>
+                
+                <div class="form-group">
+                    <label for="mealDistribution">餐时胰岛素分配</label>
+                    <div>
+                        <span>早餐: </span><input type="number" id="breakfastRatio" min="5" max="100" value="40" style="width: 60px; display: inline-block;"> %
+                    </div>
+                    <div>
+                        <span>午餐: </span><input type="number" id="lunchRatio" min="5" max="100" value="30" style="width: 60px; display: inline-block;"> %
+                    </div>
+                    <div>
+                        <span>晚餐: </span><input type="number" id="dinnerRatio" min="5" max="100" value="30" style="width: 60px; display: inline-block;"> %
+                    </div>
+                    <div class="unit-info">餐时胰岛素分配比例，总和应为100%</div>
+                </div>
+            </div>
+            
+            <button type="button" id="calculateBtn" class="btn">计算胰岛素剂量</button>
+        </form>
+        
+        <div class="result-section" id="resultSection">
+            <h2>计算结果</h2>
+            
+            <div class="result-item">
+                <span>每日胰岛素总需求量 (TDD): </span>
+                <span class="result-value" id="tddResult">--</span> 单位
+            </div>
+            
+            <div class="result-item">
+                <span>基础胰岛素剂量 (睡前): </span>
+                <span class="result-value" id="basalResult">--</span> 单位
+            </div>
+            
+            <div class="result-item">
+                <span>餐时胰岛素剂量: </span>
+                <div>
+                    <span>早餐前: </span><span class="result-value" id="breakfastResult">--</span> 单位
+                </div>
+                <div>
+                    <span>午餐前: </span><span class="result-value" id="lunchResult">--</span> 单位
+                </div>
+                <div>
+                    <span>晚餐前: </span><span class="result-value" id="dinnerResult">--</span> 单位
+                </div>
+            </div>
+            
+            <div class="result-item">
+                <span>碳水化合物系数 (CIR): </span>
+                <span class="result-value" id="cirResult">--</span> g/单位
+                <div class="unit-info">1单位胰岛素可覆盖的碳水化合物克数</div>
+            </div>
+            
+            <div class="result-item">
+                <span>胰岛素敏感系数 (ISF): </span>
+                <span class="result-value" id="isfResult">--</span> 
+                <div class="unit-info">1单位胰岛素可降低的血糖值</div>
+            </div>
+            
+            <div class="result-item" id="correctionDoseItem">
+                <span>校正剂量: </span>
+                <span class="result-value" id="correctionResult">--</span> 单位
+                <div class="unit-info">针对当前高血糖的额外剂量</div>
+            </div>
+            
+            <div class="result-item">
+                <span>总餐前胰岛素剂量: </span>
+                <span class="result-value" id="totalMealResult">--</span> 单位
+            </div>
+            
+            <div class="formula" id="calculationDetails">
+                计算详情将在这里显示
+            </div>
+        </div>
+    </div>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            // 标签切换功能
+            const tabs = document.querySelectorAll('.tab');
+            tabs.forEach(tab => {
+                tab.addEventListener('click', function() {
+                    // 移除所有活动标签
+                    tabs.forEach(t => t.classList.remove('active'));
+                    // 添加活动类到当前标签
+                    this.classList.add('active');
+                    
+                    // 隐藏所有标签内容
+                    document.querySelectorAll('.tab-content').forEach(content => {
+                        content.classList.remove('active');
+                    });
+                    
+                    // 显示当前标签内容
+                    const tabId = this.getAttribute('data-tab') + '-tab';
+                    document.getElementById(tabId).classList.add('active');
+                });
+            });
+            
+            // 计算按钮点击事件
+            document.getElementById('calculateBtn').addEventListener('click', function() {
+                calculateInsulinDose();
+            });
+            
+            // 血糖单位切换
+            document.getElementById('glucoseUnit').addEventListener('change', function() {
+                const unit = this.value;
+                const fastingGlucose = document.getElementById('fastingGlucose');
+                const currentGlucose = document.getElementById('currentGlucose');
+                const targetGlucose = document.getElementById('targetGlucose');
+                
+                // 转换示例值
+                if (unit === 'mgdL') {
+                    if (targetGlucose.value === '6.5') {
+                        targetGlucose.value = '117'; // 6.5 * 18 ≈ 117
+                    }
+                } else {
+                    if (targetGlucose.value === '117') {
+                        targetGlucose.value = '6.5'; // 117 / 18 ≈ 6.5
+                    }
+                }
+            });
+            
+            // 计算胰岛素剂量函数
+            function calculateInsulinDose() {
+                // 获取输入值
+                const weight = parseFloat(document.getElementById('weight').value);
+                const diabetesType = document.getElementById('diabetesType').value;
+                const fastingGlucose = parseFloat(document.getElementById('fastingGlucose').value);
+                const glucoseUnit = document.getElementById('glucoseUnit').value;
+                const currentGlucose = document.getElementById('currentGlucose').value ? 
+                    parseFloat(document.getElementById('currentGlucose').value) : null;
+                const targetGlucose = parseFloat(document.getElementById('targetGlucose').value);
+                const carbs = parseFloat(document.getElementById('carbs').value) || 0;
+                const insulinType = document.getElementById('insulinType').value;
+                const customTDD = document.getElementById('customTDD').value ? 
+                    parseFloat(document.getElementById('customTDD').value) : null;
+                const basalRatio = parseFloat(document.getElementById('basalRatio').value) / 100;
+                const breakfastRatio = parseFloat(document.getElementById('breakfastRatio').value) / 100;
+                const lunchRatio = parseFloat(document.getElementById('lunchRatio').value) / 100;
+                const dinnerRatio = parseFloat(document.getElementById('dinnerRatio').value) / 100;
+                
+                // 验证输入
+                if (!weight || !diabetesType || !fastingGlucose) {
+                    alert('请填写必填字段：体重、糖尿病类型和空腹血糖值');
+                    return;
+                }
+                
+                // 计算每日胰岛素总量 (TDD)
+                let tdd;
+                let calculationMethod = "";
+                
+                if (customTDD) {
+                    tdd = customTDD;
+                    calculationMethod = "使用自定义TDD值";
+                } else {
+                    // 根据糖尿病类型选择系数
+                    let coefficient;
+                    if (diabetesType === 'type1') {
+                        coefficient = 0.7; // 1型糖尿病通常使用0.5-1.0 U/kg
+                    } else {
+                        coefficient = 0.5; // 2型糖尿病通常使用0.3-0.8 U/kg
+                    }
+                    
+                    tdd = weight * coefficient;
+                    calculationMethod = `按体重计算: ${weight} kg × ${coefficient} U/kg = ${tdd.toFixed(1)} 单位`;
+                    
+                    // 也可以按空腹血糖计算作为参考
+                    let fastingGlucoseMgdl = glucoseUnit === 'mmolL' ? fastingGlucose * 18 : fastingGlucose;
+                    let tddByGlucose = (fastingGlucoseMgdl / 10).toFixed(1); // 粗略公式: 空腹血糖(mg/dL) / 10
+                    
+                    calculationMethod += `\n按空腹血糖估算: ${fastingGlucoseMgdl.toFixed(0)} mg/dL ÷ 10 = ${tddByGlucose} 单位`;
+                }
+                
+                // 计算基础胰岛素和餐时胰岛素
+                const basalDose = tdd * basalRatio;
+                const mealDose = tdd * (1 - basalRatio);
+                
+                // 计算各餐胰岛素剂量
+                const breakfastDose = mealDose * breakfastRatio;
+                const lunchDose = mealDose * lunchRatio;
+                const dinnerDose = mealDose * dinnerRatio;
+                
+                // 计算碳水化合物系数 (CIR)
+                const cir = 500 / tdd; // 标准公式: CIR = 500 / TDD
+                
+                // 计算胰岛素敏感系数 (ISF)
+                let isf;
+                if (insulinType === 'rapid') {
+                    isf = 100 / tdd; // 速效胰岛素: ISF = 100 / TDD (单位: mmol/L/单位)
+                } else {
+                    isf = 83 / tdd; // 短效胰岛素: ISF = 83 / TDD (单位: mmol/L/单位)
+                }
+                
+                // 计算碳水化合物剂量
+                const carbDose = carbs / cir;
+                
+                // 计算校正剂量
+                let correctionDose = 0;
+                if (currentGlucose && currentGlucose > targetGlucose) {
+                    // 转换单位如果需要
+                    let currentGlucoseValue = currentGlucose;
+                    let targetGlucoseValue = targetGlucose;
+                    
+                    if (glucoseUnit === 'mgdL') {
+                        currentGlucoseValue = currentGlucose / 18;
+                        targetGlucoseValue = targetGlucose / 18;
+                    }
+                    
+                    correctionDose = (currentGlucoseValue - targetGlucoseValue) / isf;
+                    if (correctionDose < 0) correctionDose = 0;
+                }
+                
+                // 计算总餐前剂量
+                const totalMealDose = carbDose + correctionDose;
+                
+                // 显示结果
+                document.getElementById('tddResult').textContent = tdd.toFixed(1);
+                document.getElementById('basalResult').textContent = basalDose.toFixed(1);
+                document.getElementById('breakfastResult').textContent = breakfastDose.toFixed(1);
+                document.getElementById('lunchResult').textContent = lunchDose.toFixed(1);
+                document.getElementById('dinnerResult').textContent = dinnerDose.toFixed(1);
+                document.getElementById('cirResult').textContent = cir.toFixed(1);
+                document.getElementById('isfResult').textContent = isf.toFixed(1) + ' mmol/L';
+                document.getElementById('correctionResult').textContent = correctionDose.toFixed(1);
+                document.getElementById('totalMealResult').textContent = totalMealDose.toFixed(1);
+                
+                // 显示计算详情
+                let details = calculationMethod;
+                details += `\n\n基础胰岛素剂量: ${tdd.toFixed(1)} × ${basalRatio*100}% = ${basalDose.toFixed(1)} 单位`;
+                details += `\n餐时胰岛素剂量: ${tdd.toFixed(1)} × ${(1-basalRatio)*100}% = ${mealDose.toFixed(1)} 单位`;
+                details += `\n  - 早餐: ${mealDose.toFixed(1)} × ${breakfastRatio*100}% = ${breakfastDose.toFixed(1)} 单位`;
+                details += `\n  - 午餐: ${mealDose.toFixed(1)} × ${lunchRatio*100}% = ${lunchDose.toFixed(1)} 单位`;
+                details += `\n  - 晚餐: ${mealDose.toFixed(1)} × ${dinnerRatio*100}% = ${dinnerDose.toFixed(1)} 单位`;
+                details += `\n\n碳水化合物系数 (CIR): 500 ÷ ${tdd.toFixed(1)} = ${cir.toFixed(1)} g/单位`;
+                details += `\n胰岛素敏感系数 (ISF): ${insulinType === 'rapid' ? '100' : '83'} ÷ ${tdd.toFixed(1)} = ${isf.toFixed(1)} mmol/L/单位`;
+                
+                if (carbs > 0) {
+                    details += `\n\n碳水化合物剂量: ${carbs} g ÷ ${cir.toFixed(1)} g/单位 = ${carbDose.toFixed(1)} 单位`;
+                }
+                
+                if (currentGlucose && currentGlucose > targetGlucose) {
+                    let current = currentGlucose;
+                    let target = targetGlucose;
+                    let unitText = 'mmol/L';
+                    
+                    if (glucoseUnit === 'mgdL') {
+                        current = current / 18;
+                        target = target / 18;
+                        unitText = 'mmol/L (转换后)';
+                    }
+                    
+                    details += `\n校正剂量: (${current.toFixed(1)} ${unitText} - ${target.toFixed(1)} ${unitText}) ÷ ${isf.toFixed(1)} mmol/L/单位 = ${correctionDose.toFixed(1)} 单位`;
+                }
+                
+                if (carbs > 0 || correctionDose > 0) {
+                    details += `\n总餐前剂量: ${carbDose.toFixed(1)} 单位 + ${correctionDose.toFixed(1)} 单位 = ${totalMealDose.toFixed(1)} 单位`;
+                }
+                
+                document.getElementById('calculationDetails').textContent = details;
+                
+                // 显示结果区域
+                document.getElementById('resultSection').style.display = 'block';
+                
+                // 滚动到结果区域
+                document.getElementById('resultSection').scrollIntoView({ behavior: 'smooth' });
+            }
+        });
+    </script>
+</body>
+</html>
