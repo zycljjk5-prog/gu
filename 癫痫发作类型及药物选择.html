@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>癫痫发作类型与综合征用药指南</title>
+    <title>基于基因、发作类型、综合症的癫痫药物选择系统</title>
     <style>
         * {
             box-sizing: border-box;
@@ -43,13 +43,15 @@
         .description {
             color: #7f8c8d;
             font-size: 16px;
+            max-width: 800px;
+            margin: 0 auto;
         }
         
         .selection-area {
-            margin-bottom: 30px;
             display: flex;
             flex-wrap: wrap;
             gap: 20px;
+            margin-bottom: 30px;
         }
         
         .selection-group {
@@ -59,9 +61,8 @@
         
         label {
             display: block;
-            font-size: 18px;
             font-weight: bold;
-            margin-bottom: 10px;
+            margin-bottom: 8px;
             color: #2c3e50;
         }
         
@@ -73,6 +74,34 @@
             background-color: white;
             width: 100%;
             cursor: pointer;
+        }
+        
+        .gene-section {
+            background-color: #e8f4f8;
+            padding: 20px;
+            border-radius: 8px;
+            margin-bottom: 20px;
+        }
+        
+        .gene-section h2 {
+            color: #2c3e50;
+            margin-bottom: 15px;
+        }
+        
+        button {
+            background-color: #4a6fa5;
+            color: white;
+            border: none;
+            padding: 12px 25px;
+            border-radius: 5px;
+            cursor: pointer;
+            font-size: 16px;
+            transition: background-color 0.3s;
+            margin-top: 10px;
+        }
+        
+        button:hover {
+            background-color: #3a5a80;
         }
         
         .result-area {
@@ -93,6 +122,13 @@
             border-radius: 5px 5px 0 0;
             font-size: 20px;
             font-weight: bold;
+        }
+        
+        .gene-info {
+            background-color: #e8f4f8;
+            padding: 15px;
+            border-left: 4px solid #4a6fa5;
+            margin-bottom: 20px;
         }
         
         .medication-category {
@@ -181,9 +217,45 @@
 <body>
     <div class="container">
         <header>
-            <h1>癫痫发作类型与综合征用药指南</h1>
-            <p class="description">根据发作类型或癫痫综合征选择合适的抗癫痫药物</p>
+            <h1>基于基因的癫痫药物选择系统</h1>
+            <p class="description">结合基因检测结果与癫痫综合征类型，提供个性化用药指导--张永超医生自用，请结合临床</p>
         </header>
+        
+        <div class="gene-section">
+            <h2>基因检测信息</h2>
+            <div class="selection-area">
+                <div class="selection-group">
+                    <label for="gene-name">相关基因</label>
+                    <select id="gene-name">
+                        <option value="">请选择相关基因</option>
+                        <option value="SCN1A">SCN1A (钠通道基因)</option>
+                        <option value="SCN2A">SCN2A (钠通道基因)</option>
+                        <option value="KCNQ2">KCNQ2 (钾通道基因)</option>
+                        <option value="CDKL5">CDKL5 (细胞周期蛋白依赖激酶)</option>
+                        <option value="PCDH19">PCDH19 (原钙粘蛋白)</option>
+                        <option value="STXBP1">STXBP1 (突触融合蛋白结合蛋白)</option>
+                        <option value="TSC1">TSC1 (结节性硬化症基因1)</option>
+                        <option value="TSC2">TSC2 (结节性硬化症基因2)</option>
+                        <option value="MECP2">MECP2 (甲基化CpG结合蛋白)</option>
+                        <option value="ARX">ARX (Aristaless相关同源框)</option>
+                        <option value="其他">其他基因</option>
+                    </select>
+                </div>
+                <div class="selection-group">
+                    <label for="mutation-type">突变类型</label>
+                    <select id="mutation-type">
+                        <option value="">请选择突变类型</option>
+                        <option value="missense">错义突变</option>
+                        <option value="nonsense">无义突变</option>
+                        <option value="frameshift">移码突变</option>
+                        <option value="deletion">缺失</option>
+                        <option value="duplication">重复</option>
+                        <option value="unknown">未知</option>
+                    </select>
+                </div>
+            </div>
+            <button id="analyze-btn">分析基因与药物关联</button>
+        </div>
         
         <div class="selection-area">
             <div class="selection-group">
@@ -220,6 +292,10 @@
         <div class="result-area" id="result-area">
             <div class="selected-condition" id="selected-condition">选择类型</div>
             
+            <div class="gene-info" id="gene-info">
+                <!-- 基因分析结果将显示在这里 -->
+            </div>
+            
             <div class="medication-category first-line">
                 <div class="category-header">一线药物</div>
                 <div class="medication-list" id="first-line-meds"></div>
@@ -241,12 +317,12 @@
             </div>
             
             <div class="note">
-                <p>注：带有 * 标记的药物为目前国内市场尚没有的抗癫痫药</p>
+                <p>注：带有 * 标记的药物为目前国内市场尚没有的抗癫痫药。基因检测结果仅供参考，具体用药请遵医嘱。</p>
             </div>
         </div>
         
         <footer>
-            <p>本指南仅供参考，具体用药请遵医嘱</p>
+            <p>本指南整合了癫痫综合征选药原则与基因药物基因组学信息，仅供参考，具体用药请遵医嘱</p>
         </footer>
     </div>
 
@@ -371,11 +447,85 @@
             }
         };
 
+        // 基因与综合征/药物的关联数据
+        const geneData = {
+            "SCN1A": {
+                syndrome: "dravet-syndrome",
+                info: "SCN1A基因突变与Dravet综合征高度相关。钠通道阻滞剂(如卡马西平、奥卡西平、拉莫三嗪)可能加重发作。",
+                recommended: ["丙戊酸", "托吡酯", "氯巴占*", "司替戊醇*"],
+                avoid: ["卡马西平", "奥卡西平", "拉莫三嗪", "苯妥英钠"]
+            },
+            "SCN2A": {
+                syndrome: "benign-childhood",
+                info: "SCN2A基因突变与良性家族性新生儿-婴儿癫痫相关。钠通道阻滞剂可能有效。",
+                recommended: ["卡马西平", "奥卡西平", "拉莫三嗪"],
+                avoid: []
+            },
+            "KCNQ2": {
+                syndrome: "benign-childhood",
+                info: "KCNQ2基因突变与良性家族性新生儿癫痫相关。钠通道阻滞剂可能有效。",
+                recommended: ["卡马西平", "奥卡西平"],
+                avoid: []
+            },
+            "CDKL5": {
+                syndrome: "west-syndrome",
+                info: "CDKL5基因突变与早期婴儿癫痫性脑病相关，常表现为婴儿痉挛症。",
+                recommended: ["皮质激素", "氨己烯酸*", "丙戊酸"],
+                avoid: []
+            },
+            "PCDH19": {
+                syndrome: "dravet-syndrome",
+                info: "PCDH19基因突变与女性限性癫痫伴智力障碍相关，表现类似Dravet综合征。",
+                recommended: ["丙戊酸", "托吡酯", "左乙拉西坦"],
+                avoid: ["卡马西平", "奥卡西平"]
+            },
+            "STXBP1": {
+                syndrome: "west-syndrome",
+                info: "STXBP1基因突变与早期婴儿癫痫性脑病相关，常表现为婴儿痉挛症。",
+                recommended: ["皮质激素", "氨己烯酸*", "丙戊酸"],
+                avoid: []
+            },
+            "TSC1": {
+                syndrome: "west-syndrome",
+                info: "TSC1基因突变与结节性硬化症相关，常表现为婴儿痉挛症或局灶性发作。",
+                recommended: ["氨己烯酸*", "丙戊酸", "依维莫司"],
+                avoid: []
+            },
+            "TSC2": {
+                syndrome: "west-syndrome",
+                info: "TSC2基因突变与结节性硬化症相关，常表现为婴儿痉挛症或局灶性发作。",
+                recommended: ["氨己烯酸*", "丙戊酸", "依维莫司"],
+                avoid: []
+            },
+            "MECP2": {
+                syndrome: "epileptic-encephalopathy",
+                info: "MECP2基因突变与Rett综合征相关，常表现为多种发作类型。",
+                recommended: ["丙戊酸", "左乙拉西坦", "卡马西平"],
+                avoid: ["拉莫三嗪"]
+            },
+            "ARX": {
+                syndrome: "west-syndrome",
+                info: "ARX基因突变与X连锁婴儿痉挛症相关。",
+                recommended: ["皮质激素", "氨己烯酸*", "丙戊酸"],
+                avoid: []
+            },
+            "其他": {
+                syndrome: "",
+                info: "该基因的癫痫药物基因组学信息有限，请参考常规癫痫综合征选药原则。",
+                recommended: [],
+                avoid: []
+            }
+        };
+
         // 获取DOM元素
+        const geneNameSelect = document.getElementById('gene-name');
+        const mutationTypeSelect = document.getElementById('mutation-type');
+        const analyzeBtn = document.getElementById('analyze-btn');
         const seizureTypeSelect = document.getElementById('seizure-type');
         const syndromeTypeSelect = document.getElementById('syndrome-type');
         const resultArea = document.getElementById('result-area');
         const selectedCondition = document.getElementById('selected-condition');
+        const geneInfo = document.getElementById('gene-info');
         const firstLineMeds = document.getElementById('first-line-meds');
         const addOnMeds = document.getElementById('add-on-meds');
         const considerMeds = document.getElementById('consider-meds');
@@ -388,11 +538,11 @@
             
             // 优先显示癫痫综合征的选择
             if (syndromeValue) {
-                displayCondition(syndromeData[syndromeValue]);
+                displayCondition(syndromeData[syndromeValue], "癫痫综合征");
                 // 清空发作类型选择
                 seizureTypeSelect.value = "";
             } else if (seizureValue) {
-                displayCondition(seizureData[seizureValue]);
+                displayCondition(seizureData[seizureValue], "发作类型");
             } else {
                 // 隐藏结果区域
                 resultArea.style.display = 'none';
@@ -400,12 +550,18 @@
         }
 
         // 显示条件的函数
-        function displayCondition(condition) {
+        function displayCondition(condition, type) {
             // 显示结果区域
             resultArea.style.display = 'block';
             
             // 更新条件名称
-            selectedCondition.textContent = condition.name;
+            selectedCondition.textContent = `${type}: ${condition.name}`;
+            
+            // 清空基因信息（除非有基因分析结果）
+            if (!geneInfo.dataset.hasAnalysis) {
+                geneInfo.innerHTML = "<p>请输入基因信息获取个性化用药建议</p>";
+                geneInfo.dataset.hasAnalysis = "false";
+            }
             
             // 更新药物列表
             updateMedicationList(firstLineMeds, condition.firstLine);
@@ -413,6 +569,40 @@
             updateMedicationList(considerMeds, condition.consider);
             updateMedicationList(worsenMeds, condition.worsen);
         }
+
+        // 基因分析功能
+        analyzeBtn.addEventListener('click', function() {
+            const geneName = geneNameSelect.value;
+            const mutationType = mutationTypeSelect.value;
+            
+            if (!geneName) {
+                alert("请选择基因名称");
+                return;
+            }
+            
+            if (geneData[geneName]) {
+                const geneInfoData = geneData[geneName];
+                
+                // 显示基因分析结果
+                geneInfo.innerHTML = `
+                    <h3>基因分析结果: ${geneName} ${mutationType ? `(${mutationType}突变)` : ''}</h3>
+                    <p>${geneInfoData.info}</p>
+                    <p><strong>相关综合征:</strong> ${syndromeData[geneInfoData.syndrome]?.name || '未知'}</p>
+                    <p><strong>基于基因的推荐药物:</strong> ${geneInfoData.recommended.join(', ') || '无特定推荐'}</p>
+                    ${geneInfoData.avoid.length > 0 ? `<p><strong>基于基因应避免的药物:</strong> ${geneInfoData.avoid.join(', ')}</p>` : ''}
+                `;
+                geneInfo.dataset.hasAnalysis = "true";
+                
+                // 自动选择相关综合征
+                if (geneInfoData.syndrome) {
+                    syndromeTypeSelect.value = geneInfoData.syndrome;
+                    seizureTypeSelect.value = "";
+                }
+                
+                // 更新显示
+                updateDisplay();
+            }
+        });
 
         // 更新药物列表的函数
         function updateMedicationList(container, medications) {
@@ -442,6 +632,7 @@
         seizureTypeSelect.addEventListener('change', function() {
             if (this.value) {
                 syndromeTypeSelect.value = "";
+                geneInfo.dataset.hasAnalysis = "false";
             }
             updateDisplay();
         });
@@ -449,9 +640,13 @@
         syndromeTypeSelect.addEventListener('change', function() {
             if (this.value) {
                 seizureTypeSelect.value = "";
+                geneInfo.dataset.hasAnalysis = "false";
             }
             updateDisplay();
         });
+        
+        // 初始化时隐藏结果区域
+        resultArea.style.display = 'none';
     </script>
 </body>
 </html>
