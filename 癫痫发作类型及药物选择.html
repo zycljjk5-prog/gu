@@ -1,0 +1,457 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>癫痫发作类型与综合征用药指南</title>
+    <style>
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+            font-family: 'Microsoft YaHei', Arial, sans-serif;
+        }
+        
+        body {
+            background-color: #f5f7fa;
+            color: #333;
+            line-height: 1.6;
+            padding: 20px;
+        }
+        
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            background: white;
+            border-radius: 10px;
+            box-shadow: 0 0 20px rgba(0, 0, 0, 0.1);
+            padding: 30px;
+        }
+        
+        header {
+            text-align: center;
+            margin-bottom: 30px;
+            border-bottom: 2px solid #4a6fa5;
+            padding-bottom: 20px;
+        }
+        
+        h1 {
+            color: #2c3e50;
+            margin-bottom: 10px;
+        }
+        
+        .description {
+            color: #7f8c8d;
+            font-size: 16px;
+        }
+        
+        .selection-area {
+            margin-bottom: 30px;
+            display: flex;
+            flex-wrap: wrap;
+            gap: 20px;
+        }
+        
+        .selection-group {
+            flex: 1;
+            min-width: 300px;
+        }
+        
+        label {
+            display: block;
+            font-size: 18px;
+            font-weight: bold;
+            margin-bottom: 10px;
+            color: #2c3e50;
+        }
+        
+        select {
+            padding: 10px 15px;
+            font-size: 16px;
+            border: 1px solid #ddd;
+            border-radius: 5px;
+            background-color: white;
+            width: 100%;
+            cursor: pointer;
+        }
+        
+        .result-area {
+            display: none;
+            margin-top: 30px;
+            animation: fadeIn 0.5s ease;
+        }
+        
+        @keyframes fadeIn {
+            from { opacity: 0; }
+            to { opacity: 1; }
+        }
+        
+        .selected-condition {
+            background-color: #4a6fa5;
+            color: white;
+            padding: 15px;
+            border-radius: 5px 5px 0 0;
+            font-size: 20px;
+            font-weight: bold;
+        }
+        
+        .medication-category {
+            margin-bottom: 20px;
+            border: 1px solid #ddd;
+            border-radius: 5px;
+            overflow: hidden;
+        }
+        
+        .category-header {
+            padding: 12px 15px;
+            font-weight: bold;
+            font-size: 18px;
+        }
+        
+        .medication-list {
+            padding: 15px;
+            display: flex;
+            flex-wrap: wrap;
+            gap: 10px;
+        }
+        
+        .medication-item {
+            background-color: #f8f9fa;
+            padding: 8px 15px;
+            border-radius: 20px;
+            border: 1px solid #e9ecef;
+        }
+        
+        .first-line .category-header {
+            background-color: #e8f5e9;
+            color: #2e7d32;
+        }
+        
+        .add-on .category-header {
+            background-color: #e3f2fd;
+            color: #1565c0;
+        }
+        
+        .consider .category-header {
+            background-color: #fff3e0;
+            color: #ef6c00;
+        }
+        
+        .worsen .category-header {
+            background-color: #ffebee;
+            color: #c62828;
+        }
+        
+        .note {
+            margin-top: 20px;
+            padding: 15px;
+            background-color: #fff9c4;
+            border-left: 4px solid #ffd600;
+            font-size: 14px;
+        }
+        
+        footer {
+            margin-top: 30px;
+            text-align: center;
+            color: #7f8c8d;
+            font-size: 14px;
+            border-top: 1px solid #eee;
+            padding-top: 20px;
+        }
+        
+        @media (max-width: 768px) {
+            .container {
+                padding: 15px;
+            }
+            
+            .selection-area {
+                flex-direction: column;
+            }
+            
+            .medication-list {
+                flex-direction: column;
+            }
+            
+            .medication-item {
+                width: 100%;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <header>
+            <h1>癫痫发作类型与综合征用药指南</h1>
+            <p class="description">根据发作类型或癫痫综合征选择合适的抗癫痫药物</p>
+        </header>
+        
+        <div class="selection-area">
+            <div class="selection-group">
+                <label for="seizure-type">选择发作类型：</label>
+                <select id="seizure-type">
+                    <option value="">请选择发作类型</option>
+                    <option value="generalized-tonic-clonic">全面强直阵挛发作</option>
+                    <option value="tonic-atonic">强直或失张力发作</option>
+                    <option value="absence">失神发作</option>
+                    <option value="myoclonic">肌阵挛发作</option>
+                    <option value="focal">局灶性发作</option>
+                </select>
+            </div>
+            
+            <div class="selection-group">
+                <label for="syndrome-type">选择癫痫综合征：</label>
+                <select id="syndrome-type">
+                    <option value="">请选择癫痫综合征</option>
+                    <option value="childhood-absence">儿童失神癫痫、青少年失神癫痫或其他失神综合征</option>
+                    <option value="juvenile-myoclonic">青少年肌阵挛癫痫</option>
+                    <option value="generalized-tonic-clonic-only">仅有全面强直阵挛发作的癫痫</option>
+                    <option value="idiopathic-generalized">特发性全面性癫痫</option>
+                    <option value="benign-childhood">儿童良性癫痫伴中央颞区棘波、Panayiotopoulos综合征或晚发性儿童枕叶癫痫(Gastaut型)</option>
+                    <option value="west-syndrome">West综合征(婴儿痉挛症)</option>
+                    <option value="lennox-gastaut">Lennox-Gastaut综合征</option>
+                    <option value="dravet-syndrome">Dravet综合征</option>
+                    <option value="epileptic-encephalopathy">癫痫性脑病伴慢波睡眠期持续棘慢波</option>
+                    <option value="landau-kleffner">Landau-Kleffner综合征</option>
+                    <option value="myoclonic-atonic">肌阵挛-失张力癫痫</option>
+                </select>
+            </div>
+        </div>
+        
+        <div class="result-area" id="result-area">
+            <div class="selected-condition" id="selected-condition">选择类型</div>
+            
+            <div class="medication-category first-line">
+                <div class="category-header">一线药物</div>
+                <div class="medication-list" id="first-line-meds"></div>
+            </div>
+            
+            <div class="medication-category add-on">
+                <div class="category-header">添加药物</div>
+                <div class="medication-list" id="add-on-meds"></div>
+            </div>
+            
+            <div class="medication-category consider">
+                <div class="category-header">可以考虑的药物</div>
+                <div class="medication-list" id="consider-meds"></div>
+            </div>
+            
+            <div class="medication-category worsen">
+                <div class="category-header">可能加重发作的药物</div>
+                <div class="medication-list" id="worsen-meds"></div>
+            </div>
+            
+            <div class="note">
+                <p>注：带有 * 标记的药物为目前国内市场尚没有的抗癫痫药</p>
+            </div>
+        </div>
+        
+        <footer>
+            <p>本指南仅供参考，具体用药请遵医嘱</p>
+        </footer>
+    </div>
+
+    <script>
+        // 发作类型数据
+        const seizureData = {
+            "generalized-tonic-clonic": {
+                name: "全面强直阵挛发作",
+                firstLine: ["丙戊酸", "左乙拉西坦"],
+                addOn: ["氯硝西泮", "拉莫三嗪", "托吡酯", "苯巴比妥"],
+                consider: ["卡马西平", "奥卡西平"],
+                worsen: ["卡马西平", "奥卡西平", "苯妥英钠", "替加宾*", "氨己烯酸*"]
+            },
+            "tonic-atonic": {
+                name: "强直或失张力发作",
+                firstLine: ["丙戊酸"],
+                addOn: ["拉莫三嗪", "托吡酯", "卢菲酰胺*"],
+                consider: [],
+                worsen: ["卡马西平", "奥卡西平", "加巴喷丁", "普瑞巴林", "替加宾*"]
+            },
+            "absence": {
+                name: "失神发作",
+                firstLine: ["丙戊酸"],
+                addOn: ["丙戊酸", "氯硝西泮"],
+                consider: ["乙琥胺*", "左乙拉西坦"],
+                worsen: ["卡马西平", "奥卡西平", "苯妥英钠", "替加宾*"]
+            },
+            "myoclonic": {
+                name: "肌阵挛发作",
+                firstLine: ["丙戊酸", "左乙拉西坦"],
+                addOn: ["丙戊酸", "托吡酯", "氯硝西泮", "左乙拉西坦", "氯巴占*"],
+                consider: ["左乙拉西坦", "托吡酯", "唑尼沙胺"],
+                worsen: ["卡马西平", "奥卡西平", "苯妥英钠", "替加宾*", "氨己烯酸*"]
+            },
+            "focal": {
+                name: "局灶性发作",
+                firstLine: ["卡马西平", "拉莫三嗪", "奥卡西平", "左乙拉西坦", "丙戊酸"],
+                addOn: ["卡马西平", "左乙拉西坦", "拉莫三嗪", "奥卡西平", "加巴喷丁", "丙戊酸", "托吡酯", "拉考沙胺", "吡仑帕奈", "唑尼沙胺", "氯巴占*"],
+                consider: ["苯妥英钠", "苯巴比妥"],
+                worsen: []
+            }
+        };
+
+        // 癫痫综合征数据
+        const syndromeData = {
+            "childhood-absence": {
+                name: "儿童失神癫痫、青少年失神癫痫或其他失神综合征",
+                firstLine: ["丙戊酸", "乙琥胺*", "拉莫三嗪"],
+                addOn: ["丙戊酸", "乙琥胺*", "拉莫三嗪"],
+                consider: ["氯硝西泮", "唑尼沙胺", "左乙拉西坦", "托吡酯", "氯巴占*"],
+                worsen: ["卡马西平", "奥卡西平", "苯妥英钠", "加巴喷丁", "普瑞巴林", "替加宾*", "氨己烯酸*"]
+            },
+            "juvenile-myoclonic": {
+                name: "青少年肌阵挛癫痫",
+                firstLine: ["丙戊酸", "拉莫三嗪"],
+                addOn: ["左乙拉西坦", "托吡酯"],
+                consider: ["氯硝西泮", "唑尼沙胺", "氯巴占*", "苯巴比妥"],
+                worsen: ["卡马西平", "奥卡西平", "苯妥英钠", "加巴喷丁", "普瑞巴林", "替加宾*", "氨己烯酸*"]
+            },
+            "generalized-tonic-clonic-only": {
+                name: "仅有全面强直阵挛发作的癫痫",
+                firstLine: ["丙戊酸", "拉莫三嗪", "卡马西平", "奥卡西平"],
+                addOn: ["左乙拉西坦", "托吡酯", "丙戊酸", "拉莫三嗪", "氯巴占*"],
+                consider: ["苯巴比妥"],
+                worsen: []
+            },
+            "idiopathic-generalized": {
+                name: "特发性全面性癫痫",
+                firstLine: ["丙戊酸", "拉莫三嗪"],
+                addOn: ["左乙拉西坦", "丙戊酸", "拉莫三嗪", "托吡酯"],
+                consider: ["氯硝西泮", "唑尼沙胺", "氯巴占*", "苯巴比妥", "吡仑帕奈"],
+                worsen: ["卡马西平", "奥卡西平", "苯妥英钠", "加巴喷丁", "普瑞巴林", "替加宾*", "氨己烯酸*"]
+            },
+            "benign-childhood": {
+                name: "儿童良性癫痫伴中央颞区棘波、Panayiotopoulos综合征或晚发性儿童枕叶癫痫(Gastaut型)",
+                firstLine: ["卡马西平", "奥卡西平", "左乙拉西坦", "丙戊酸", "拉莫三嗪"],
+                addOn: ["卡马西平", "奥卡西平", "左乙拉西坦", "丙戊酸", "拉莫三嗪", "托吡酯", "拉考沙胺", "吡仑帕奈", "氯巴占*"],
+                consider: ["唑尼沙胺", "普瑞巴林", "替加宾*", "艾司利卡西平*"],
+                worsen: []
+            },
+            "west-syndrome": {
+                name: "West综合征(婴儿痉挛症)",
+                firstLine: ["皮质激素", "氨己烯酸*"],
+                addOn: ["托吡酯", "丙戊酸", "氯硝西泮", "拉莫三嗪"],
+                consider: [],
+                worsen: []
+            },
+            "lennox-gastaut": {
+                name: "Lennox-Gastaut综合征",
+                firstLine: ["丙戊酸"],
+                addOn: ["拉莫三嗪"],
+                consider: ["托吡酯", "左乙拉西坦", "卢菲酰胺*", "非氨酯*", "大麻二酚*"],
+                worsen: ["卡马西平", "奥卡西平", "加巴喷丁", "普瑞巴林", "替加宾*", "氨己烯酸*"]
+            },
+            "dravet-syndrome": {
+                name: "Dravet综合征",
+                firstLine: ["丙戊酸", "托吡酯"],
+                addOn: ["氯巴占*", "司替戊醇*", "左乙拉西坦", "氯硝西泮"],
+                consider: ["氟苯丙胺"],
+                worsen: ["卡马西平", "奥卡西平", "加巴喷丁", "拉莫三嗪", "苯妥英钠", "普瑞巴林", "替加宾*", "氨己烯酸*"]
+            },
+            "epileptic-encephalopathy": {
+                name: "癫痫性脑病伴慢波睡眠期持续棘慢波",
+                firstLine: ["丙戊酸", "氯硝西泮", "皮质激素"],
+                addOn: ["左乙拉西坦", "拉莫三嗪", "托吡酯"],
+                consider: [],
+                worsen: ["卡马西平", "奥卡西平"]
+            },
+            "landau-kleffner": {
+                name: "Landau-Kleffner综合征",
+                firstLine: ["丙戊酸", "氯硝西泮", "皮质激素"],
+                addOn: ["左乙拉西坦", "拉莫三嗪", "托吡酯"],
+                consider: [],
+                worsen: ["卡马西平", "奥卡西平"]
+            },
+            "myoclonic-atonic": {
+                name: "肌阵挛-失张力癫痫",
+                firstLine: ["丙戊酸"],
+                addOn: ["拉莫三嗪", "左乙拉西坦", "托吡酯", "氯硝西泮", "氯巴占*"],
+                consider: [],
+                worsen: ["卡马西平", "奥卡西平", "苯妥英钠", "加巴喷丁", "普瑞巴林", "替加宾*", "氨己烯酸*"]
+            }
+        };
+
+        // 获取DOM元素
+        const seizureTypeSelect = document.getElementById('seizure-type');
+        const syndromeTypeSelect = document.getElementById('syndrome-type');
+        const resultArea = document.getElementById('result-area');
+        const selectedCondition = document.getElementById('selected-condition');
+        const firstLineMeds = document.getElementById('first-line-meds');
+        const addOnMeds = document.getElementById('add-on-meds');
+        const considerMeds = document.getElementById('consider-meds');
+        const worsenMeds = document.getElementById('worsen-meds');
+
+        // 监听选择变化
+        function updateDisplay() {
+            const seizureValue = seizureTypeSelect.value;
+            const syndromeValue = syndromeTypeSelect.value;
+            
+            // 优先显示癫痫综合征的选择
+            if (syndromeValue) {
+                displayCondition(syndromeData[syndromeValue]);
+                // 清空发作类型选择
+                seizureTypeSelect.value = "";
+            } else if (seizureValue) {
+                displayCondition(seizureData[seizureValue]);
+            } else {
+                // 隐藏结果区域
+                resultArea.style.display = 'none';
+            }
+        }
+
+        // 显示条件的函数
+        function displayCondition(condition) {
+            // 显示结果区域
+            resultArea.style.display = 'block';
+            
+            // 更新条件名称
+            selectedCondition.textContent = condition.name;
+            
+            // 更新药物列表
+            updateMedicationList(firstLineMeds, condition.firstLine);
+            updateMedicationList(addOnMeds, condition.addOn);
+            updateMedicationList(considerMeds, condition.consider);
+            updateMedicationList(worsenMeds, condition.worsen);
+        }
+
+        // 更新药物列表的函数
+        function updateMedicationList(container, medications) {
+            // 清空容器
+            container.innerHTML = '';
+            
+            // 如果没有药物，显示提示
+            if (medications.length === 0) {
+                const noMeds = document.createElement('div');
+                noMeds.textContent = '暂无相关药物';
+                noMeds.style.color = '#999';
+                noMeds.style.fontStyle = 'italic';
+                container.appendChild(noMeds);
+                return;
+            }
+            
+            // 添加药物项
+            medications.forEach(med => {
+                const medItem = document.createElement('div');
+                medItem.className = 'medication-item';
+                medItem.textContent = med;
+                container.appendChild(medItem);
+            });
+        }
+
+        // 添加事件监听器
+        seizureTypeSelect.addEventListener('change', function() {
+            if (this.value) {
+                syndromeTypeSelect.value = "";
+            }
+            updateDisplay();
+        });
+        
+        syndromeTypeSelect.addEventListener('change', function() {
+            if (this.value) {
+                seizureTypeSelect.value = "";
+            }
+            updateDisplay();
+        });
+    </script>
+</body>
+</html>
