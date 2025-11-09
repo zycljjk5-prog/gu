@@ -1,148 +1,590 @@
 <!DOCTYPE html>
-<html lang="zh">
+<html lang="zh-CN">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>儿童癫痫用药判断策略</title>
+    <title>儿童抗癫痫药物剂量计算器</title>
     <style>
-        body {
-            font-family: Arial, sans-serif;
-            line-height: 1.6;
+        * {
+            box-sizing: border-box;
             margin: 0;
             padding: 0;
-            background-color: #f4f4f4;
+            font-family: 'Microsoft YaHei', Arial, sans-serif;
         }
-        .container {
-            width: 80%;
-            margin: 20px auto;
-            background-color: #fff;
-            padding: 20px;
-            border-radius: 8px;
-            box-shadow: 0 4px 8px rgba(0,0,0,0.1);
-        }
-        h1 {
-            text-align: center;
+        
+        body {
+            background-color: #f5f7fa;
             color: #333;
+            line-height: 1.6;
+            padding: 20px;
         }
-        .form-group {
-            margin-bottom: 15px;
+        
+        .container {
+            max-width: 1000px;
+            margin: 0 auto;
+            background-color: white;
+            border-radius: 10px;
+            box-shadow: 0 0 20px rgba(0, 0, 0, 0.1);
+            padding: 30px;
         }
-        .form-group label {
-            font-weight: bold;
-            display: block;
-        }
-        .form-group input, .form-group select {
-            width: 100%;
-            padding: 10px;
-            margin-top: 5px;
-            border: 1px solid #ccc;
-            border-radius: 4px;
-        }
-        .button-group {
+        
+        header {
             text-align: center;
+            margin-bottom: 30px;
+            padding-bottom: 20px;
+            border-bottom: 1px solid #eaeaea;
         }
+        
+        h1 {
+            color: #2c3e50;
+            margin-bottom: 10px;
+        }
+        
+        .description {
+            color: #7f8c8d;
+            font-size: 16px;
+        }
+        
+        .input-section {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 20px;
+            margin-bottom: 30px;
+        }
+        
+        @media (max-width: 768px) {
+            .input-section {
+                grid-template-columns: 1fr;
+            }
+        }
+        
+        .form-group {
+            margin-bottom: 20px;
+        }
+        
+        label {
+            display: block;
+            margin-bottom: 8px;
+            font-weight: 600;
+            color: #2c3e50;
+        }
+        
+        select, input {
+            width: 100%;
+            padding: 12px 15px;
+            border: 1px solid #ddd;
+            border-radius: 5px;
+            font-size: 16px;
+            transition: border-color 0.3s;
+        }
+        
+        select:focus, input:focus {
+            outline: none;
+            border-color: #3498db;
+            box-shadow: 0 0 0 2px rgba(52, 152, 219, 0.2);
+        }
+        
         button {
-            padding: 10px 20px;
-            background-color: #4CAF50;
+            background-color: #3498db;
             color: white;
             border: none;
-            border-radius: 4px;
+            padding: 14px 20px;
+            border-radius: 5px;
             cursor: pointer;
+            font-size: 16px;
+            font-weight: 600;
+            transition: background-color 0.3s;
+            width: 100%;
+            margin-top: 10px;
         }
+        
         button:hover {
-            background-color: #45a049;
+            background-color: #2980b9;
         }
-        .result {
+        
+        .results-section {
+            margin-top: 30px;
+        }
+        
+        .results-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 20px;
             margin-top: 20px;
-            background-color: #f9f9f9;
-            padding: 15px;
-            border: 1px solid #ccc;
-            border-radius: 4px;
         }
-        .result h3 {
-            color: #333;
+        
+        .result-card {
+            background-color: #f8f9fa;
+            border-radius: 8px;
+            padding: 20px;
+            text-align: center;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.05);
+        }
+        
+        .result-title {
+            font-size: 14px;
+            color: #7f8c8d;
+            margin-bottom: 8px;
+        }
+        
+        .result-value {
+            font-size: 18px;
+            font-weight: 600;
+            color: #2c3e50;
+        }
+        
+        .note {
+            margin-top: 30px;
+            padding: 15px;
+            background-color: #fff8e1;
+            border-left: 4px solid #ffc107;
+            border-radius: 4px;
+            font-size: 14px;
+            color: #7f8c8d;
+        }
+        
+        .hidden {
+            display: none;
+        }
+        
+        .error-message {
+            color: #e74c3c;
+            font-size: 14px;
+            margin-top: 5px;
         }
     </style>
 </head>
 <body>
-
     <div class="container">
-        <h1>儿童癫痫用药判断策略及剂量调整</h1>
-
-        <div class="form-group">
-            <label for="age">年龄 (岁)</label>
-            <input type="number" id="age" placeholder="请输入年龄" required>
+        <header>
+            <h1>儿童抗癫痫药物剂量计算器</h1>
+            <p class="description">根据体重计算常用抗癫痫药物的起始剂量、维持剂量等关键信息</p>
+        </header>
+        
+        <div class="input-section">
+            <div class="form-group">
+                <label for="drug-select">选择药物</label>
+                <select id="drug-select">
+                    <option value="">-- 请选择药物 --</option>
+                    <option value="卡马西平">卡马西平</option>
+                    <option value="氯硝西泮">氯硝西泮</option>
+                    <option value="苯巴比妥">苯巴比妥</option>
+                    <option value="苯妥英钠">苯妥英钠</option>
+                    <option value="丙戊酸钠">丙戊酸钠</option>
+                    <option value="加巴喷丁">加巴喷丁</option>
+                    <option value="拉莫三嗪">拉莫三嗪</option>
+                    <option value="左乙拉西坦">左乙拉西坦</option>
+                    <option value="奥卡西平">奥卡西平</option>
+                    <option value="托吡酯">托吡酯</option>
+                    <option value="唑尼沙胺">唑尼沙胺</option>
+                    <option value="拉考沙胺">拉考沙胺</option>
+                    <option value="吡仑帕奈">吡仑帕奈</option>
+                </select>
+            </div>
+            
+            <div class="form-group" id="lamotrigine-options" style="display: none;">
+                <label for="lamotrigine-type">拉莫三嗪用药情况</label>
+                <select id="lamotrigine-type">
+                    <option value="单药治疗">单药治疗</option>
+                    <option value="与肝酶诱导类的AEDs物合用">与肝酶诱导类的AEDs物合用</option>
+                    <option value="与丙戊酸类药物合用">与丙戊酸类药物合用</option>
+                </select>
+            </div>
+            
+            <div class="form-group">
+                <label for="weight-input">体重 (kg)</label>
+                <input type="number" id="weight-input" min="0" step="0.1" placeholder="请输入体重">
+                <div id="weight-error" class="error-message"></div>
+            </div>
+            
+            <div class="form-group">
+                <label for="age-input">年龄 (岁，选填)</label>
+                <input type="number" id="age-input" min="0" step="0.1" placeholder="请输入年龄">
+            </div>
         </div>
-
-        <div class="form-group">
-            <label for="weight">体重 (kg)</label>
-            <input type="number" id="weight" placeholder="请输入体重" required>
+        
+        <button id="calculate-btn">计算剂量</button>
+        
+        <div id="results-section" class="results-section hidden">
+            <h2>计算结果</h2>
+            <div class="results-grid">
+                <div class="result-card">
+                    <div class="result-title">起始剂量</div>
+                    <div class="result-value" id="start-dose">--</div>
+                </div>
+                <div class="result-card">
+                    <div class="result-title">增加剂量</div>
+                    <div class="result-value" id="increase-dose">--</div>
+                </div>
+                <div class="result-card">
+                    <div class="result-title">维持剂量</div>
+                    <div class="result-value" id="maintenance-dose">--</div>
+                </div>
+                <div class="result-card">
+                    <div class="result-title">最大剂量</div>
+                    <div class="result-value" id="max-dose">--</div>
+                </div>
+                <div class="result-card">
+                    <div class="result-title">有效浓度</div>
+                    <div class="result-value" id="effective-concentration">--</div>
+                </div>
+                <div class="result-card">
+                    <div class="result-title">服药次数</div>
+                    <div class="result-value" id="dosage-frequency">--</div>
+                </div>
+            </div>
         </div>
-
-        <div class="form-group">
-            <label for="seizureType">发作类型</label>
-            <select id="seizureType" required>
-                <option value="tonicClonic">大发作（强直-阵挛性发作）</option>
-                <option value="absence">失神发作</option>
-                <option value="focal">局部发作</option>
-                <option value="myoclonic">肌阵挛发作</option>
-            </select>
-        </div>
-
-        <div class="button-group">
-            <button onclick="calculateDose()">计算用药方案</button>
-        </div>
-
-        <div id="result" class="result" style="display:none;">
-            <h3>用药方案:</h3>
-            <p id="medication"></p>
-            <p id="dosage"></p>
+        
+        <div class="note">
+            <p><strong>重要提示：</strong>本计算器提供的信息仅供参考，不能替代专业医疗建议。实际用药需在医生指导下进行，并根据患者具体情况进行调整。</p>
         </div>
     </div>
 
     <script>
-        function calculateDose() {
-            const age = parseInt(document.getElementById('age').value);
-            const weight = parseFloat(document.getElementById('weight').value);
-            const seizureType = document.getElementById('seizureType').value;
+        // 药物数据
+        const drugData = {
+            "卡马西平": {
+                "<6岁": {
+                    startDose: "5mg/(kg·d)",
+                    increaseDose: "5~7天增加1次",
+                    maintenanceDose: "1~20mg/(kg·d)",
+                    maxDose: "400mg/d",
+                    effectiveConcentration: "4~12mg/l",
+                    frequency: "2次/天",
+                    note: "小于6岁儿童：起始剂量5mg/(kg·d)，5~7天增加1次，维持剂量1~20mg/(kg·d)，最大剂量400mg/d，服药次数2次/天"
+                },
+                "6~12岁": {
+                    startDose: "100mg/d",
+                    increaseDose: "每2周增加100mg/d",
+                    maintenanceDose: "400~800mg/d",
+                    maxDose: "1000mg/d",
+                    effectiveConcentration: "4~12mg/l",
+                    frequency: "2~3次/天",
+                    note: "6~12岁儿童：起始剂量100mg/d，每2周增加100mg/d，维持剂量400~800mg/d，最大剂量1000mg/d，服药次数2~3次/天"
+                }
+            },
+            "氯硝西泮": {
+                startDose: "0.01~0.03mg/(kg·d)",
+                increaseDose: "每周0.3~0.05mg/kg",
+                maintenanceDose: "0.1~0.2mg/(kg·d)",
+                maxDose: "<20mg/d",
+                effectiveConcentration: "20~90mg/l",
+                frequency: "2~3次/天"
+            },
+            "苯巴比妥": {
+                startDose: "2~3mg/(kg·d)",
+                increaseDose: "2mg/(kg·d)",
+                maintenanceDose: "5~8mg/(kg·d)",
+                maxDose: "8mg/(kg·d) (<180mg)",
+                effectiveConcentration: "10~40mg/l",
+                frequency: "1~2次/天"
+            },
+            "苯妥英钠": {
+                startDose: "5mg/(kg·d)",
+                increaseDose: "逐渐增加",
+                maintenanceDose: "4~8mg/(kg·d)",
+                maxDose: "<250mg/d",
+                effectiveConcentration: "5~20mg/l",
+                frequency: "2~3次/天"
+            },
+            "丙戊酸钠": {
+                startDose: "15mg/(kg·d)",
+                increaseDose: "逐渐增加",
+                maintenanceDose: "20~30mg/(kg·d)",
+                maxDose: "60mg/(kg·d) (<2500mg/d)",
+                effectiveConcentration: "50~100mg/l",
+                frequency: "2~3次/天"
+            },
+            "加巴喷丁": {
+                startDose: "10~15mg/(kg·d)",
+                increaseDose: "",
+                maintenanceDose: "25~35mg/(kg·d)",
+                maxDose: "<12岁:50mg/(kg·d), >12岁:<1.8g/d",
+                effectiveConcentration: "",
+                frequency: "3次/天"
+            },
+            "拉莫三嗪": {
+                "单药治疗": {
+                    startDose: "0.3mg/(kg·d)",
+                    increaseDose: "1~2周3mg/(kg·d)",
+                    maintenanceDose: "2~10mg/(kg·d)",
+                    maxDose: "10mg/(kg·d) (<500mg/d)",
+                    effectiveConcentration: "",
+                    frequency: "2次/天"
+                },
+                "与肝酶诱导类的AEDs物合用": {
+                    startDose: "0.6mg/(kg·d)",
+                    increaseDose: "1~2周0.6mg/(kg·d)",
+                    maintenanceDose: "5~15mg/(kg·d)",
+                    maxDose: "15mg/(kg·d) (<500mg/d)",
+                    effectiveConcentration: "",
+                    frequency: "2次/天"
+                },
+                "与丙戊酸类药物合用": {
+                    startDose: "0.15mg/(kg·d)",
+                    increaseDose: "1~2周0.15mg/(kg·d)",
+                    maintenanceDose: "1~5mg/(kg·d)",
+                    maxDose: "5mg/(kg·d) (<200mg/d)",
+                    effectiveConcentration: "",
+                    frequency: "2次/天"
+                }
+            },
+            "左乙拉西坦": {
+                startDose: "10~20mg/(kg·d)",
+                increaseDose: "每周10~20mg/(kg·d)",
+                maintenanceDose: "20~60mg/(kg·d) (<3000mg/d)",
+                maxDose: "60mg/(kg·d) (<3000mg/d)",
+                effectiveConcentration: "",
+                frequency: "2次/天",
+                note: "1~6月龄婴儿：起始剂量7~14mg/kg，每周增加7~14mg/(kg·d)，维持剂量21~42mg/(kg·d)，最大剂量42mg/(kg·d) (<3000mg/d)"
+            },
+            "奥卡西平": {
+                startDose: "8~10mg/(kg·d)",
+                increaseDose: "每周10mg/kg",
+                maintenanceDose: "20~60mg/(kg·d) (口服液)",
+                maxDose: "60mg/(kg·d)",
+                effectiveConcentration: "",
+                frequency: "2次/天",
+                note: "片剂维持剂量：20~46mg/(kg·d)，最大剂量46mg/(kg·d)"
+            },
+            "托吡酯": {
+                startDose: "0.5~1mg/(kg·d)",
+                increaseDose: "0.5~1mg/kg",
+                maintenanceDose: "3~6mg/(kg·d)",
+                maxDose: "30mg/(kg·d) (<500mg/d)",
+                effectiveConcentration: "",
+                frequency: "2次/天"
+            },
+            "唑尼沙胺": {
+                startDose: "2~4mg/(kg·d)",
+                increaseDose: "每周2~4mg/kg",
+                maintenanceDose: "4~8mg/(kg·d)",
+                maxDose: "12mg/(kg·d) (600mg/d)",
+                effectiveConcentration: "",
+                frequency: "1~3次/天"
+            },
+            "拉考沙胺": {
+                startDose: "2mg/(kg·d)",
+                increaseDose: "每周2mg/kg",
+                maintenanceDose: "6~10mg/(kg·d)",
+                maxDose: "12mg/(kg·d) (400mg/d)",
+                effectiveConcentration: "",
+                frequency: "2次/天"
+            },
+            "吡仑帕奈": {
+                startDose: "2mg/d",
+                increaseDose: "1~2周2mg",
+                maintenanceDose: "4~8mg/d",
+                maxDose: "12mg/d",
+                effectiveConcentration: "",
+                frequency: "1次/天",
+                note: "适用于12岁以上儿童"
+            }
+        };
 
-            if (isNaN(age) || isNaN(weight)) {
-                alert('请输入有效的年龄和体重');
+        // DOM元素
+        const drugSelect = document.getElementById('drug-select');
+        const lamotrigineOptions = document.getElementById('lamotrigine-options');
+        const weightInput = document.getElementById('weight-input');
+        const ageInput = document.getElementById('age-input');
+        const calculateBtn = document.getElementById('calculate-btn');
+        const resultsSection = document.getElementById('results-section');
+        const weightError = document.getElementById('weight-error');
+
+        // 监听药物选择变化
+        drugSelect.addEventListener('change', function() {
+            if (this.value === '拉莫三嗪') {
+                lamotrigineOptions.style.display = 'block';
+            } else {
+                lamotrigineOptions.style.display = 'none';
+            }
+            
+            // 清空结果
+            resultsSection.classList.add('hidden');
+        });
+
+        // 计算按钮点击事件
+        calculateBtn.addEventListener('click', function() {
+            // 验证输入
+            const selectedDrug = drugSelect.value;
+            const weight = parseFloat(weightInput.value);
+            
+            if (!selectedDrug) {
+                alert('请选择一种药物');
                 return;
             }
-
-            let medication = "";
-            let dosage = "";
-
-            // 根据发作类型选择药物
-            switch (seizureType) {
-                case 'tonicClonic':
-                    medication = "推荐用药: 卡马西平或苯妥英钠";
-                    dosage = `初始剂量: ${weight * 10}mg/kg/天（分次服用），维持剂量根据效果调整。`;
-                    break;
-                case 'absence':
-                    medication = "推荐用药: 丙戊酸钠或拉莫三嗪";
-                    dosage = `初始剂量: ${weight * 15}mg/kg/天（分次服用），维持剂量根据效果调整。`;
-                    break;
-                case 'focal':
-                    medication = "推荐用药: 拉莫三嗪或托吡酯";
-                    dosage = `初始剂量: ${weight * 10}mg/kg/天（分次服用），维持剂量根据效果调整。`;
-                    break;
-                case 'myoclonic':
-                    medication = "推荐用药: 丙戊酸钠或左乙拉西坦";
-                    dosage = `初始剂量: ${weight * 10}mg/kg/天（分次服用），维持剂量根据效果调整。`;
-                    break;
-                default:
-                    medication = "无法识别发作类型";
-                    dosage = "";
+            
+            if (!weight || weight <= 0) {
+                weightError.textContent = '请输入有效的体重值';
+                return;
+            } else {
+                weightError.textContent = '';
             }
+            
+            // 获取药物数据
+            let drugInfo;
+            if (selectedDrug === '拉莫三嗪') {
+                const lamotrigineType = document.getElementById('lamotrigine-type').value;
+                drugInfo = drugData[selectedDrug][lamotrigineType];
+            } else if (selectedDrug === '卡马西平') {
+                const age = parseFloat(ageInput.value) || 0;
+                if (age < 6) {
+                    drugInfo = drugData[selectedDrug]["<6岁"];
+                } else {
+                    drugInfo = drugData[selectedDrug]["6~12岁"];
+                }
+            } else {
+                drugInfo = drugData[selectedDrug];
+            }
+            
+            // 计算剂量
+            const age = parseFloat(ageInput.value) || 0;
+            const startDose = calculateDose(drugInfo.startDose, weight, selectedDrug, age, 'start');
+            const maintenanceDose = calculateDose(drugInfo.maintenanceDose, weight, selectedDrug, age, 'maintenance');
+            const maxDose = calculateDose(drugInfo.maxDose, weight, selectedDrug, age, 'max');
+            
+            // 显示结果
+            document.getElementById('start-dose').textContent = startDose;
+            document.getElementById('increase-dose').textContent = drugInfo.increaseDose || '--';
+            document.getElementById('maintenance-dose').textContent = maintenanceDose;
+            document.getElementById('max-dose').textContent = maxDose;
+            document.getElementById('effective-concentration').textContent = drugInfo.effectiveConcentration || '--';
+            document.getElementById('dosage-frequency').textContent = drugInfo.frequency || '--';
+            
+            resultsSection.classList.remove('hidden');
+        });
 
-            // 显示计算结果
-            document.getElementById('result').style.display = "block";
-            document.getElementById('medication').innerText = medication;
-            document.getElementById('dosage').innerText = dosage;
+        // 计算剂量函数
+        function calculateDose(doseString, weight, selectedDrug, age, doseType) {
+            if (!doseString) return '--';
+            
+            // 特殊处理卡马西平6~12岁的维持剂量（固定数值，不按体重计算）
+            if (selectedDrug === '卡马西平' && age >= 6 && age <= 12 && doseString === '400~800mg/d') {
+                return doseString; // 直接返回固定数值
+            }
+            
+            // 特殊处理苯巴比妥的最大剂量（8mg/(kg·d)但不超过180mg）
+            if (selectedDrug === '苯巴比妥' && doseType === 'max' && doseString === '8mg/(kg·d) (<180mg)') {
+                const calculatedDose = 8 * weight;
+                if (calculatedDose <= 180) {
+                    return `${calculatedDose.toFixed(2)} mg/d`;
+                } else {
+                    return '180 mg/d';
+                }
+            }
+            
+            // 特殊处理丙戊酸钠的最大剂量（60mg/(kg·d)但不超过2500mg）
+            if (selectedDrug === '丙戊酸钠' && doseType === 'max' && doseString === '60mg/(kg·d) (<2500mg/d)') {
+                const calculatedDose = 60 * weight;
+                if (calculatedDose <= 2500) {
+                    return `${calculatedDose.toFixed(2)} mg/d`;
+                } else {
+                    return '2500 mg/d';
+                }
+            }
+            
+            // 特殊处理丙戊酸钠的最大剂量（60mg/(kg·d)但不超过2500mg）
+            if (selectedDrug === '丙戊酸钠' && doseType === 'max' && doseString === '60mg/(kg·d) (<2500mg/d)') {
+                const calculatedDose = 60 * weight;
+                if (calculatedDose <= 2500) {
+                    return `${calculatedDose.toFixed(2)} mg/d`;
+                } else {
+                    return '2500 mg/d';
+                }
+            }
+            
+            // 获取最大剂量限制
+            let maxDoseLimit = null;
+            const maxDoseString = getMaxDoseString(selectedDrug, age);
+            
+            if (maxDoseString) {
+                // 解析最大剂量限制
+                if (maxDoseString.includes('mg/d') && maxDoseString.includes('(')) {
+                    // 格式如 "8mg/(kg·d) (<180mg)"
+                    const match = maxDoseString.match(/\(<([\d.]+)mg\)/);
+                    if (match) {
+                        maxDoseLimit = parseFloat(match[1]);
+                    }
+                } else if (maxDoseString.includes('mg/d') && !maxDoseString.includes('kg')) {
+                    // 格式如 "1000mg/d"
+                    const match = maxDoseString.match(/([\d.]+)mg\/d/);
+                    if (match) {
+                        maxDoseLimit = parseFloat(match[1]);
+                    }
+                }
+            }
+            
+            let calculatedDose = null;
+            
+            // 处理范围值（如 "1~20mg/(kg·d)"）
+            if (doseString.includes('~')) {
+                const parts = doseString.split('~');
+                const min = parseFloat(parts[0]);
+                const max = parseFloat(parts[1].split('mg')[0]);
+                
+                if (!isNaN(min) && !isNaN(max)) {
+                    const minDose = min * weight;
+                    const maxDose = max * weight;
+                    
+                    // 应用最大剂量限制
+                    if (maxDoseLimit !== null) {
+                        const finalMinDose = Math.min(minDose, maxDoseLimit);
+                        const finalMaxDose = Math.min(maxDose, maxDoseLimit);
+                        return `${finalMinDose.toFixed(2)}~${finalMaxDose.toFixed(2)} mg/d`;
+                    }
+                    
+                    return `${minDose.toFixed(2)}~${maxDose.toFixed(2)} mg/d`;
+                }
+            }
+            
+            // 处理固定值（如 "400mg/d"）
+            if (doseString.includes('mg/d') && !doseString.includes('kg')) {
+                const fixedDose = parseFloat(doseString);
+                if (!isNaN(fixedDose)) {
+                    // 应用最大剂量限制
+                    if (maxDoseLimit !== null) {
+                        return `${Math.min(fixedDose, maxDoseLimit).toFixed(2)} mg/d`;
+                    }
+                    return doseString;
+                }
+            }
+            
+            // 处理按体重计算的剂量（如 "5mg/(kg·d)"）
+            if (doseString.includes('mg/(kg·d)')) {
+                const doseValue = parseFloat(doseString);
+                if (!isNaN(doseValue)) {
+                    calculatedDose = doseValue * weight;
+                    
+                    // 应用最大剂量限制
+                    if (maxDoseLimit !== null) {
+                        calculatedDose = Math.min(calculatedDose, maxDoseLimit);
+                    }
+                    
+                    return `${calculatedDose.toFixed(2)} mg/d`;
+                }
+            }
+            
+            return doseString;
+        }
+        
+        // 获取最大剂量字符串
+        function getMaxDoseString(selectedDrug, age) {
+            let drugInfo;
+            if (selectedDrug === '拉莫三嗪') {
+                const lamotrigineType = document.getElementById('lamotrigine-type').value;
+                drugInfo = drugData[selectedDrug][lamotrigineType];
+            } else if (selectedDrug === '卡马西平') {
+                if (age < 6) {
+                    drugInfo = drugData[selectedDrug]["<6岁"];
+                } else {
+                    drugInfo = drugData[selectedDrug]["6~12岁"];
+                }
+            } else {
+                drugInfo = drugData[selectedDrug];
+            }
+            
+            return drugInfo ? drugInfo.maxDose : null;
         }
     </script>
-
 </body>
 </html>
