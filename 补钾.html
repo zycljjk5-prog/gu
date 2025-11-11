@@ -1,0 +1,347 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>儿童静脉补钾计算器</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Microsoft YaHei', Arial, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            padding: 20px;
+        }
+
+        .container {
+            max-width: 800px;
+            margin: 0 auto;
+            background: white;
+            border-radius: 20px;
+            box-shadow: 0 20px 40px rgba(0,0,0,0.1);
+            overflow: hidden;
+        }
+
+        .header {
+            background: linear-gradient(135deg, #4CAF50, #45a049);
+            color: white;
+            padding: 30px;
+            text-align: center;
+        }
+
+        .header h1 {
+            font-size: 28px;
+            margin-bottom: 10px;
+        }
+
+        .header p {
+            font-size: 14px;
+            opacity: 0.9;
+        }
+
+        .form-section {
+            padding: 30px;
+        }
+
+        .input-group {
+            margin-bottom: 20px;
+        }
+
+        .input-group label {
+            display: block;
+            margin-bottom: 8px;
+            font-weight: bold;
+            color: #333;
+        }
+
+        .input-group input {
+            width: 100%;
+            padding: 12px;
+            border: 2px solid #e0e0e0;
+            border-radius: 8px;
+            font-size: 16px;
+            transition: border-color 0.3s;
+        }
+
+        .input-group input:focus {
+            outline: none;
+            border-color: #4CAF50;
+        }
+
+        .calculate-btn {
+            width: 100%;
+            padding: 15px;
+            background: linear-gradient(135deg, #4CAF50, #45a049);
+            color: white;
+            border: none;
+            border-radius: 8px;
+            font-size: 18px;
+            font-weight: bold;
+            cursor: pointer;
+            transition: transform 0.2s;
+        }
+
+        .calculate-btn:hover {
+            transform: translateY(-2px);
+        }
+
+        .results {
+            margin-top: 30px;
+            padding: 20px;
+            background: #f8f9fa;
+            border-radius: 12px;
+            display: none;
+        }
+
+        .result-card {
+            background: white;
+            border-radius: 10px;
+            padding: 20px;
+            margin-bottom: 20px;
+            box-shadow: 0 4px 8px rgba(0,0,0,0.1);
+            border-left: 4px solid #4CAF50;
+        }
+
+        .result-card h3 {
+            color: #4CAF50;
+            margin-bottom: 15px;
+            font-size: 18px;
+        }
+
+        .result-item {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 10px 0;
+            border-bottom: 1px solid #eee;
+        }
+
+        .result-item:last-child {
+            border-bottom: none;
+        }
+
+        .result-label {
+            font-weight: bold;
+            color: #555;
+        }
+
+        .result-value {
+            font-size: 16px;
+            color: #333;
+            font-weight: bold;
+        }
+
+        .warning {
+            background: #fff3cd;
+            border: 1px solid #ffeaa7;
+            border-radius: 8px;
+            padding: 15px;
+            margin-top: 20px;
+            color: #856404;
+        }
+
+        .warning h4 {
+            margin-bottom: 10px;
+            color: #d63031;
+        }
+
+        .formula-section {
+            margin-top: 30px;
+            padding: 20px;
+            background: #e8f5e8;
+            border-radius: 12px;
+            font-size: 14px;
+            color: #2d3436;
+        }
+
+        .formula-section h4 {
+            color: #4CAF50;
+            margin-bottom: 10px;
+        }
+
+        @media (max-width: 600px) {
+            .container {
+                margin: 10px;
+            }
+            
+            .form-section {
+                padding: 20px;
+            }
+            
+            .header {
+                padding: 20px;
+            }
+        }
+    </style>
+<base target="_blank">
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <h1>儿童静脉补钾计算器</h1>
+            <p>基于临床指南的安全补钾计算工具，张永超医生自用，发现错误及时联系qq274017209</p>
+        </div>
+
+        <div class="form-section">
+            <div class="input-group">
+                <label for="actualK">实际血钾水平 (mmol/L):</label>
+                <input type="number" id="actualK" step="0.1" placeholder="例如: 2.5">
+            </div>
+
+            <div class="input-group">
+                <label for="targetK">目标血钾水平 (mmol/L):</label>
+                <input type="number" id="targetK" step="0.1" placeholder="例如: 4.0">
+            </div>
+
+            <div class="input-group">
+                <label for="weight">患儿体重 (kg):</label>
+                <input type="number" id="weight" step="0.1" placeholder="例如: 15.5">
+            </div>
+
+            <button class="calculate-btn" onclick="calculate()">计算补钾方案</button>
+
+            <div id="results" class="results">
+                <div class="result-card">
+                    <h3>15%氯化钾溶液方案</h3>
+                    <div class="result-item">
+                        <span class="result-label">15%氯化钾毫升数:</span>
+                        <span class="result-value" id="k15ml">-</span>
+                    </div>
+                    <div class="result-item">
+                        <span class="result-label">稀释后总毫升数 (0.3%):</span>
+                        <span class="result-value" id="total15ml">-</span>
+                    </div>
+                    <div class="result-item">
+                        <span class="result-label">滴速 (ml/h):</span>
+                        <span class="result-value" id="rate15">-</span>
+                    </div>
+                </div>
+
+                <div class="result-card">
+                    <h3>10%氯化钾溶液方案</h3>
+                    <div class="result-item">
+                        <span class="result-label">10%氯化钾毫升数:</span>
+                        <span class="result-value" id="k10ml">-</span>
+                    </div>
+                    <div class="result-item">
+                        <span class="result-label">稀释后总毫升数 (0.3%):</span>
+                        <span class="result-value" id="total10ml">-</span>
+                    </div>
+                    <div class="result-item">
+                        <span class="result-label">滴速 (ml/h):</span>
+                        <span class="result-value" id="rate10">-</span>
+                    </div>
+                </div>
+
+                <div class="warning">
+                    <h4>⚠️ 重要提醒</h4>
+                    <ul>
+                        <li>儿童静脉补钾量为 0.3～1 mmol/kg</li>
+                        <li>单次最大量不超过 40 mmol/L</li>
+                        <li>补钾浓度不超过 0.3%</li>
+                        <li>每天总量的输注时间在 6～8 h 以上</li>
+                        <li>低钾危象时速度不超过 0.5 mmol/(kg·h)</li>
+                        <li>浓度超过 0.3% 时需使用深静脉注射</li>
+                    </ul>
+                </div>
+            </div>
+
+            <div class="formula-section">
+                <h4>计算公式说明:</h4>
+                <p><strong>钾缺失量:</strong> (目标血钾 - 实际血钾) × 体重(kg) × 0.3</p>
+                <p><strong>15%氯化钾换算:</strong> 1ml 15%KCl = 2 mmol K⁺</p>
+                <p><strong>10%氯化钾换算:</strong> 1ml 10%KCl = 1.34 mmol K⁺</p>
+                <p><strong>稀释计算:</strong> 原液体积 × 原浓度 = 稀释后体积 × 0.3%</p>
+                <p><strong>滴速计算:</strong> 稀释后总体积 ÷ 6小时 (或8小时)</p>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        function calculate() {
+            // 获取输入值
+            const actualK = parseFloat(document.getElementById('actualK').value);
+            const targetK = parseFloat(document.getElementById('targetK').value);
+            const weight = parseFloat(document.getElementById('weight').value);
+
+            // 验证输入
+            if (isNaN(actualK) || isNaN(targetK) || isNaN(weight)) {
+                alert('请填写所有必填项！');
+                return;
+            }
+
+            if (weight <= 0) {
+                alert('体重必须大于0！');
+                return;
+            }
+
+            if (targetK <= actualK) {
+                alert('目标血钾应高于实际血钾！');
+                return;
+            }
+
+            // 计算钾缺失量 (mmol)
+            const kDeficit = (targetK - actualK) * weight * 0.3;
+            
+            // 计算补钾量范围 (0.3-1 mmol/kg)
+            const minK = 0.3 * weight;
+            const maxK = 1 * weight;
+            
+            // 使用缺失量，但限制在安全范围内
+            let kAmount = Math.min(kDeficit, maxK);
+            kAmount = Math.max(kAmount, minK); // 确保至少给予最小量
+
+            // 15%氯化钾计算 (1ml 15%KCl = 2 mmol K⁺)
+            const k15mmol = kAmount;
+            const k15ml = k15mmol / 2; // ml of 15% KCl
+            
+            // 稀释到0.3%后的总体积
+            // 15% × V1 = 0.3% × V2 => V2 = V1 × 15 / 0.3 = V1 × 50
+            const total15ml = k15ml * 50;
+            
+            // 10%氯化钾计算 (1ml 10%KCl = 1.34 mmol K⁺)
+            const k10mmol = kAmount;
+            const k10ml = k10mmol / 1.34; // ml of 10% KCl
+            
+            // 稀释到0.3%后的总体积
+            // 10% × V1 = 0.3% × V2 => V2 = V1 × 10 / 0.3 = V1 × 33.33
+            const total10ml = k10ml * 33.33;
+
+            // 计算滴速 (6-8小时输注)
+            const rate6h_15 = total15ml / 6;
+            const rate8h_15 = total15ml / 8;
+            const rate6h_10 = total10ml / 6;
+            const rate8h_10 = total10ml / 8;
+
+            // 显示结果
+            document.getElementById('k15ml').textContent = k15ml.toFixed(2) + ' ml';
+            document.getElementById('total15ml').textContent = total15ml.toFixed(2) + ' ml';
+            document.getElementById('rate15').textContent = 
+                `${rate6h_15.toFixed(1)} - ${rate8h_15.toFixed(1)} ml/h (6-8h)`;
+
+            document.getElementById('k10ml').textContent = k10ml.toFixed(2) + ' ml';
+            document.getElementById('total10ml').textContent = total10ml.toFixed(2) + ' ml';
+            document.getElementById('rate10').textContent = 
+                `${rate6h_10.toFixed(1)} - ${rate8h_10.toFixed(1)} ml/h (6-8h)`;
+
+            // 显示结果区域
+            document.getElementById('results').style.display = 'block';
+            
+            // 滚动到结果区域
+            document.getElementById('results').scrollIntoView({ behavior: 'smooth' });
+        }
+
+        // 回车键触发计算
+        document.addEventListener('keypress', function(e) {
+            if (e.key === 'Enter') {
+                calculate();
+            }
+        });
+    </script>
+</body>
+</html>
