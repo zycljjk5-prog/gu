@@ -124,7 +124,7 @@
     <script>
         function loadMarked() {
             const script = document.createElement('script');
-            script.src = 'https://cdn.jsdelivr.net/npm/marked/marked.min.js';
+            script.src = 'https://web.yanshu.net/markdown.js';
             script.onload = () => {
                 if (typeof marked !== 'undefined') {
                     console.log('Marked.js 加载成功');
@@ -142,7 +142,7 @@
 
         function loadFallbackMarked() {
             const fallbackScript = document.createElement('script');
-            fallbackScript.src = './marked.min.js';
+            fallbackScript.src = 'https://knightyun.github.io/markdown-to-richtext/js/index.js';
             fallbackScript.onload = () => {
                 if (typeof marked !== 'undefined') {
                     console.log('备用 Marked.js 加载成功');
