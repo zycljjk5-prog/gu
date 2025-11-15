@@ -1,0 +1,554 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>急症救治药物用量计算器</title>
+    <style>
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+            font-family: 'Segoe UI', 'Microsoft YaHei', sans-serif;
+        }
+        
+        body {
+            background-color: #f0f5ff;
+            color: #333;
+            line-height: 1.6;
+            padding: 20px;
+        }
+        
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            background-color: white;
+            border-radius: 10px;
+            box-shadow: 0 0 20px rgba(0, 0, 0, 0.1);
+            padding: 30px;
+        }
+        
+        header {
+            text-align: center;
+            margin-bottom: 30px;
+            padding-bottom: 20px;
+            border-bottom: 1px solid #e0e0e0;
+        }
+        
+        h1 {
+            color: #2c3e50;
+            margin-bottom: 10px;
+        }
+        
+        .subtitle {
+            color: #7f8c8d;
+            font-size: 1.1rem;
+        }
+        
+        .calculator {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 30px;
+            margin-bottom: 30px;
+        }
+        
+        @media (max-width: 768px) {
+            .calculator {
+                grid-template-columns: 1fr;
+            }
+        }
+        
+        .input-section, .result-section {
+            background-color: #f8f9fa;
+            padding: 20px;
+            border-radius: 8px;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.05);
+        }
+        
+        .form-group {
+            margin-bottom: 20px;
+        }
+        
+        label {
+            display: block;
+            margin-bottom: 8px;
+            font-weight: 600;
+            color: #2c3e50;
+        }
+        
+        select, input {
+            width: 100%;
+            padding: 10px 15px;
+            border: 1px solid #ddd;
+            border-radius: 4px;
+            font-size: 16px;
+            transition: border-color 0.3s;
+        }
+        
+        select:focus, input:focus {
+            outline: none;
+            border-color: #3498db;
+            box-shadow: 0 0 0 2px rgba(52, 152, 219, 0.2);
+        }
+        
+        .result-card {
+            background-color: white;
+            border-left: 4px solid #3498db;
+            padding: 15px;
+            margin-bottom: 15px;
+            border-radius: 4px;
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);
+        }
+        
+        .result-title {
+            font-weight: 600;
+            color: #2c3e50;
+            margin-bottom: 5px;
+        }
+        
+        .result-value {
+            font-size: 1.1rem;
+            color: #2980b9;
+        }
+        
+        .highlight {
+            background-color: #e8f4fc;
+            padding: 15px;
+            border-radius: 4px;
+            margin-top: 10px;
+            border-left: 4px solid #2980b9;
+        }
+        
+        .note {
+            background-color: #fff8e1;
+            padding: 15px;
+            border-radius: 4px;
+            margin-top: 20px;
+            font-size: 0.9rem;
+            border-left: 4px solid #f39c12;
+        }
+        
+        .drug-info {
+            margin-top: 30px;
+            background-color: #f8f9fa;
+            padding: 20px;
+            border-radius: 8px;
+        }
+        
+        .drug-info h3 {
+            color: #2c3e50;
+            margin-bottom: 15px;
+            padding-bottom: 10px;
+            border-bottom: 1px solid #e0e0e0;
+        }
+        
+        .info-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 15px;
+        }
+        
+        .info-item {
+            margin-bottom: 10px;
+        }
+        
+        .info-label {
+            font-weight: 600;
+            color: #7f8c8d;
+        }
+        
+        .info-value {
+            color: #2c3e50;
+        }
+        
+        footer {
+            text-align: center;
+            margin-top: 30px;
+            padding-top: 20px;
+            border-top: 1px solid #e0e0e0;
+            color: #7f8c8d;
+            font-size: 0.9rem;
+        }
+        
+        .btn {
+            background-color: #3498db;
+            color: white;
+            border: none;
+            padding: 12px 20px;
+            border-radius: 4px;
+            cursor: pointer;
+            font-size: 16px;
+            font-weight: 600;
+            transition: background-color 0.3s;
+            width: 100%;
+        }
+        
+        .btn:hover {
+            background-color: #2980b9;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <header>
+            <h1>急症救治药物用量计算器</h1>
+            <p class="subtitle">根据患者体重快速计算药物配置及泵速调整方案</p>
+        </header>
+        
+        <div class="calculator">
+            <div class="input-section">
+                <div class="form-group">
+                    <label for="drug-select">选择药物</label>
+                    <select id="drug-select">
+                        <option value="">-- 请选择药物 --</option>
+                        <option value="adrenaline">肾上腺素</option>
+                        <option value="aminophylline">氨茶碱</option>
+                        <option value="amiodarone">胺碘酮</option>
+                        <option value="dobutamine">多巴酚丁胺</option>
+                        <option value="dopamine">多巴胺</option>
+                        <option value="fentanyl">芬太尼</option>
+                        <option value="furosemide">呋塞米</option>
+                        <option value="nitroglycerin">硝酸甘油</option>
+                        <option value="heparin">肝素</option>
+                        <option value="insulin">胰岛素</option>
+                        <option value="ketamine">氯胺酮</option>
+                        <option value="midazolam">咪达唑仑</option>
+                        <option value="milrinone">米力农</option>
+                        <option value="morphine">吗啡</option>
+                        <option value="norepinephrine">去甲肾上腺素</option>
+                        <option value="albuterol">沙丁胺醇</option>
+                        <option value="sodiumBicarbonate">5%碳酸氢钠</option>
+                        <option value="nitroprusside">硝普钠</option>
+                        <option value="vasopressin">抗利尿激素</option>
+                        <option value="glucagon">胰高血糖素</option>
+                    </select>
+                </div>
+                
+                <div class="form-group">
+                    <label for="weight-input">患者体重 (kg)</label>
+                    <input type="number" id="weight-input" min="1" max="200" placeholder="输入患者体重">
+                </div>
+                
+                <div class="form-group">
+                    <label for="target-dose">目标剂量 (可选)</label>
+                    <input type="text" id="target-dose" placeholder="例如: 0.1μg/(kg·min)">
+                </div>
+                
+                <button class="btn" id="calculate-btn">计算</button>
+            </div>
+            
+            <div class="result-section">
+                <h2>计算结果</h2>
+                <div id="results-container">
+                    <p style="text-align: center; color: #7f8c8d; padding: 20px;">
+                        选择药物并输入体重后，将显示计算结果
+                    </p>
+                </div>
+            </div>
+        </div>
+        
+        <div class="drug-info" id="drug-info" style="display: none;">
+            <h3>药物信息</h3>
+            <div class="info-grid" id="info-grid">
+                <!-- 药物信息将动态填充 -->
+            </div>
+        </div>
+        
+        <div class="note">
+            <p><strong>注意：</strong> 本计算器提供的结果仅供参考，实际用药需结合患者具体情况并由专业医生指导。用药前请仔细核对药物说明书和医嘱。</p>
+        </div>
+        
+        <footer>
+            <p>急症救治药物用量计算器 © 2023 | 数据来源：急症救治特殊药物用量及快速计算法参考表</p>
+        </footer>
+    </div>
+
+    <script>
+        // 药物数据
+        const drugData = {
+            adrenaline: {
+                name: "肾上腺素",
+                dosageRange: "0.1~0.2μg/(kg·min)",
+                config20ml: "0.12mg×wt",
+                speedPerMl: "0.1μg/(kg·min)",
+                remark: "静脉或骨髓内注射"
+            },
+            aminophylline: {
+                name: "氨茶碱",
+                dosageRange: "1mg/(kg·h)",
+                config20ml: "×wt",
+                speedPerMl: "1mg/h",
+                remark: "负荷量5mg/kg,用5%葡萄糖配制"
+            },
+            amiodarone: {
+                name: "胺碘酮",
+                dosageRange: "5~15μg/(kg·min)",
+                config20ml: "6mg×wt",
+                speedPerMl: "5μg/(kg·min)",
+                remark: "4h负荷量25μg/(kg·min),5%葡萄糖配制"
+            },
+            dobutamine: {
+                name: "多巴酚丁胺",
+                dosageRange: "5~20μg/(kg·min)",
+                config20ml: "12mg×wt",
+                speedPerMl: "10μg/(kg·min)",
+                remark: "如果浓度>5mg/ml,选中心静脉给药"
+            },
+            dopamine: {
+                name: "多巴胺",
+                dosageRange: "5~20μg/(kg·min)",
+                config20ml: "12mg×wt",
+                speedPerMl: "10μg/(kg·min)",
+                remark: "可用外周静脉，推荐中心静脉给药"
+            },
+            fentanyl: {
+                name: "芬太尼",
+                dosageRange: "1~5μg/(kg·h)",
+                config20ml: "20μg×wt",
+                speedPerMl: "1μg/(kg·h)",
+                remark: "常用剂量1~3μg/(kg·h)"
+            },
+            furosemide: {
+                name: "呋塞米",
+                dosageRange: "0.1~1mg/(kg·h)",
+                config20ml: "4mg×wt",
+                speedPerMl: "0.2mg/(kg·h)",
+                remark: "用0.9%氯化钠配制"
+            },
+            nitroglycerin: {
+                name: "硝酸甘油",
+                dosageRange: "1~5μg/(kg·min)",
+                config20ml: "1.2mg×wt",
+                speedPerMl: "1μg/(kg·min)",
+                remark: "推荐最大浓度400μg/ml"
+            },
+            heparin: {
+                name: "肝素",
+                dosageRange: "10~30U/(kg·h)",
+                config20ml: "400U×wt",
+                speedPerMl: "20U/(kg·h)",
+                remark: "负荷量75U/kg"
+            },
+            insulin: {
+                name: "胰岛素",
+                dosageRange: "0.01~0.2U/(kg·h)",
+                config20ml: "1U×wt",
+                speedPerMl: "0.05U/(kg·h)",
+                remark: "0.9%氯化钠配制，建议30~60min监测血糖"
+            },
+            ketamine: {
+                name: "氯胺酮",
+                dosageRange: "10~45μg/(kg·min)",
+                config20ml: "12mg×wt",
+                speedPerMl: "10μg/(kg·min)",
+                remark: ""
+            },
+            midazolam: {
+                name: "咪达唑仑",
+                dosageRange: "0.5~20μg/(kg·min)",
+                config20ml: "1.2mg×wt",
+                speedPerMl: "1μg/(kg·min)",
+                remark: ""
+            },
+            milrinone: {
+                name: "米力农",
+                dosageRange: "0.3~0.75μg/(kg·min)",
+                config20ml: "0.6mg×wt",
+                speedPerMl: "0.5μg/(kg·min)",
+                remark: ""
+            },
+            morphine: {
+                name: "吗啡",
+                dosageRange: "5~100μg/(kg·h)",
+                config20ml: "0.4mg×wt",
+                speedPerMl: "20μg/(kg·h)",
+                remark: ""
+            },
+            norepinephrine: {
+                name: "去甲肾上腺素",
+                dosageRange: "0.1~1μg/(kg·min)",
+                config20ml: "0.12mg×wt",
+                speedPerMl: "0.1μg/(kg·min)",
+                remark: ""
+            },
+            albuterol: {
+                name: "沙丁胺醇",
+                dosageRange: "1~5μg/(kg·min)",
+                config20ml: "0.6mg×wt",
+                speedPerMl: "0.5μg/(kg·min)",
+                remark: ""
+            },
+            sodiumBicarbonate: {
+                name: "5%碳酸氢钠",
+                dosageRange: "1~2mmol/(kg·h)",
+                config20ml: "0mmol×wt",
+                speedPerMl: "1mmol/h",
+                remark: "建议稀释为等张液体"
+            },
+            nitroprusside: {
+                name: "硝普钠",
+                dosageRange: "1~5μg/(kg·min)",
+                config20ml: "1.2mg×wt",
+                speedPerMl: "1μg/(kg·min)",
+                remark: "避光"
+            },
+            vasopressin: {
+                name: "抗利尿激素",
+                dosageRange: "0.0001~0.002U/(kg·min)",
+                config20ml: "6U×wt",
+                speedPerMl: "0.0005U/(kg·min)",
+                remark: "剂量范围：低=0.0001U/(kg·min)，标准=0.00025U/(kg·min)，高=0.0005U/(kg·min)"
+            },
+            glucagon: {
+                name: "胰高血糖素",
+                dosageRange: "0.005~0.02mg/(kg·h)",
+                config20ml: "",
+                speedPerMl: "0.02mg/(kg·h)",
+                remark: "最好短期使用"
+            }
+        };
+
+        // DOM元素
+        const drugSelect = document.getElementById('drug-select');
+        const weightInput = document.getElementById('weight-input');
+        const targetDoseInput = document.getElementById('target-dose');
+        const calculateBtn = document.getElementById('calculate-btn');
+        const resultsContainer = document.getElementById('results-container');
+        const drugInfoSection = document.getElementById('drug-info');
+        const infoGrid = document.getElementById('info-grid');
+
+        // 计算按钮点击事件
+        calculateBtn.addEventListener('click', calculateDosage);
+
+        // 计算函数
+        function calculateDosage() {
+            const selectedDrug = drugSelect.value;
+            const weight = parseFloat(weightInput.value);
+            
+            if (!selectedDrug) {
+                alert('请选择一种药物');
+                return;
+            }
+            
+            if (!weight || weight <= 0) {
+                alert('请输入有效的患者体重');
+                return;
+            }
+            
+            const drug = drugData[selectedDrug];
+            const configFormula = drug.config20ml;
+            
+            // 计算配置20ml所需药量
+            let configAmount = '';
+            if (configFormula.includes('×wt')) {
+                const multiplier = parseFloat(configFormula.replace('×wt', ''));
+                if (!isNaN(multiplier)) {
+                    configAmount = (multiplier * weight).toFixed(2);
+                }
+            }
+            
+            // 计算泵速（如果提供了目标剂量）
+            let pumpSpeed = '';
+            const targetDose = targetDoseInput.value.trim();
+            if (targetDose) {
+                // 提取速度1ml/h对应的剂量数值
+                const speedValueMatch = drug.speedPerMl.match(/(\d+(\.\d+)?)/);
+                if (speedValueMatch) {
+                    const speedValue = parseFloat(speedValueMatch[1]);
+                    // 提取目标剂量数值
+                    const targetValueMatch = targetDose.match(/(\d+(\.\d+)?)/);
+                    if (targetValueMatch) {
+                        const targetValue = parseFloat(targetValueMatch[1]);
+                        pumpSpeed = (targetValue / speedValue).toFixed(2);
+                    }
+                }
+            }
+            
+            // 显示结果
+            displayResults(drug, weight, configAmount, pumpSpeed, targetDose);
+            
+            // 显示药物信息
+            displayDrugInfo(drug);
+        }
+
+        // 显示计算结果
+        function displayResults(drug, weight, configAmount, pumpSpeed, targetDose) {
+            let html = '';
+            
+            html += `<div class="result-card">
+                <div class="result-title">药物</div>
+                <div class="result-value">${drug.name}</div>
+            </div>`;
+            
+            html += `<div class="result-card">
+                <div class="result-title">用量范围</div>
+                <div class="result-value">${drug.dosageRange}</div>
+            </div>`;
+            
+            if (configAmount) {
+                html += `<div class="result-card">
+                    <div class="result-title">配置20ml所需药量 (体重${weight}kg)</div>
+                    <div class="result-value">${configAmount}${drug.config20ml.replace('×wt', '').replace(/\d/g, '').replace('.', '')}</div>
+                </div>`;
+            }
+            
+            html += `<div class="result-card">
+                <div class="result-title">速度1ml/h对应剂量</div>
+                <div class="result-value">${drug.speedPerMl}</div>
+            </div>`;
+            
+            if (pumpSpeed) {
+                html += `<div class="result-card">
+                    <div class="result-title">目标剂量 ${targetDose} 对应的泵速</div>
+                    <div class="result-value">${pumpSpeed} ml/h</div>
+                </div>`;
+            }
+            
+            if (drug.remark) {
+                html += `<div class="highlight">
+                    <div class="result-title">备注</div>
+                    <div>${drug.remark}</div>
+                </div>`;
+            }
+            
+            resultsContainer.innerHTML = html;
+        }
+
+        // 显示药物详细信息
+        function displayDrugInfo(drug) {
+            drugInfoSection.style.display = 'block';
+            
+            let html = '';
+            
+            html += `<div class="info-item">
+                <div class="info-label">药物名称</div>
+                <div class="info-value">${drug.name}</div>
+            </div>`;
+            
+            html += `<div class="info-item">
+                <div class="info-label">用量范围</div>
+                <div class="info-value">${drug.dosageRange}</div>
+            </div>`;
+            
+            html += `<div class="info-item">
+                <div class="info-label">配置20ml需药量公式</div>
+                <div class="info-value">${drug.config20ml || '无'}</div>
+            </div>`;
+            
+            html += `<div class="info-item">
+                <div class="info-label">速度1ml/h对应剂量</div>
+                <div class="info-value">${drug.speedPerMl}</div>
+            </div>`;
+            
+            if (drug.remark) {
+                html += `<div class="info-item">
+                    <div class="info-label">备注</div>
+                    <div class="info-value">${drug.remark}</div>
+                </div>`;
+            }
+            
+            infoGrid.innerHTML = html;
+        }
+    </script>
+</body>
+</html>
