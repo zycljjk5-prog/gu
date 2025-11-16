@@ -1,0 +1,344 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>格拉斯哥昏迷量表(GCS)评估工具</title>
+    <style>
+        * {
+            box-sizing: border-box;
+            font-family: "Microsoft YaHei", sans-serif;
+        }
+        body {
+            margin: 0;
+            padding: 20px;
+            background-color: #f5f7fa;
+            color: #333;
+            line-height: 1.6;
+        }
+        .container {
+            max-width: 1000px;
+            margin: 0 auto;
+            background: white;
+            border-radius: 10px;
+            box-shadow: 0 0 20px rgba(0, 0, 0, 0.1);
+            padding: 25px;
+        }
+        h1 {
+            text-align: center;
+            color: #2c3e50;
+            margin-bottom: 5px;
+        }
+        .subtitle {
+            text-align: center;
+            color: #7f8c8d;
+            margin-bottom: 30px;
+            font-size: 16px;
+        }
+        .age-selector {
+            display: flex;
+            justify-content: center;
+            margin-bottom: 30px;
+        }
+        .age-option {
+            margin: 0 15px;
+            padding: 10px 20px;
+            background: #ecf0f1;
+            border-radius: 5px;
+            cursor: pointer;
+            transition: all 0.3s;
+        }
+        .age-option.active {
+            background: #3498db;
+            color: white;
+        }
+        .evaluation-section {
+            display: none;
+            margin-bottom: 30px;
+        }
+        .evaluation-section.active {
+            display: block;
+        }
+        .category {
+            margin-bottom: 25px;
+            border: 1px solid #ddd;
+            border-radius: 5px;
+            overflow: hidden;
+        }
+        .category-header {
+            background: #34495e;
+            color: white;
+            padding: 12px 15px;
+            font-weight: bold;
+        }
+        .options {
+            padding: 15px;
+        }
+        .option {
+            margin-bottom: 10px;
+            padding: 10px;
+            background: #f8f9fa;
+            border-radius: 5px;
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+        .option:hover {
+            background: #e9ecef;
+        }
+        .option.selected {
+            background: #d4edda;
+            border-left: 4px solid #28a745;
+        }
+        .score-display {
+            text-align: center;
+            margin: 30px 0;
+            padding: 20px;
+            background: #f8f9fa;
+            border-radius: 5px;
+        }
+        .total-score {
+            font-size: 36px;
+            font-weight: bold;
+            color: #2c3e50;
+            margin: 10px 0;
+        }
+        .conclusion {
+            text-align: center;
+            padding: 20px;
+            border-radius: 5px;
+            margin-top: 20px;
+            display: none;
+        }
+        .conclusion.mild {
+            background: #d4edda;
+            color: #155724;
+            border: 1px solid #c3e6cb;
+        }
+        .conclusion.moderate {
+            background: #fff3cd;
+            color: #856404;
+            border: 1px solid #ffeaa7;
+        }
+        .conclusion.severe {
+            background: #f8d7da;
+            color: #721c24;
+            border: 1px solid #f5c6cb;
+        }
+        .note {
+            font-size: 14px;
+            color: #7f8c8d;
+            margin-top: 30px;
+            padding: 15px;
+            background: #f8f9fa;
+            border-radius: 5px;
+        }
+        .reset-btn {
+            display: block;
+            margin: 20px auto;
+            padding: 10px 25px;
+            background: #e74c3c;
+            color: white;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            font-size: 16px;
+            transition: background 0.3s;
+        }
+        .reset-btn:hover {
+            background: #c0392b;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>格拉斯哥昏迷量表(GCS)评估工具</h1>
+        <p class="subtitle">根据患者的反应情况，自动计算GCS分数并评估意识障碍程度</p>
+        
+        <div class="age-selector">
+            <div class="age-option active" data-age="adult">≥5岁患者 (标准GCS)</div>
+            <div class="age-option" data-age="child"><5岁患者 (改良GCS)</div>
+        </div>
+        
+        <div id="adult-evaluation" class="evaluation-section active">
+            <div class="category">
+                <div class="category-header">睁眼反应 (E)</div>
+                <div class="options">
+                    <div class="option" data-score="4">正常睁眼</div>
+                    <div class="option" data-score="3">呼唤睁眼</div>
+                    <div class="option" data-score="2">刺痛睁眼</div>
+                    <div class="option" data-score="1">无反应</div>
+                </div>
+            </div>
+            
+            <div class="category">
+                <div class="category-header">语言反应 (V)</div>
+                <div class="options">
+                    <div class="option" data-score="5">回答切题</div>
+                    <div class="option" data-score="4">答非所问</div>
+                    <div class="option" data-score="3">用词错乱</div>
+                    <div class="option" data-score="2">声音含糊不清</div>
+                    <div class="option" data-score="1">无反应</div>
+                </div>
+            </div>
+            
+            <div class="category">
+                <div class="category-header">运动反应 (M)</div>
+                <div class="options">
+                    <div class="option" data-score="6">服从指令</div>
+                    <div class="option" data-score="5">能定位疼痛</div>
+                    <div class="option" data-score="4">能躲避疼痛</div>
+                    <div class="option" data-score="3">疼痛刺激肢体屈曲</div>
+                    <div class="option" data-score="2">疼痛刺激肢体过伸</div>
+                    <div class="option" data-score="1">无反应</div>
+                </div>
+            </div>
+        </div>
+        
+        <div id="child-evaluation" class="evaluation-section">
+            <div class="category">
+                <div class="category-header">睁眼反应 (E)</div>
+                <div class="options">
+                    <div class="option" data-score="4">正常睁眼</div>
+                    <div class="option" data-score="3">呼唤睁眼</div>
+                    <div class="option" data-score="2">刺痛睁眼</div>
+                    <div class="option" data-score="1">无反应</div>
+                </div>
+            </div>
+            
+            <div class="category">
+                <div class="category-header">语言反应 (V)</div>
+                <div class="options">
+                    <div class="option" data-score="5">语言交流正常，有自发性哭闹</div>
+                    <div class="option" data-score="4">疼痛刺激后能哭闹</div>
+                    <div class="option" data-score="3">疼痛刺激后仅有呻吟、不安</div>
+                    <div class="option" data-score="2">疼痛刺激后无发声（仅烦躁不安）</div>
+                    <div class="option" data-score="1">无任何反应（对疼痛刺激）</div>
+                </div>
+            </div>
+            
+            <div class="category">
+                <div class="category-header">运动反应 (M)</div>
+                <div class="options">
+                    <div class="option" data-score="6">能自主活动或按指令动作</div>
+                    <div class="option" data-score="5">能定位疼痛或躲避接触</div>
+                    <div class="option" data-score="4">能躲避疼痛</div>
+                    <div class="option" data-score="3">疼痛刺激肢体屈曲</div>
+                    <div class="option" data-score="2">疼痛刺激肢体过伸</div>
+                    <div class="option" data-score="1">无反应</div>
+                </div>
+            </div>
+        </div>
+        
+        <div class="score-display">
+            <h3>当前GCS评分</h3>
+            <div class="total-score">0</div>
+            <p>睁眼反应(E): <span id="e-score">0</span>分 | 
+               语言反应(V): <span id="v-score">0</span>分 | 
+               运动反应(M): <span id="m-score">0</span>分</p>
+        </div>
+        
+        <div id="conclusion" class="conclusion">
+            <!-- 结论将在这里显示 -->
+        </div>
+        
+        <button class="reset-btn">重置评估</button>
+        
+        <div class="note">
+            <p><strong>使用说明：</strong>根据患者年龄选择相应的评估标准，然后在每个类别中选择最符合患者反应情况的选项。系统会自动计算总分并给出评估结论。</p>
+            <p><strong>评估标准：</strong></p>
+            <ul>
+                <li>13-15分：轻度意识障碍或正常</li>
+                <li>9-12分：中度意识障碍</li>
+                <li>3-8分：重度意识障碍（昏迷）</li>
+            </ul>
+        </div>
+    </div>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            // 年龄选择
+            const ageOptions = document.querySelectorAll('.age-option');
+            const adultEvaluation = document.getElementById('adult-evaluation');
+            const childEvaluation = document.getElementById('child-evaluation');
+            
+            ageOptions.forEach(option => {
+                option.addEventListener('click', function() {
+                    ageOptions.forEach(opt => opt.classList.remove('active'));
+                    this.classList.add('active');
+                    
+                    if (this.dataset.age === 'adult') {
+                        adultEvaluation.classList.add('active');
+                        childEvaluation.classList.remove('active');
+                    } else {
+                        adultEvaluation.classList.remove('active');
+                        childEvaluation.classList.add('active');
+                    }
+                    
+                    resetEvaluation();
+                });
+            });
+            
+            // 选项选择
+            const allOptions = document.querySelectorAll('.option');
+            let scores = { E: 0, V: 0, M: 0 };
+            
+            allOptions.forEach(option => {
+                option.addEventListener('click', function() {
+                    // 移除同一类别中其他选项的选中状态
+                    const category = this.closest('.category');
+                    const optionsInCategory = category.querySelectorAll('.option');
+                    optionsInCategory.forEach(opt => opt.classList.remove('selected'));
+                    
+                    // 选中当前选项
+                    this.classList.add('selected');
+                    
+                    // 更新分数
+                    const score = parseInt(this.dataset.score);
+                    const categoryType = category.querySelector('.category-header').textContent.charAt(0);
+                    
+                    if (categoryType === '睁') scores.E = score;
+                    else if (categoryType === '语') scores.V = score;
+                    else if (categoryType === '运') scores.M = score;
+                    
+                    updateScoreDisplay();
+                });
+            });
+            
+            // 更新分数显示
+            function updateScoreDisplay() {
+                const totalScore = scores.E + scores.V + scores.M;
+                document.querySelector('.total-score').textContent = totalScore;
+                document.getElementById('e-score').textContent = scores.E;
+                document.getElementById('v-score').textContent = scores.V;
+                document.getElementById('m-score').textContent = scores.M;
+                
+                // 显示结论
+                const conclusion = document.getElementById('conclusion');
+                conclusion.style.display = 'block';
+                conclusion.className = 'conclusion';
+                
+                if (totalScore >= 13) {
+                    conclusion.classList.add('mild');
+                    conclusion.innerHTML = '<h3>评估结论：轻度意识障碍或正常</h3><p>患者意识状态基本正常或仅有轻度障碍。</p>';
+                } else if (totalScore >= 9) {
+                    conclusion.classList.add('moderate');
+                    conclusion.innerHTML = '<h3>评估结论：中度意识障碍</h3><p>患者存在中度意识障碍，需要密切观察。</p>';
+                } else {
+                    conclusion.classList.add('severe');
+                    conclusion.innerHTML = '<h3>评估结论：重度意识障碍（昏迷）</h3><p>患者处于昏迷状态，需要立即医疗干预。</p>';
+                }
+            }
+            
+            // 重置评估
+            function resetEvaluation() {
+                scores = { E: 0, V: 0, M: 0 };
+                document.querySelectorAll('.option').forEach(opt => opt.classList.remove('selected'));
+                updateScoreDisplay();
+                document.getElementById('conclusion').style.display = 'none';
+            }
+            
+            document.querySelector('.reset-btn').addEventListener('click', resetEvaluation);
+        });
+    </script>
+</body>
+</html>
