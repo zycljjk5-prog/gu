@@ -1,0 +1,278 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>儿童肌炎评估量表（CMAS）</title>
+  <style>
+    body {
+      font-family: "Microsoft YaHei", sans-serif;
+      background-color: #f9f9f9;
+      padding: 20px;
+      max-width: 800px;
+      margin: 0 auto;
+    }
+    h1 {
+      text-align: center;
+      color: #2c3e50;
+    }
+    .item {
+      background: white;
+      padding: 15px;
+      margin-bottom: 15px;
+      border-radius: 8px;
+      box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+    }
+    .item h3 {
+      margin-top: 0;
+      color: #3498db;
+    }
+    .options {
+      display: flex;
+      gap: 10px;
+      flex-wrap: wrap;
+    }
+    .option {
+      flex: 1;
+      min-width: 100px;
+    }
+    label {
+      display: block;
+      padding: 8px;
+      background: #ecf0f1;
+      border: 1px solid #bdc3c7;
+      border-radius: 4px;
+      cursor: pointer;
+      transition: background 0.2s;
+    }
+    input[type="radio"] {
+      display: none;
+    }
+    input[type="radio"]:checked + label {
+      background: #d5e8f7;
+      border-color: #3498db;
+      font-weight: bold;
+    }
+    #result {
+      margin-top: 30px;
+      padding: 20px;
+      background: white;
+      border-radius: 8px;
+      box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+      text-align: center;
+      font-size: 1.2em;
+    }
+    .severity {
+      font-weight: bold;
+      margin-top: 10px;
+      padding: 10px;
+      border-radius: 6px;
+    }
+    .normal { background-color: #d4edda; color: #155724; }
+    .mild { background-color: #fff3cd; color: #856404; }
+    .moderate { background-color: #ffeaa7; color: #8a5a00; }
+    .severe { background-color: #f8d7da; color: #721c24; }
+  </style>
+</head>
+<body>
+
+<h1>儿童肌炎评估量表（CMAS）</h1>
+
+<form id="cmasForm">
+  <!-- 项目定义 -->
+  <div class="item">
+    <h3>1. 从仰卧位坐起</h3>
+    <div class="options">
+      <div class="option"><input type="radio" name="q1" value="0" required><label>0分：无法完成，需两人协助</label></div>
+      <div class="option"><input type="radio" name="q1" value="1"><label>1分：需一人协助</label></div>
+      <div class="option"><input type="radio" name="q1" value="2"><label>2分：可独立完成但用手支撑</label></div>
+      <div class="option"><input type="radio" name="q1" value="3"><label>3分：流畅、无需手支撑</label></div>
+    </div>
+  </div>
+
+  <div class="item">
+    <h3>2. 维持坐姿30秒</h3>
+    <div class="options">
+      <div class="option"><input type="radio" name="q2" value="0" required><label>0分：无法维持坐姿</label></div>
+      <div class="option"><input type="radio" name="q2" value="1"><label>1分：<10秒</label></div>
+      <div class="option"><input type="radio" name="q2" value="2"><label>2分：10–29秒</label></div>
+      <div class="option"><input type="radio" name="q2" value="3"><label>3分：稳定坐满30秒</label></div>
+    </div>
+  </div>
+
+  <div class="item">
+    <h3>3. 从坐位站起</h3>
+    <div class="options">
+      <div class="option"><input type="radio" name="q3" value="0" required><label>0分：无法完成，需两人协助</label></div>
+      <div class="option"><input type="radio" name="q3" value="1"><label>1分：需一人协助</label></div>
+      <div class="option"><input type="radio" name="q3" value="2"><label>2分：可独立但用手支撑</label></div>
+      <div class="option"><input type="radio" name="q3" value="3"><label>3分：流畅、无需手支撑</label></div>
+    </div>
+  </div>
+
+  <div class="item">
+    <h3>4. 站立30秒</h3>
+    <div class="options">
+      <div class="option"><input type="radio" name="q4" value="0" required><label>0分：无法站立</label></div>
+      <div class="option"><input type="radio" name="q4" value="1"><label>1分：<10秒</label></div>
+      <div class="option"><input type="radio" name="q4" value="2"><label>2分：10–29秒</label></div>
+      <div class="option"><input type="radio" name="q4" value="3"><label>3分：稳定站立30秒</label></div>
+    </div>
+  </div>
+
+  <div class="item">
+    <h3>5. 头部控制</h3>
+    <div class="options">
+      <div class="option"><input type="radio" name="q5" value="0" required><label>0分：无法抬头</label></div>
+      <div class="option"><input type="radio" name="q5" value="1"><label>1分：可轻微抬头但不能维持</label></div>
+      <div class="option"><input type="radio" name="q5" value="2"><label>2分：可抬头并维持数秒</label></div>
+      <div class="option"><input type="radio" name="q5" value="3"><label>3分：正常头部控制</label></div>
+    </div>
+  </div>
+
+  <div class="item">
+    <h3>6. 肩外展90度并维持5秒</h3>
+    <div class="options">
+      <div class="option"><input type="radio" name="q6" value="0" required><label>0分：无法外展</label></div>
+      <div class="option"><input type="radio" name="q6" value="1"><label>1分：可外展但<5秒</label></div>
+      <div class="option"><input type="radio" name="q6" value="2"><label>2分：≥5秒但<90度</label></div>
+      <div class="option"><input type="radio" name="q6" value="3"><label>3分：90度并维持5秒</label></div>
+    </div>
+  </div>
+
+  <div class="item">
+    <h3>7. 肘关节屈曲抗重力</h3>
+    <div class="options">
+      <div class="option"><input type="radio" name="q7" value="0" required><label>0分：无法屈肘</label></div>
+      <div class="option"><input type="radio" name="q7" value="1"><label>1分：可部分屈肘但不能抗重力</label></div>
+      <div class="option"><input type="radio" name="q7" value="2"><label>2分：可屈肘抗重力但不能维持</label></div>
+      <div class="option"><input type="radio" name="q7" value="3"><label>3分：完全屈肘并维持</label></div>
+    </div>
+  </div>
+
+  <div class="item">
+    <h3>8. 手指捏合（拇指与食指对捏）</h3>
+    <div class="options">
+      <div class="option"><input type="radio" name="q8" value="0" required><label>0分：无法完成</label></div>
+      <div class="option"><input type="radio" name="q8" value="1"><label>1分：尝试但失败</label></div>
+      <div class="option"><input type="radio" name="q8" value="2"><label>2分：可完成但笨拙/缓慢</label></div>
+      <div class="option"><input type="radio" name="q8" value="3"><label>3分：正常、快速完成</label></div>
+    </div>
+  </div>
+
+  <div class="item">
+    <h3>9. 抓握与释放小物体</h3>
+    <div class="options">
+      <div class="option"><input type="radio" name="q9" value="0" required><label>0分：无法抓握</label></div>
+      <div class="option"><input type="radio" name="q9" value="1"><label>1分：可抓握但无法释放</label></div>
+      <div class="option"><input type="radio" name="q9" value="2"><label>2分：可抓握释放但缓慢/不协调</label></div>
+      <div class="option"><input type="radio" name="q9" value="3"><label>3分：正常抓握与释放</label></div>
+    </div>
+  </div>
+
+  <div class="item">
+    <h3>10. 蹲下后站起</h3>
+    <div class="options">
+      <div class="option"><input type="radio" name="q10" value="0" required><label>0分：无法完成</label></div>
+      <div class="option"><input type="radio" name="q10" value="1"><label>1分：可蹲下但无法站起（需协助）</label></div>
+      <div class="option"><input type="radio" name="q10" value="2"><label>2分：可蹲下站起但用手支撑</label></div>
+      <div class="option"><input type="radio" name="q10" value="3"><label>3分：流畅完成无支撑</label></div>
+    </div>
+  </div>
+
+  <div class="item">
+    <h3>11. 单腿站立</h3>
+    <div class="options">
+      <div class="option"><input type="radio" name="q11" value="0" required><label>0分：无法抬起腿</label></div>
+      <div class="option"><input type="radio" name="q11" value="1"><label>1分：<3秒</label></div>
+      <div class="option"><input type="radio" name="q11" value="2"><label>2分：3–5秒</label></div>
+      <div class="option"><input type="radio" name="q11" value="3"><label>3分：≥5秒</label></div>
+    </div>
+  </div>
+
+  <div class="item">
+    <h3>12. 上台阶（6英寸）</h3>
+    <div class="options">
+      <div class="option"><input type="radio" name="q12" value="0" required><label>0分：无法完成</label></div>
+      <div class="option"><input type="radio" name="q12" value="1"><label>1分：需扶助</label></div>
+      <div class="option"><input type="radio" name="q12" value="2"><label>2分：可独立但缓慢/不稳定</label></div>
+      <div class="option"><input type="radio" name="q12" value="3"><label>3分：流畅稳定上台阶</label></div>
+    </div>
+  </div>
+
+  <div class="item">
+    <h3>13. 下台阶（6英寸）</h3>
+    <div class="options">
+      <div class="option"><input type="radio" name="q13" value="0" required><label>0分：无法完成</label></div>
+      <div class="option"><input type="radio" name="q13" value="1"><label>1分：需扶助</label></div>
+      <div class="option"><input type="radio" name="q13" value="2"><label>2分：可独立但缓慢/不稳定</label></div>
+      <div class="option"><input type="radio" name="q13" value="3"><label>3分：流畅稳定下台阶</label></div>
+    </div>
+  </div>
+
+  <div class="item">
+    <h3>14. Gowers征（从地面站起）</h3>
+    <div class="options">
+      <div class="option"><input type="radio" name="q14" value="0" required><label>0分：无法站起</label></div>
+      <div class="option"><input type="radio" name="q14" value="1"><label>1分：需双手攀爬且需协助</label></div>
+      <div class="option"><input type="radio" name="q14" value="2"><label>2分：需双手攀爬但可独立站起</label></div>
+      <div class="option"><input type="radio" name="q14" value="3"><label>3分：无需攀爬，直接站起</label></div>
+    </div>
+  </div>
+</form>
+
+<div id="result">
+  <p>请完成所有项目以查看结果。</p>
+</div>
+
+<script>
+  const form = document.getElementById('cmasForm');
+  const resultDiv = document.getElementById('result');
+
+  // 监听所有单选按钮变化
+  form.addEventListener('change', calculateScore);
+
+  function calculateScore() {
+    let total = 0;
+    let answered = 0;
+    for (let i = 1; i <= 14; i++) {
+      const selected = document.querySelector(`input[name="q${i}"]:checked`);
+      if (selected) {
+        total += parseInt(selected.value);
+        answered++;
+      }
+    }
+
+    if (answered === 14) {
+      let severityText = '';
+      let severityClass = '';
+
+      if (total > 36) {
+        severityText = '肌肉功能基本正常';
+        severityClass = 'normal';
+      } else if (total >= 30) {
+        severityText = '轻度肌无力';
+        severityClass = 'mild';
+      } else if (total >= 20) {
+        severityText = '中度肌无力';
+        severityClass = 'moderate';
+      } else {
+        severityText = '重度肌无力';
+        severityClass = 'severe';
+      }
+
+      resultDiv.innerHTML = `
+        <p>总分：<strong>${total} / 42</strong></p>
+        <div class="severity ${severityClass}">${severityText}</div>
+        <p style="font-size:0.9em; margin-top:10px; color:#666;">
+          注：>36分正常；30–36分轻度；20–29分中度；<20分重度。
+        </p>
+      `;
+    } else {
+      resultDiv.innerHTML = '<p>请完成所有项目以查看结果。</p>';
+    }
+  }
+</script>
+
+</body>
+</html>
