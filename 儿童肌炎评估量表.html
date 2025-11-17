@@ -46,7 +46,11 @@
       transition: background 0.2s;
     }
     input[type="radio"] {
-      display: none;
+      /* 不再隐藏，但视觉上不可见 */
+      position: absolute;
+      opacity: 0;
+      width: 0;
+      height: 0;
     }
     input[type="radio"]:checked + label {
       background: #d5e8f7;
@@ -79,144 +83,157 @@
 <h1>儿童肌炎评估量表（CMAS）</h1>
 
 <form id="cmasForm">
-  <!-- 项目定义 -->
+  <!-- 项目1 -->
   <div class="item">
     <h3>1. 从仰卧位坐起</h3>
     <div class="options">
-      <div class="option"><input type="radio" name="q1" value="0" required><label>0分：无法完成，需两人协助</label></div>
-      <div class="option"><input type="radio" name="q1" value="1"><label>1分：需一人协助</label></div>
-      <div class="option"><input type="radio" name="q1" value="2"><label>2分：可独立完成但用手支撑</label></div>
-      <div class="option"><input type="radio" name="q1" value="3"><label>3分：流畅、无需手支撑</label></div>
+      <div class="option"><input type="radio" name="q1" id="q1_0" value="0" required><label for="q1_0">0分：无法完成，需两人协助</label></div>
+      <div class="option"><input type="radio" name="q1" id="q1_1" value="1"><label for="q1_1">1分：需一人协助</label></div>
+      <div class="option"><input type="radio" name="q1" id="q1_2" value="2"><label for="q1_2">2分：可独立完成但用手支撑</label></div>
+      <div class="option"><input type="radio" name="q1" id="q1_3" value="3"><label for="q1_3">3分：流畅、无需手支撑</label></div>
     </div>
   </div>
 
+  <!-- 项目2 -->
   <div class="item">
     <h3>2. 维持坐姿30秒</h3>
     <div class="options">
-      <div class="option"><input type="radio" name="q2" value="0" required><label>0分：无法维持坐姿</label></div>
-      <div class="option"><input type="radio" name="q2" value="1"><label>1分：<10秒</label></div>
-      <div class="option"><input type="radio" name="q2" value="2"><label>2分：10–29秒</label></div>
-      <div class="option"><input type="radio" name="q2" value="3"><label>3分：稳定坐满30秒</label></div>
+      <div class="option"><input type="radio" name="q2" id="q2_0" value="0" required><label for="q2_0">0分：无法维持坐姿</label></div>
+      <div class="option"><input type="radio" name="q2" id="q2_1" value="1"><label for="q2_1">1分：<10秒</label></div>
+      <div class="option"><input type="radio" name="q2" id="q2_2" value="2"><label for="q2_2">2分：10–29秒</label></div>
+      <div class="option"><input type="radio" name="q2" id="q2_3" value="3"><label for="q2_3">3分：稳定坐满30秒</label></div>
     </div>
   </div>
 
+  <!-- 项目3 -->
   <div class="item">
     <h3>3. 从坐位站起</h3>
     <div class="options">
-      <div class="option"><input type="radio" name="q3" value="0" required><label>0分：无法完成，需两人协助</label></div>
-      <div class="option"><input type="radio" name="q3" value="1"><label>1分：需一人协助</label></div>
-      <div class="option"><input type="radio" name="q3" value="2"><label>2分：可独立但用手支撑</label></div>
-      <div class="option"><input type="radio" name="q3" value="3"><label>3分：流畅、无需手支撑</label></div>
+      <div class="option"><input type="radio" name="q3" id="q3_0" value="0" required><label for="q3_0">0分：无法完成，需两人协助</label></div>
+      <div class="option"><input type="radio" name="q3" id="q3_1" value="1"><label for="q3_1">1分：需一人协助</label></div>
+      <div class="option"><input type="radio" name="q3" id="q3_2" value="2"><label for="q3_2">2分：可独立但用手支撑</label></div>
+      <div class="option"><input type="radio" name="q3" id="q3_3" value="3"><label for="q3_3">3分：流畅、无需手支撑</label></div>
     </div>
   </div>
 
+  <!-- 项目4 -->
   <div class="item">
     <h3>4. 站立30秒</h3>
     <div class="options">
-      <div class="option"><input type="radio" name="q4" value="0" required><label>0分：无法站立</label></div>
-      <div class="option"><input type="radio" name="q4" value="1"><label>1分：<10秒</label></div>
-      <div class="option"><input type="radio" name="q4" value="2"><label>2分：10–29秒</label></div>
-      <div class="option"><input type="radio" name="q4" value="3"><label>3分：稳定站立30秒</label></div>
+      <div class="option"><input type="radio" name="q4" id="q4_0" value="0" required><label for="q4_0">0分：无法站立</label></div>
+      <div class="option"><input type="radio" name="q4" id="q4_1" value="1"><label for="q4_1">1分：<10秒</label></div>
+      <div class="option"><input type="radio" name="q4" id="q4_2" value="2"><label for="q4_2">2分：10–29秒</label></div>
+      <div class="option"><input type="radio" name="q4" id="q4_3" value="3"><label for="q4_3">3分：稳定站立30秒</label></div>
     </div>
   </div>
 
+  <!-- 项目5 -->
   <div class="item">
     <h3>5. 头部控制</h3>
     <div class="options">
-      <div class="option"><input type="radio" name="q5" value="0" required><label>0分：无法抬头</label></div>
-      <div class="option"><input type="radio" name="q5" value="1"><label>1分：可轻微抬头但不能维持</label></div>
-      <div class="option"><input type="radio" name="q5" value="2"><label>2分：可抬头并维持数秒</label></div>
-      <div class="option"><input type="radio" name="q5" value="3"><label>3分：正常头部控制</label></div>
+      <div class="option"><input type="radio" name="q5" id="q5_0" value="0" required><label for="q5_0">0分：无法抬头</label></div>
+      <div class="option"><input type="radio" name="q5" id="q5_1" value="1"><label for="q5_1">1分：可轻微抬头但不能维持</label></div>
+      <div class="option"><input type="radio" name="q5" id="q5_2" value="2"><label for="q5_2">2分：可抬头并维持数秒</label></div>
+      <div class="option"><input type="radio" name="q5" id="q5_3" value="3"><label for="q5_3">3分：正常头部控制</label></div>
     </div>
   </div>
 
+  <!-- 项目6 -->
   <div class="item">
     <h3>6. 肩外展90度并维持5秒</h3>
     <div class="options">
-      <div class="option"><input type="radio" name="q6" value="0" required><label>0分：无法外展</label></div>
-      <div class="option"><input type="radio" name="q6" value="1"><label>1分：可外展但<5秒</label></div>
-      <div class="option"><input type="radio" name="q6" value="2"><label>2分：≥5秒但<90度</label></div>
-      <div class="option"><input type="radio" name="q6" value="3"><label>3分：90度并维持5秒</label></div>
+      <div class="option"><input type="radio" name="q6" id="q6_0" value="0" required><label for="q6_0">0分：无法外展</label></div>
+      <div class="option"><input type="radio" name="q6" id="q6_1" value="1"><label for="q6_1">1分：可外展但<5秒</label></div>
+      <div class="option"><input type="radio" name="q6" id="q6_2" value="2"><label for="q6_2">2分：≥5秒但<90度</label></div>
+      <div class="option"><input type="radio" name="q6" id="q6_3" value="3"><label for="q6_3">3分：90度并维持5秒</label></div>
     </div>
   </div>
 
+  <!-- 项目7 -->
   <div class="item">
     <h3>7. 肘关节屈曲抗重力</h3>
     <div class="options">
-      <div class="option"><input type="radio" name="q7" value="0" required><label>0分：无法屈肘</label></div>
-      <div class="option"><input type="radio" name="q7" value="1"><label>1分：可部分屈肘但不能抗重力</label></div>
-      <div class="option"><input type="radio" name="q7" value="2"><label>2分：可屈肘抗重力但不能维持</label></div>
-      <div class="option"><input type="radio" name="q7" value="3"><label>3分：完全屈肘并维持</label></div>
+      <div class="option"><input type="radio" name="q7" id="q7_0" value="0" required><label for="q7_0">0分：无法屈肘</label></div>
+      <div class="option"><input type="radio" name="q7" id="q7_1" value="1"><label for="q7_1">1分：可部分屈肘但不能抗重力</label></div>
+      <div class="option"><input type="radio" name="q7" id="q7_2" value="2"><label for="q7_2">2分：可屈肘抗重力但不能维持</label></div>
+      <div class="option"><input type="radio" name="q7" id="q7_3" value="3"><label for="q7_3">3分：完全屈肘并维持</label></div>
     </div>
   </div>
 
+  <!-- 项目8 -->
   <div class="item">
-    <h3>8. 手指捏合（拇指与食指对捏）</h3>
+    <h3>8. 手指捏合</h3>
     <div class="options">
-      <div class="option"><input type="radio" name="q8" value="0" required><label>0分：无法完成</label></div>
-      <div class="option"><input type="radio" name="q8" value="1"><label>1分：尝试但失败</label></div>
-      <div class="option"><input type="radio" name="q8" value="2"><label>2分：可完成但笨拙/缓慢</label></div>
-      <div class="option"><input type="radio" name="q8" value="3"><label>3分：正常、快速完成</label></div>
+      <div class="option"><input type="radio" name="q8" id="q8_0" value="0" required><label for="q8_0">0分：无法完成</label></div>
+      <div class="option"><input type="radio" name="q8" id="q8_1" value="1"><label for="q8_1">1分：尝试但失败</label></div>
+      <div class="option"><input type="radio" name="q8" id="q8_2" value="2"><label for="q8_2">2分：可完成但笨拙/缓慢</label></div>
+      <div class="option"><input type="radio" name="q8" id="q8_3" value="3"><label for="q8_3">3分：正常、快速完成</label></div>
     </div>
   </div>
 
+  <!-- 项目9 -->
   <div class="item">
     <h3>9. 抓握与释放小物体</h3>
     <div class="options">
-      <div class="option"><input type="radio" name="q9" value="0" required><label>0分：无法抓握</label></div>
-      <div class="option"><input type="radio" name="q9" value="1"><label>1分：可抓握但无法释放</label></div>
-      <div class="option"><input type="radio" name="q9" value="2"><label>2分：可抓握释放但缓慢/不协调</label></div>
-      <div class="option"><input type="radio" name="q9" value="3"><label>3分：正常抓握与释放</label></div>
+      <div class="option"><input type="radio" name="q9" id="q9_0" value="0" required><label for="q9_0">0分：无法抓握</label></div>
+      <div class="option"><input type="radio" name="q9" id="q9_1" value="1"><label for="q9_1">1分：可抓握但无法释放</label></div>
+      <div class="option"><input type="radio" name="q9" id="q9_2" value="2"><label for="q9_2">2分：可抓握释放但缓慢/不协调</label></div>
+      <div class="option"><input type="radio" name="q9" id="q9_3" value="3"><label for="q9_3">3分：正常抓握与释放</label></div>
     </div>
   </div>
 
+  <!-- 项目10 -->
   <div class="item">
     <h3>10. 蹲下后站起</h3>
     <div class="options">
-      <div class="option"><input type="radio" name="q10" value="0" required><label>0分：无法完成</label></div>
-      <div class="option"><input type="radio" name="q10" value="1"><label>1分：可蹲下但无法站起（需协助）</label></div>
-      <div class="option"><input type="radio" name="q10" value="2"><label>2分：可蹲下站起但用手支撑</label></div>
-      <div class="option"><input type="radio" name="q10" value="3"><label>3分：流畅完成无支撑</label></div>
+      <div class="option"><input type="radio" name="q10" id="q10_0" value="0" required><label for="q10_0">0分：无法完成</label></div>
+      <div class="option"><input type="radio" name="q10" id="q10_1" value="1"><label for="q10_1">1分：可蹲下但无法站起（需协助）</label></div>
+      <div class="option"><input type="radio" name="q10" id="q10_2" value="2"><label for="q10_2">2分：可蹲下站起但用手支撑</label></div>
+      <div class="option"><input type="radio" name="q10" id="q10_3" value="3"><label for="q10_3">3分：流畅完成无支撑</label></div>
     </div>
   </div>
 
+  <!-- 项目11 -->
   <div class="item">
     <h3>11. 单腿站立</h3>
     <div class="options">
-      <div class="option"><input type="radio" name="q11" value="0" required><label>0分：无法抬起腿</label></div>
-      <div class="option"><input type="radio" name="q11" value="1"><label>1分：<3秒</label></div>
-      <div class="option"><input type="radio" name="q11" value="2"><label>2分：3–5秒</label></div>
-      <div class="option"><input type="radio" name="q11" value="3"><label>3分：≥5秒</label></div>
+      <div class="option"><input type="radio" name="q11" id="q11_0" value="0" required><label for="q11_0">0分：无法抬起腿</label></div>
+      <div class="option"><input type="radio" name="q11" id="q11_1" value="1"><label for="q11_1">1分：<3秒</label></div>
+      <div class="option"><input type="radio" name="q11" id="q11_2" value="2"><label for="q11_2">2分：3–5秒</label></div>
+      <div class="option"><input type="radio" name="q11" id="q11_3" value="3"><label for="q11_3">3分：≥5秒</label></div>
     </div>
   </div>
 
+  <!-- 项目12 -->
   <div class="item">
     <h3>12. 上台阶（6英寸）</h3>
     <div class="options">
-      <div class="option"><input type="radio" name="q12" value="0" required><label>0分：无法完成</label></div>
-      <div class="option"><input type="radio" name="q12" value="1"><label>1分：需扶助</label></div>
-      <div class="option"><input type="radio" name="q12" value="2"><label>2分：可独立但缓慢/不稳定</label></div>
-      <div class="option"><input type="radio" name="q12" value="3"><label>3分：流畅稳定上台阶</label></div>
+      <div class="option"><input type="radio" name="q12" id="q12_0" value="0" required><label for="q12_0">0分：无法完成</label></div>
+      <div class="option"><input type="radio" name="q12" id="q12_1" value="1"><label for="q12_1">1分：需扶助</label></div>
+      <div class="option"><input type="radio" name="q12" id="q12_2" value="2"><label for="q12_2">2分：可独立但缓慢/不稳定</label></div>
+      <div class="option"><input type="radio" name="q12" id="q12_3" value="3"><label for="q12_3">3分：流畅稳定上台阶</label></div>
     </div>
   </div>
 
+  <!-- 项目13 -->
   <div class="item">
     <h3>13. 下台阶（6英寸）</h3>
     <div class="options">
-      <div class="option"><input type="radio" name="q13" value="0" required><label>0分：无法完成</label></div>
-      <div class="option"><input type="radio" name="q13" value="1"><label>1分：需扶助</label></div>
-      <div class="option"><input type="radio" name="q13" value="2"><label>2分：可独立但缓慢/不稳定</label></div>
-      <div class="option"><input type="radio" name="q13" value="3"><label>3分：流畅稳定下台阶</label></div>
+      <div class="option"><input type="radio" name="q13" id="q13_0" value="0" required><label for="q13_0">0分：无法完成</label></div>
+      <div class="option"><input type="radio" name="q13" id="q13_1" value="1"><label for="q13_1">1分：需扶助</label></div>
+      <div class="option"><input type="radio" name="q13" id="q13_2" value="2"><label for="q13_2">2分：可独立但缓慢/不稳定</label></div>
+      <div class="option"><input type="radio" name="q13" id="q13_3" value="3"><label for="q13_3">3分：流畅稳定下台阶</label></div>
     </div>
   </div>
 
+  <!-- 项目14 -->
   <div class="item">
     <h3>14. Gowers征（从地面站起）</h3>
     <div class="options">
-      <div class="option"><input type="radio" name="q14" value="0" required><label>0分：无法站起</label></div>
-      <div class="option"><input type="radio" name="q14" value="1"><label>1分：需双手攀爬且需协助</label></div>
-      <div class="option"><input type="radio" name="q14" value="2"><label>2分：需双手攀爬但可独立站起</label></div>
-      <div class="option"><input type="radio" name="q14" value="3"><label>3分：无需攀爬，直接站起</label></div>
+      <div class="option"><input type="radio" name="q14" id="q14_0" value="0" required><label for="q14_0">0分：无法站起</label></div>
+      <div class="option"><input type="radio" name="q14" id="q14_1" value="1"><label for="q14_1">1分：需双手攀爬且需协助</label></div>
+      <div class="option"><input type="radio" name="q14" id="q14_2" value="2"><label for="q14_2">2分：需双手攀爬但可独立站起</label></div>
+      <div class="option"><input type="radio" name="q14" id="q14_3" value="3"><label for="q14_3">3分：无需攀爬，直接站起</label></div>
     </div>
   </div>
 </form>
@@ -265,7 +282,7 @@
         <p>总分：<strong>${total} / 42</strong></p>
         <div class="severity ${severityClass}">${severityText}</div>
         <p style="font-size:0.9em; margin-top:10px; color:#666;">
-          注：>36分正常；30–36分轻度；20–29分中度；<20分重度。
+          注：>36分正常；30–36分轻度；20–29分中度；&lt;20分重度。
         </p>
       `;
     } else {
