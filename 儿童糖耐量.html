@@ -1,1 +1,200 @@
-<!DOCTYPE html><html lang="zh-CN"><head> <meta charset="UTF-8"> <meta name="viewport" content="width=device-width, initial-scale=1.0"> <title>儿童糖耐量-葡萄糖溶液用量计算器</title> <style> * { box-sizing: border-box; margin: 0; padding: 0; font-family: 'Arial', 'Microsoft YaHei', sans-serif; } body { background-color: #f0f7ff; color: #333; line-height: 1.6; padding: 20px; } .container { max-width: 600px; margin: 0 auto; background: white; border-radius: 12px; box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1); padding: 30px; } h1 { color: #2c5aa0; margin-bottom: 20px; text-align: center; font-size: 24px; } .description { background-color: #e8f4ff; padding: 15px; border-radius: 8px; margin-bottom: 25px; font-size: 14px; color: #555; } .input-group { margin-bottom: 25px; } label { display: block; margin-bottom: 8px; font-weight: bold; color: #2c5aa0; } input { width: 100%; padding: 12px 15px; border: 2px solid #d0e2ff; border-radius: 8px; font-size: 16px; transition: border-color 0.3s; } input:focus { border-color: #2c5aa0; outline: none; } button { background-color: #2c5aa0; color: white; border: none; padding: 12px 20px; border-radius: 8px; font-size: 16px; cursor: pointer; width: 100%; transition: background-color 0.3s; } button:hover { background-color: #1e3d6f; } .result { margin-top: 25px; padding: 20px; background-color: #f0f9ff; border-radius: 8px; text-align: center; display: none; } .result h3 { color: #2c5aa0; margin-bottom: 10px; } .dosage { font-size: 28px; font-weight: bold; color: #1e3d6f; margin: 10px 0; } .unit { font-size: 16px; color: #666; } .note { margin-top: 20px; font-size: 13px; color: #777; text-align: center; } .formula { background-color: #f5f9ff; padding: 15px; border-radius: 8px; margin-top: 20px; font-size: 14px; } .formula h4 { color: #2c5aa0; margin-bottom: 8px; } </style></head><body> <div class="container"> <h1>儿童糖耐量—葡萄糖溶液用量计算器</h1> <div class="description"> <p>本计算器根据儿童体重计算葡萄糖溶液的取用量。</p> <p>已知：82.5克一水葡萄糖溶于300毫升水中，儿童用量为每公斤体重1.925克葡萄糖。</p> </div> <div class="input-group"> <label for="weight">请输入儿童体重（公斤）</label> <input type="number" id="weight" placeholder="例如：15" min="0" step="0.1"> </div> <button id="calculate">计算用量</button> <div class="result" id="result"> <h3>计算结果</h3> <p>建议取用葡萄糖溶液：</p> <div class="dosage" id="dosage">0</div> <p class="unit">毫升</p> </div> <div class="formula"> <h4>计算原理：82.5g一水葡萄糖溶于300ml温水</h4> <p>溶液浓度：82.5克葡萄糖 / 300毫升水 = 0.275克/毫升</p> <p>每公斤体重需要葡萄糖：1.925克</p> <p>计算公式：体重(kg) × 1.925 ÷ 0.275 = 取用毫升数</p> </div> <div class="note"> <p>注意：本计算结果仅供参考，实际使用请遵医嘱。</p> </div> </div><script> document.getElementById('calculate').addEventListener('click', function() { const weight = parseFloat(document.getElementById('weight').value); if (isNaN(weight) || weight <= 0) { alert('请输入有效的体重数值'); return; } // 计算逻辑 // 溶液浓度：82.5克葡萄糖/300毫升水 = 0.275克/毫升 // 每公斤体重需要葡萄糖：1.925克 // 计算公式：体重(kg) × 1.925 ÷ 0.275 const concentration = 0.275; // 克/毫升 const dosagePerKg = 1.925; // 克/公斤 const volume = (weight * dosagePerKg) / concentration; // 显示结果，四舍五入到小数点后1位 document.getElementById('dosage').textContent = volume.toFixed(1); document.getElementById('result').style.display = 'block'; }); // 允许按回车键进行计算 document.getElementById('weight').addEventListener('keypress', function(e) { if (e.key === 'Enter') { document.getElementById('calculate').click(); } }); </script></body></html>
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>儿童糖耐量-葡萄糖溶液用量计算器</title>
+    <style>
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+            font-family: 'Arial', 'Microsoft YaHei', sans-serif;
+        }
+        
+        body {
+            background-color: #f0f7ff;
+            color: #333;
+            line-height: 1.6;
+            padding: 20px;
+        }
+        
+        .container {
+            max-width: 600px;
+            margin: 0 auto;
+            background: white;
+            border-radius: 12px;
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
+            padding: 30px;
+        }
+        
+        h1 {
+            color: #2c5aa0;
+            margin-bottom: 20px;
+            text-align: center;
+            font-size: 24px;
+        }
+        
+        .description {
+            background-color: #e8f4ff;
+            padding: 15px;
+            border-radius: 8px;
+            margin-bottom: 25px;
+            font-size: 14px;
+            color: #555;
+        }
+        
+        .input-group {
+            margin-bottom: 25px;
+        }
+        
+        label {
+            display: block;
+            margin-bottom: 8px;
+            font-weight: bold;
+            color: #2c5aa0;
+        }
+        
+        input {
+            width: 100%;
+            padding: 12px 15px;
+            border: 2px solid #d0e2ff;
+            border-radius: 8px;
+            font-size: 16px;
+            transition: border-color 0.3s;
+        }
+        
+        input:focus {
+            border-color: #2c5aa0;
+            outline: none;
+        }
+        
+        button {
+            background-color: #2c5aa0;
+            color: white;
+            border: none;
+            padding: 12px 20px;
+            border-radius: 8px;
+            font-size: 16px;
+            cursor: pointer;
+            width: 100%;
+            transition: background-color 0.3s;
+        }
+        
+        button:hover {
+            background-color: #1e3d6f;
+        }
+        
+        .result {
+            margin-top: 25px;
+            padding: 20px;
+            background-color: #f0f9ff;
+            border-radius: 8px;
+            text-align: center;
+            display: none;
+        }
+        
+        .result h3 {
+            color: #2c5aa0;
+            margin-bottom: 10px;
+        }
+        
+        .dosage {
+            font-size: 28px;
+            font-weight: bold;
+            color: #1e3d6f;
+            margin: 10px 0;
+        }
+        
+        .unit {
+            font-size: 16px;
+            color: #666;
+        }
+        
+        .note {
+            margin-top: 20px;
+            font-size: 13px;
+            color: #777;
+            text-align: center;
+        }
+        
+        .formula {
+            background-color: #f5f9ff;
+            padding: 15px;
+            border-radius: 8px;
+            margin-top: 20px;
+            font-size: 14px;
+        }
+        
+        .formula h4 {
+            color: #2c5aa0;
+            margin-bottom: 8px;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>儿童葡萄糖溶液用量计算器</h1>
+        
+        <div class="description">
+            <p>本计算器根据儿童体重计算葡萄糖溶液的取用量。</p>
+            <p>已知：82.5克一水葡萄糖溶于300毫升水中，儿童用量为每公斤体重1.925克葡萄糖。</p>
+        </div>
+        
+        <div class="input-group">
+            <label for="weight">请输入儿童体重（公斤）</label>
+            <input type="number" id="weight" placeholder="例如：15" min="0" step="0.1">
+        </div>
+        
+        <button id="calculate">计算用量</button>
+        
+        <div class="result" id="result">
+            <h3>计算结果</h3>
+            <p>建议取用葡萄糖溶液：</p>
+            <div class="dosage" id="dosage">0</div>
+            <p class="unit">毫升</p>
+        </div>
+        
+        <div class="formula">
+            <h4>计算原理：82.5g一水葡萄糖溶于300ml温水</h4>
+            <p>溶液浓度：82.5克葡萄糖 / 300毫升水 = 0.275克/毫升</p>
+            <p>每公斤体重需要葡萄糖：1.925克</p>
+            <p>计算公式：体重(kg) × 1.925 ÷ 0.275 = 取用毫升数</p>
+        </div>
+        
+        <div class="note">
+            <p>注意：本计算结果仅供参考，实际使用请遵医嘱。</p>
+        </div>
+    </div>
+
+    <script>
+        document.getElementById('calculate').addEventListener('click', function() {
+            const weight = parseFloat(document.getElementById('weight').value);
+            
+            if (isNaN(weight) || weight <= 0) {
+                alert('请输入有效的体重数值');
+                return;
+            }
+            
+            // 计算逻辑
+            // 溶液浓度：82.5克葡萄糖/300毫升水 = 0.275克/毫升
+            // 每公斤体重需要葡萄糖：1.925克
+            // 计算公式：体重(kg) × 1.925 ÷ 0.275
+            const concentration = 0.275; // 克/毫升
+            const dosagePerKg = 1.925; // 克/公斤
+            const volume = (weight * dosagePerKg) / concentration;
+            
+            // 显示结果，四舍五入到小数点后1位
+            document.getElementById('dosage').textContent = volume.toFixed(1);
+            document.getElementById('result').style.display = 'block';
+        });
+        
+        // 允许按回车键进行计算
+        document.getElementById('weight').addEventListener('keypress', function(e) {
+            if (e.key === 'Enter') {
+                document.getElementById('calculate').click();
+            }
+        });
+    </script>
+</body>
+</html>
