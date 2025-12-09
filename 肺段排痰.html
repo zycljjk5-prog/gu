@@ -1,0 +1,324 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>不同肺段排痰体位叩击部位查询系统</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Microsoft YaHei', Arial, sans-serif;
+        }
+        
+        body {
+            background: linear-gradient(135deg, #f0f8ff 0%, #e6f7ff 100%);
+            color: #333;
+            line-height: 1.6;
+            padding: 20px;
+            min-height: 100vh;
+        }
+        
+        .container {
+            max-width: 1000px;
+            margin: 0 auto;
+            background-color: white;
+            border-radius: 15px;
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
+            padding: 30px;
+            overflow: hidden;
+        }
+        
+        header {
+            text-align: center;
+            margin-bottom: 30px;
+            padding-bottom: 20px;
+            border-bottom: 2px solid #4a90e2;
+        }
+        
+        h1 {
+            color: #2c3e50;
+            margin-bottom: 10px;
+            font-size: 28px;
+        }
+        
+        .subtitle {
+            color: #7f8c8d;
+            font-size: 16px;
+        }
+        
+        .selection-area {
+            background-color: #f8f9fa;
+            padding: 20px;
+            border-radius: 10px;
+            margin-bottom: 30px;
+        }
+        
+        .form-group {
+            margin-bottom: 20px;
+        }
+        
+        label {
+            display: block;
+            margin-bottom: 8px;
+            font-weight: bold;
+            color: #2c3e50;
+        }
+        
+        select {
+            width: 100%;
+            padding: 12px 15px;
+            border: 2px solid #ddd;
+            border-radius: 8px;
+            font-size: 16px;
+            background-color: white;
+            transition: border-color 0.3s;
+        }
+        
+        select:focus {
+            border-color: #4a90e2;
+            outline: none;
+        }
+        
+        .result-area {
+            display: block;
+            background-color: #fff;
+            border-radius: 10px;
+            padding: 25px;
+            box-shadow: 0 3px 10px rgba(0, 0, 0, 0.08);
+            margin-top: 20px;
+            border-left: 5px solid #4a90e2;
+        }
+        
+        .segment-title {
+            color: #2c3e50;
+            font-size: 22px;
+            margin-bottom: 15px;
+            padding-bottom: 10px;
+            border-bottom: 1px solid #eee;
+        }
+        
+        .position-info, .percussion-info {
+            margin-bottom: 20px;
+        }
+        
+        .info-label {
+            font-weight: bold;
+            color: #4a90e2;
+            margin-right: 5px;
+        }
+        
+        .image-container {
+            text-align: center;
+            margin: 20px 0;
+        }
+        
+        .image-container img {
+            max-width: 100%;
+            border-radius: 8px;
+            box-shadow: 0 3px 10px rgba(0, 0, 0, 0.1);
+        }
+        
+        .caption {
+            font-style: italic;
+            color: #7f8c8d;
+            margin-top: 10px;
+            font-size: 14px;
+        }
+        
+        .notes {
+            background-color: #f9f9f9;
+            padding: 15px;
+            border-radius: 8px;
+            margin-top: 20px;
+            font-size: 14px;
+            border-left: 3px solid #f1c40f;
+        }
+        
+        footer {
+            text-align: center;
+            margin-top: 30px;
+            color: #7f8c8d;
+            font-size: 14px;
+        }
+        
+        .default-message {
+            text-align: center;
+            color: #7f8c8d;
+            font-style: italic;
+            padding: 20px;
+        }
+        
+        @media (max-width: 768px) {
+            .container {
+                padding: 15px;
+            }
+            
+            h1 {
+                font-size: 24px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <header>
+            <h1>支气管体操体位引流查询系统</h1>
+            <p class="subtitle">根据肺段选择查看对应的体位引流操作方法</p>
+        </header>
+        
+        <div class="selection-area">
+            <div class="form-group">
+                <label for="lung-segment">选择肺段：</label>
+                <select id="lung-segment">
+                    <option value="">-- 请选择肺段 --</option>
+                    <option value="rightB1" selected>右肺上叶尖段 (右B1)</option>
+                    <option value="leftB1_2">左肺上叶尖后段 (左B1+2)</option>
+                    <option value="rightB2">右上叶后段 (右B2)</option>
+                    <option value="bilateralB3">上叶前段 (左右B3)</option>
+                    <option value="rightB4_5">右肺中叶 (右B4、B5)</option>
+                    <option value="leftB4_5">左肺舌叶 (左B4、B5)</option>
+                    <option value="bilateralB6">背段 (左右B6)</option>
+                    <option value="rightB7_leftB9">右下叶内基底段 (右B7) 和 左下叶外基底段 (左B9)</option>
+                    <option value="bilateralB8">前基底段 (左右B8)</option>
+                    <option value="rightB9">右下叶外基底段 (右B9)</option>
+                    <option value="bilateralB10">下叶后基底段 (左右B10)</option>
+                </select>
+            </div>
+        </div>
+        
+        <div id="result" class="result-area">
+            <!-- 内容将通过JavaScript动态加载 -->
+        </div>
+        
+        <div class="notes">
+            <p><strong>注意事项：</strong>体位引流操作应在专业医护人员指导下进行。不同患者可能存在个体差异，请根据实际情况调整。如有疑问，请咨询医疗专家。</p>
+        </div>
+        
+        <footer>
+            <p>支气管体操体位引流查询系统 &copy; 2023 - 基于临床医学资料编制</p>
+        </footer>
+    </div>
+
+    <script>
+        // 肺段数据
+        const segmentData = {
+            rightB1: {
+                title: "右肺上叶尖段 (右B1)",
+                position: "直立坐位，身体稍向背侧靠。",
+                percussion: "前上胸壁、肩部及背上部。",
+                notes: ""
+            },
+            leftB1_2: {
+                title: "左肺上叶尖后段 (左B1+2)",
+                position: "取右侧卧位，上体同床面水平呈45°，胸前、头部分别垫起，使肩部抬高。",
+                percussion: "从背上部向外侧叩击。",
+                notes: ""
+            },
+            rightB2: {
+                title: "右上叶后段 (右B2)",
+                position: "取左侧卧位，上体同床面水平呈45°，用枕头将肩部抬高(高度低于左B1+2操作)。",
+                percussion: "从背上部向外侧叩击。",
+                notes: ""
+            },
+            bilateralB3: {
+                title: "上叶前段 (左右B3)",
+                position: "屈膝仰卧位。左侧:向右倾斜20°；右侧:向左倾斜20°。",
+                percussion: "前上胸壁。",
+                notes: ""
+            },
+            rightB4_5: {
+                title: "右肺中叶 (右B4、B5)",
+                position: "仰卧位，在右侧从肩部到髋部垫一个被子支撑，头部、腰臀底部支撑，头低脚高与地面成15°夹角。",
+                percussion: "前胸壁中、下部内侧。",
+                notes: ""
+            },
+            leftB4_5: {
+                title: "左肺舌叶 (左B4、B5)",
+                position: "仰卧位，在左侧从肩部到髋部垫一个被子支撑，头部、腰臀底部支撑，头低脚高与地面成15°夹角。",
+                percussion: "前胸壁中、下部内侧。",
+                notes: ""
+            },
+            bilateralB6: {
+                title: "背段 (左右B6)",
+                position: "取俯卧位，头端向下，腹部垫一个枕头。左侧:向左倾斜20°；右侧:向右倾斜20°。",
+                percussion: "背部中央。",
+                notes: ""
+            },
+            rightB7_leftB9: {
+                title: "右下叶内基底段 (右B7) 和 左下叶外基底段 (左B9)",
+                position: "取右侧卧位，腰骶部垫起，头低脚高身体与地面呈20°。",
+                percussion: "右B7：右背部内侧；左B9：前胸壁下部、侧胸壁下部及背侧下部。",
+                notes: "注意：此体位同时适用于右下叶内基底段和左下叶外基底段，但叩击部位不同。"
+            },
+            bilateralB8: {
+                title: "前基底段 (左右B8)",
+                position: "取屈膝仰卧位，胸部朝下与地面呈20°。",
+                percussion: "前胸壁下部。",
+                notes: ""
+            },
+            rightB9: {
+                title: "右下叶外基底段 (右B9)",
+                position: "取左侧卧位，腰骶部垫起，头低脚高身体与地面呈20°。",
+                percussion: "前胸壁下部、侧胸壁下部及背侧下部。",
+                notes: ""
+            },
+            bilateralB10: {
+                title: "下叶后基底段 (左右B10)",
+                position: "取俯卧位，在腹部垫一个枕头，头低脚高身体与地面呈20°。",
+                percussion: "病灶侧背下部。",
+                notes: ""
+            }
+        };
+        
+        // 更新结果显示函数
+        function updateResult(segmentKey) {
+            const resultDiv = document.getElementById('result');
+            
+            if (!segmentKey) {
+                resultDiv.innerHTML = '<div class="default-message"><p>请从上方下拉菜单中选择一个肺段，查看对应的体位引流操作方法。</p></div>';
+                return;
+            }
+            
+            const data = segmentData[segmentKey];
+            
+            if (!data) {
+                resultDiv.innerHTML = '<div class="default-message"><p>未找到该肺段的体位引流信息，请选择其他肺段。</p></div>';
+                return;
+            }
+            
+            // 构建结果显示HTML
+            let notesHtml = '';
+            if (data.notes) {
+                notesHtml = `<div class="position-info">
+                    <p><span class="info-label">特别说明:</span> ${data.notes}</p>
+                </div>`;
+            }
+            
+            resultDiv.innerHTML = `
+                <h2 class="segment-title">${data.title}</h2>
+                <div class="position-info">
+                    <p><span class="info-label">体位:</span> ${data.position}</p>
+                </div>
+                <div class="percussion-info">
+                    <p><span class="info-label">叩击部位:</span> ${data.percussion}</p>
+                </div>
+                ${notesHtml}
+            `;
+        }
+        
+        // 绑定选择框变化事件
+        document.getElementById('lung-segment').addEventListener('change', function() {
+            const segment = this.value;
+            updateResult(segment);
+        });
+        
+        // 页面加载时显示默认肺段
+        document.addEventListener('DOMContentLoaded', function() {
+            const defaultSegment = document.getElementById('lung-segment').value;
+            updateResult(defaultSegment);
+        });
+    </script>
+</body>
+</html>
