@@ -1,0 +1,139 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8" />
+  <title>L-T₄用药剂量计算器</title>
+  <style>
+    /* 页面样式：简洁美观，适配不同设备 */
+    body {
+      font-family: "微软雅黑", sans-serif;
+      max-width: 600px;
+      margin: 0 auto;
+      padding: 20px;
+      background-color: #f5f5f5;
+    }
+    h1 {
+      text-align: center;
+      color: #333;
+    }
+    form {
+      background-color: white;
+      padding: 20px;
+      border-radius: 8px;
+      box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+    }
+    label {
+      display: block;
+      margin-bottom: 8px;
+      font-weight: bold;
+    }
+    select, input {
+      width: 100%;
+      padding: 10px;
+      margin-bottom: 15px;
+      border: 1px solid #ddd;
+      border-radius: 4px;
+      font-size: 16px;
+    }
+    button {
+      width: 100%;
+      padding: 12px;
+      background-color: #4CAF50;
+      color: white;
+      border: none;
+      border-radius: 4px;
+      font-size: 16px;
+      cursor: pointer;
+      transition: background-color 0.3s;
+    }
+    button:hover {
+      background-color: #45a049;
+    }
+    #result {
+      margin-top: 20px;
+      padding: 15px;
+      background-color: white;
+      border-radius: 8px;
+      box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+    }
+  </style>
+</head>
+<body>
+  <h1>L-T₄用药剂量计算器</h1>
+  <!-- 表单：选择年龄组 + 输入体重 + 计算按钮 -->
+  <form id="doseForm">
+    <label for="ageGroup">选择年龄组：</label>
+    <select id="ageGroup">
+      <option value="0-3m">0～3个月</option>
+      <option value="3-6m">3～6个月</option>
+      <option value="6-12m">6～12个月</option>
+      <option value="1-3y">1～3岁</option>
+      <option value="3-10y">3～10岁</option>
+      <option value="10-15y">10～15岁</option>
+      <option value=">15y">＞15岁</option>
+      <option value="adult">成人</option>
+    </select>
+
+    <label for="weight">输入体重（kg）：</label>
+    <input 
+      type="number" 
+      id="weight" 
+      step="0.1" 
+      min="0" 
+      placeholder="请输入体重（如：10.5）" 
+    />
+
+    <button type="button" onclick="calculateDose()">计算剂量</button>
+  </form>
+
+  <!-- 结果展示区域 -->
+  <div id="result"></div>
+
+  <script>
+    // 🔥 核心：年龄组 ↔ 剂量范围的映射关系（数据来源：题目表格）
+    const doseRanges = {
+      "0-3m": { min: 10, max: 12 },   // 0～3个月：10～12 μg/(kg·d)
+      "3-6m": { min: 8, max: 10 },    // 3～6个月：8～10
+      "6-12m": { min: 6, max: 8 },    // 6～12个月：6～8
+      "1-3y": { min: 4, max: 6 },     // 1～3岁：4～6
+      "3-10y": { min: 3, max: 4 },    // 3～10岁：3～4
+      "10-15y": { min: 2, max: 4 },   // 10～15岁：2～4
+      ">15y": { min: 2, max: 3 },     // ＞15岁：2～3
+      "adult": { min: 1.6, max: 1.8 } // 成人：1.6～1.8
+    };
+
+    // 🔥 计算剂量的函数：选择年龄组 + 输入体重 → 输出范围
+    function calculateDose() {
+      // 1. 获取用户输入的「年龄组」和「体重」
+      const ageGroup = document.getElementById("ageGroup").value;
+      const weightStr = document.getElementById("weight").value;
+      
+      // 2. 验证体重有效性（必须为正数）
+      const weight = parseFloat(weightStr);
+      if (isNaN(weight) || weight <= 0) {
+        alert("⚠️ 请输入有效的体重（需为大于0的数字）！");
+        return; // 终止函数执行
+      }
+
+      // 3. 从映射表中获取当前年龄组的「剂量最小值/最大值」
+      const range = doseRanges[ageGroup];
+      if (!range) {
+        alert("⚠️ 年龄组数据异常，请联系管理员！");
+        return;
+      }
+
+      // 4. 计算剂量范围（保留1位小数，更易读）
+      const lowerDose = (weight * range.min).toFixed(1);
+      const upperDose = (weight * range.max).toFixed(1);
+
+      // 5. 渲染结果到页面
+      const resultDiv = document.getElementById("result");
+      resultDiv.innerHTML = `
+        <p><strong>年龄组：</strong>${ageGroup.replace("-", "～")}</p>
+        <p><strong>体重：</strong>${weight} kg</p>
+        <p><strong>用药剂量范围：</strong>${lowerDose} ～ ${upperDose} μg/(kg·d)</p>
+      `;
+    }
+  </script>
+</body>
+</html>
