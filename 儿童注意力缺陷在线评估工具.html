@@ -1,0 +1,626 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>儿童注意力缺陷在线评估工具</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        }
+        
+        body {
+            background: linear-gradient(135deg, #6a11cb 0%, #2575fc 100%);
+            color: #333;
+            line-height: 1.6;
+            min-height: 100vh;
+            padding: 20px;
+        }
+        
+        .container {
+            max-width: 1000px;
+            margin: 0 auto;
+        }
+        
+        header {
+            text-align: center;
+            padding: 30px 20px;
+            color: white;
+            animation: fadeInDown 1s ease;
+        }
+        
+        header h1 {
+            font-size: 2.5rem;
+            margin-bottom: 15px;
+            text-shadow: 0 2px 4px rgba(0,0,0,0.2);
+        }
+        
+        header p {
+            font-size: 1.2rem;
+            max-width: 700px;
+            margin: 0 auto;
+            opacity: 0.9;
+        }
+        
+        .card {
+            background: white;
+            border-radius: 15px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.15);
+            overflow: hidden;
+            margin-bottom: 30px;
+            animation: fadeInUp 1s ease;
+        }
+        
+        .card-header {
+            background: #4a69bd;
+            color: white;
+            padding: 20px;
+            display: flex;
+            align-items: center;
+        }
+        
+        .card-header i {
+            font-size: 1.8rem;
+            margin-right: 15px;
+        }
+        
+        .card-body {
+            padding: 25px;
+        }
+        
+        .intro-text {
+            margin-bottom: 25px;
+            font-size: 1.1rem;
+        }
+        
+        .disclaimer {
+            background: #fff8e1;
+            border-left: 4px solid #ffc107;
+            padding: 15px;
+            margin: 20px 0;
+            border-radius: 0 8px 8px 0;
+        }
+        
+        .form-group {
+            margin-bottom: 25px;
+        }
+        
+        label {
+            display: block;
+            margin-bottom: 8px;
+            font-weight: 600;
+            color: #2c3e50;
+        }
+        
+        input[type="text"], select {
+            width: 100%;
+            padding: 12px 15px;
+            border: 2px solid #ddd;
+            border-radius: 8px;
+            font-size: 1rem;
+            transition: border-color 0.3s;
+        }
+        
+        input[type="text"]:focus, select:focus {
+            border-color: #3498db;
+            outline: none;
+            box-shadow: 0 0 0 3px rgba(52, 152, 219, 0.2);
+        }
+        
+        .question-container {
+            margin-bottom: 30px;
+            padding-bottom: 20px;
+            border-bottom: 1px dashed #eee;
+        }
+        
+        .question-text {
+            font-weight: 500;
+            margin-bottom: 15px;
+            font-size: 1.1rem;
+        }
+        
+        .options {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 12px;
+        }
+        
+        .option {
+            display: flex;
+            align-items: center;
+            padding: 12px 15px;
+            background: #f8f9fa;
+            border-radius: 8px;
+            cursor: pointer;
+            transition: all 0.3s;
+            border: 2px solid transparent;
+        }
+        
+        .option:hover {
+            background: #e9f7fe;
+            border-color: #3498db;
+        }
+        
+        .option.selected {
+            background: #d1ecff;
+            border-color: #3498db;
+        }
+        
+        .option input {
+            margin-right: 10px;
+        }
+        
+        .btn {
+            display: inline-block;
+            background: #3498db;
+            color: white;
+            padding: 14px 28px;
+            border: none;
+            border-radius: 8px;
+            font-size: 1.1rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s;
+            text-align: center;
+            width: 100%;
+            margin-top: 10px;
+        }
+        
+        .btn:hover {
+            background: #2980b9;
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(0,0,0,0.1);
+        }
+        
+        .btn:active {
+            transform: translateY(0);
+        }
+        
+        .result-container {
+            display: none;
+            text-align: center;
+            padding: 30px;
+        }
+        
+        .result-score {
+            font-size: 3.5rem;
+            font-weight: 700;
+            color: #e74c3c;
+            margin: 20px 0;
+        }
+        
+        .result-category {
+            font-size: 1.8rem;
+            margin-bottom: 20px;
+            padding: 10px 20px;
+            border-radius: 50px;
+            display: inline-block;
+        }
+        
+        .low-risk { background: #d4edda; color: #155724; }
+        .medium-risk { background: #fff3cd; color: #856404; }
+        .high-risk { background: #f8d7da; color: #721c24; }
+        
+        .result-description {
+            margin: 25px 0;
+            text-align: left;
+            background: #f8f9fa;
+            padding: 20px;
+            border-radius: 10px;
+        }
+        
+        .recommendation {
+            background: #e3f2fd;
+            padding: 20px;
+            border-radius: 10px;
+            margin-top: 25px;
+        }
+        
+        footer {
+            text-align: center;
+            color: white;
+            padding: 20px;
+            font-size: 0.9rem;
+            opacity: 0.8;
+        }
+        
+        @keyframes fadeInUp {
+            from {
+                opacity: 0;
+                transform: translateY(30px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+        
+        @keyframes fadeInDown {
+            from {
+                opacity: 0;
+                transform: translateY(-30px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+        
+        @media (max-width: 768px) {
+            .options {
+                grid-template-columns: 1fr;
+            }
+            
+            header h1 {
+                font-size: 2rem;
+            }
+            
+            .card-body {
+                padding: 20px 15px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <header>
+            <h1><i class="fas fa-brain"></i> 儿童注意力缺陷在线评估工具</h1>
+            <p>基于SNAP-IV量表的初步筛查工具，帮助识别注意力相关问题</p>
+        </header>
+        
+        <main>
+            <div class="card">
+                <div class="card-header">
+                    <i class="fas fa-info-circle"></i>
+                    <h2>评估说明</h2>
+                </div>
+                <div class="card-body">
+                    <div class="intro-text">
+                        <p>本评估工具基于美国精神医学学会《精神障碍诊断与统计手册》(DSM-5)中的ADHD诊断标准，采用SNAP-IV量表设计。</p>
+                        <p>请根据您观察到的孩子在过去6个月内的行为表现进行回答。</p>
+                    </div>
+                    
+                    <div class="disclaimer">
+                        <strong>重要声明：</strong> 本评估结果仅为初步筛查参考，不能作为临床诊断依据。如评估结果显示高风险，建议咨询专业医生进行进一步评估。
+                    </div>
+                    
+                    <form id="assessment-form">
+                        <div class="form-group">
+                            <label for="child-name">孩子姓名</label>
+                            <input type="text" id="child-name" placeholder="请输入孩子姓名" required>
+                        </div>
+                        
+                        <div class="form-group">
+                            <label for="child-age">孩子年龄</label>
+                            <select id="child-age" required>
+                                <option value="">请选择年龄</option>
+                                <option value="3">3岁</option>
+                                <option value="4">4岁</option>
+                                <option value="5">5岁</option>
+                                <option value="6">6岁</option>
+                                <option value="7">7岁</option>
+                                <option value="8">8岁</option>
+                                <option value="9">9岁</option>
+                                <option value="10">10岁</option>
+                                <option value="11">11岁</option>
+                                <option value="12">12岁</option>
+                                <option value="13">13岁</option>
+                                <option value="14">14岁</option>
+                                <option value="15">15岁</option>
+                                <option value="16">16岁</option>
+                                <option value="17">17岁</option>
+                            </select>
+                        </div>
+                        
+                        <div class="form-group">
+                            <label for="observer">评估人身份</label>
+                            <select id="observer" required>
+                                <option value="">请选择您的身份</option>
+                                <option value="parent">家长</option>
+                                <option value="teacher">教师</option>
+                                <option value="self">青少年自评</option>
+                            </select>
+                        </div>
+                        
+                        <h3 style="margin: 30px 0 20px; color: #2c3e50; text-align: center;">注意力不集中症状评估</h3>
+                        
+                        <!-- 注意力不集中问题 -->
+                        <div class="question-container">
+                            <div class="question-text">1. 容易分心，注意力难以持久</div>
+                            <div class="options">
+                                <label class="option">
+                                    <input type="radio" name="q1" value="0" required> 从不
+                                </label>
+                                <label class="option">
+                                    <input type="radio" name="q1" value="1"> 偶尔
+                                </label>
+                                <label class="option">
+                                    <input type="radio" name="q1" value="2"> 经常
+                                </label>
+                                <label class="option">
+                                    <input type="radio" name="q1" value="3"> 总是
+                                </label>
+                            </div>
+                        </div>
+                        
+                        <div class="question-container">
+                            <div class="question-text">2. 经常犯粗心的错误（如作业、工作遗漏细节）</div>
+                            <div class="options">
+                                <label class="option">
+                                    <input type="radio" name="q2" value="0" required> 从不
+                                </label>
+                                <label class="option">
+                                    <input type="radio" name="q2" value="1"> 偶尔
+                                </label>
+                                <label class="option">
+                                    <input type="radio" name="q2" value="2"> 经常
+                                </label>
+                                <label class="option">
+                                    <input type="radio" name="q2" value="3"> 总是
+                                </label>
+                            </div>
+                        </div>
+                        
+                        <div class="question-container">
+                            <div class="question-text">3. 做事有始无终（如开始做作业但不能完成）</div>
+                            <div class="options">
+                                <label class="option">
+                                    <input type="radio" name="q3" value="0" required> 从不
+                                </label>
+                                <label class="option">
+                                    <input type="radio" name="q3" value="1"> 偶尔
+                                </label>
+                                <label class="option">
+                                    <input type="radio" name="q3" value="2"> 经常
+                                </label>
+                                <label class="option">
+                                    <input type="radio" name="q3" value="3"> 总是
+                                </label>
+                            </div>
+                        </div>
+                        
+                        <div class="question-container">
+                            <div class="question-text">4. 难以听从指令完成作业或家务</div>
+                            <div class="options">
+                                <label class="option">
+                                    <input type="radio" name="q4" value="0" required> 从不
+                                </label>
+                                <label class="option">
+                                    <input type="radio" name="q4" value="1"> 偶尔
+                                </label>
+                                <label class="option">
+                                    <input type="radio" name="q4" value="2"> 经常
+                                </label>
+                                <label class="option">
+                                    <input type="radio" name="q4" value="3"> 总是
+                                </label>
+                            </div>
+                        </div>
+                        
+                        <div class="question-container">
+                            <div class="question-text">5. 逃避需要持续用脑的活动（如家庭作业）</div>
+                            <div class="options">
+                                <label class="option">
+                                    <input type="radio" name="q5" value="0" required> 从不
+                                </label>
+                                <label class="option">
+                                    <input type="radio" name="q5" value="1"> 偶尔
+                                </label>
+                                <label class="option">
+                                    <input type="radio" name="q5" value="2"> 经常
+                                </label>
+                                <label class="option">
+                                    <input type="radio" name="q5" value="3"> 总是
+                                </label>
+                            </div>
+                        </div>
+                        
+                        <h3 style="margin: 40px 0 20px; color: #2c3e50; text-align: center;">多动/冲动症状评估</h3>
+                        
+                        <!-- 多动/冲动问题 -->
+                        <div class="question-container">
+                            <div class="question-text">6. 手脚不停，在座位上扭动</div>
+                            <div class="options">
+                                <label class="option">
+                                    <input type="radio" name="q6" value="0" required> 从不
+                                </label>
+                                <label class="option">
+                                    <input type="radio" name="q6" value="1"> 偶尔
+                                </label>
+                                <label class="option">
+                                    <input type="radio" name="q6" value="2"> 经常
+                                </label>
+                                <label class="option">
+                                    <input type="radio" name="q6" value="3"> 总是
+                                </label>
+                            </div>
+                        </div>
+                        
+                        <div class="question-container">
+                            <div class="question-text">7. 在教室或其他场合离开座位</div>
+                            <div class="options">
+                                <label class="option">
+                                    <input type="radio" name="q7" value="0" required> 从不
+                                </label>
+                                <label class="option">
+                                    <input type="radio" name="q7" value="1"> 偶尔
+                                </label>
+                                <label class="option">
+                                    <input type="radio" name="q7" value="2"> 经常
+                                </label>
+                                <label class="option">
+                                    <input type="radio" name="q7" value="3"> 总是
+                                </label>
+                            </div>
+                        </div>
+                        
+                        <div class="question-container">
+                            <div class="question-text">8. 过度奔跑或攀爬（在青少年期表现为主观不安感）</div>
+                            <div class="options">
+                                <label class="option">
+                                    <input type="radio" name="q8" value="0" required> 从不
+                                </label>
+                                <label class="option">
+                                    <input type="radio" name="q8" value="1"> 偶尔
+                                </label>
+                                <label class="option">
+                                    <input type="radio" name="q8" value="2"> 经常
+                                </label>
+                                <label class="option">
+                                    <input type="radio" name="q8" value="3"> 总是
+                                </label>
+                            </div>
+                        </div>
+                        
+                        <div class="question-container">
+                            <div class="question-text">9. 难以安静地玩耍或从事休闲活动</div>
+                            <div class="options">
+                                <label class="option">
+                                    <input type="radio" name="q9" value="0" required> 从不
+                                </label>
+                                <label class="option">
+                                    <input type="radio" name="q9" value="1"> 偶尔
+                                </label>
+                                <label class="option">
+                                    <input type="radio" name="q9" value="2"> 经常
+                                </label>
+                                <label class="option">
+                                    <input type="radio" name="q9" value="3"> 总是
+                                </label>
+                            </div>
+                        </div>
+                        
+                        <div class="question-container">
+                            <div class="question-text">10. 话多，喋喋不休</div>
+                            <div class="options">
+                                <label class="option">
+                                    <input type="radio" name="q10" value="0" required> 从不
+                                </label>
+                                <label class="option">
+                                    <input type="radio" name="q10" value="1"> 偶尔
+                                </label>
+                                <label class="option">
+                                    <input type="radio" name="q10" value="2"> 经常
+                                </label>
+                                <label class="option">
+                                    <input type="radio" name="q10" value="3"> 总是
+                                </label>
+                            </div>
+                        </div>
+                        
+                        <button type="submit" class="btn">
+                            <i class="fas fa-calculator"></i> 计算评估结果
+                        </button>
+                    </form>
+                </div>
+            </div>
+            
+            <div class="card result-container" id="result-section">
+                <div class="card-header">
+                    <i class="fas fa-chart-bar"></i>
+                    <h2>评估结果</h2>
+                </div>
+                <div class="card-body">
+                    <h3 id="result-child-name">孩子姓名</h3>
+                    <div class="result-score" id="result-score">0</div>
+                    <div class="result-category" id="result-category">风险类别</div>
+                    
+                    <div class="result-description">
+                        <p id="result-description-text">评估结果描述将显示在这里...</p>
+                    </div>
+                    
+                    <div class="recommendation">
+                        <h4><i class="fas fa-lightbulb"></i> 专业建议</h4>
+                        <p id="recommendation-text">根据评估结果，这里将显示专业建议...</p>
+                    </div>
+                    
+                    <button class="btn" onclick="window.location.reload()">
+                        <i class="fas fa-redo"></i> 重新评估
+                    </button>
+                </div>
+            </div>
+        </main>
+        
+        <footer>
+            <p>© 2023 儿童注意力缺陷在线评估工具 | 本工具仅作初步筛查参考，不能替代专业医疗诊断</p>
+            <p>如有疑问，请咨询儿科医生或儿童精神科医生</p>
+        </footer>
+    </div>
+
+    <script>
+        // 为选项添加交互效果
+        document.querySelectorAll('.option').forEach(option => {
+            option.addEventListener('click', function() {
+                const radio = this.querySelector('input[type="radio"]');
+                radio.checked = true;
+                
+                // 移除同组其他选项的选中状态
+                const groupName = radio.getAttribute('name');
+                document.querySelectorAll(`input[name="${groupName}"]`).forEach(r => {
+                    r.closest('.option').classList.remove('selected');
+                });
+                
+                // 添加当前选项的选中状态
+                this.classList.add('selected');
+            });
+        });
+        
+        // 处理表单提交
+        document.getElementById('assessment-form').addEventListener('submit', function(e) {
+            e.preventDefault();
+            
+            // 收集答案并计算总分
+            let totalScore = 0;
+            for (let i = 1; i <= 10; i++) {
+                const selectedOption = document.querySelector(`input[name="q${i}"]:checked`);
+                if (selectedOption) {
+                    totalScore += parseInt(selectedOption.value);
+                }
+            }
+            
+            // 获取孩子信息
+            const childName = document.getElementById('child-name').value || "未命名";
+            const childAge = document.getElementById('child-age').value;
+            const observer = document.getElementById('observer').value;
+            
+            // 确定风险类别
+            let category, description, recommendation, categoryClass;
+            
+            if (totalScore <= 10) {
+                category = "低风险";
+                categoryClass = "low-risk";
+                description = "评估结果显示孩子注意力相关问题的风险较低。这表明孩子目前的行为表现可能在正常范围内，但仍需持续关注其发展变化。";
+                recommendation = "建议继续观察孩子的日常行为表现，特别是学习专注度和情绪管理方面。保持规律的作息和健康的生活方式有助于维持良好的注意力水平。如果未来观察到明显变化，可考虑重新评估。";
+            } else if (totalScore <= 20) {
+                category = "中等风险";
+                categoryClass = "medium-risk";
+                description = "评估结果显示孩子可能存在一定程度的注意力相关问题。这些症状虽然尚未达到临床诊断标准，但需要引起关注。";
+                recommendation = "建议密切观察孩子的行为模式，特别是在学校的表现和家庭作业完成情况。可以尝试建立更有结构的日常生活和学习环境。考虑与老师沟通了解在校情况，如有必要可咨询学校心理咨询师。";
+            } else {
+                category = "高风险";
+                categoryClass = "high-risk";
+                description = "评估结果显示孩子存在较明显的注意力相关问题，可能符合ADHD的部分特征。这需要专业人员进行进一步评估。";
+                recommendation = "强烈建议尽快带孩子到儿科、儿童精神科或发育行为科就诊。医生可能会进行更全面的评估，包括临床访谈、行为观察和可能的神经心理测试。早期识别和干预对改善预后非常重要。";
+            }
+            
+            // 更新结果区域
+            document.getElementById('result-child-name').textContent = `评估结果：${childName} (${childAge}岁)`;
+            document.getElementById('result-score').textContent = totalScore;
+            document.getElementById('result-category').textContent = category;
+            document.getElementById('result-category').className = `result-category ${categoryClass}`;
+            document.getElementById('result-description-text').textContent = description;
+            document.getElementById('recommendation-text').textContent = recommendation;
+            
+            // 显示结果区域
+            document.getElementById('result-section').style.display = 'block';
+            
+            // 滚动到结果区域
+            document.getElementById('result-section').scrollIntoView({ behavior: 'smooth' });
+        });
+    </script>
+</body>
+</html>
