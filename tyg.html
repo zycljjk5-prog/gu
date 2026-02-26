@@ -1,0 +1,515 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>TyG 指数计算器 · 胰岛素抵抗评估</title>
+    <style>
+        * {
+            box-sizing: border-box;
+            font-family: system-ui, -apple-system, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
+        }
+        body {
+            background: linear-gradient(145deg, #f0f4f8 0%, #e6ecf3 100%);
+            min-height: 100vh;
+            margin: 0;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            padding: 16px;
+        }
+        .card {
+            background: rgba(255, 255, 255, 0.9);
+            backdrop-filter: blur(10px);
+            -webkit-backdrop-filter: blur(10px);
+            border-radius: 36px;
+            box-shadow: 0 25px 50px -12px rgba(0, 20, 40, 0.35), inset 0 1px 2px rgba(255, 255, 255, 0.6);
+            max-width: 600px;
+            width: 100%;
+            padding: 28px 30px 34px;
+            border: 1px solid rgba(255,255,255,0.5);
+            transition: all 0.2s;
+        }
+        h1 {
+            font-size: 2.1rem;
+            font-weight: 600;
+            margin: 0 0 10px 0;
+            color: #0a2a44;
+            letter-spacing: -0.02em;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+        h1 span {
+            background: #1e3b5c;
+            color: white;
+            font-size: 0.9rem;
+            font-weight: 500;
+            padding: 6px 14px;
+            border-radius: 60px;
+            letter-spacing: 0.3px;
+            background: linear-gradient(135deg, #1e3b5c, #143049);
+            box-shadow: 0 4px 8px rgba(0,20,40,0.2);
+        }
+        .sub {
+            font-size: 1rem;
+            color: #2c4b6b;
+            margin-top: 0px;
+            margin-bottom: 28px;
+            border-left: 4px solid #4f8bb9;
+            padding-left: 18px;
+            background: rgba(79, 139, 185, 0.06);
+            border-radius: 0 20px 20px 0;
+            line-height: 1.5;
+            font-weight: 400;
+        }
+        .sub a {
+            color: #0f2e4a;
+            text-decoration: none;
+            border-bottom: 1px dotted #4f8bb9;
+        }
+        .input-group {
+            margin-bottom: 24px;
+        }
+        label {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            font-weight: 550;
+            font-size: 1.05rem;
+            color: #163a57;
+            margin-bottom: 8px;
+        }
+        label i {
+            font-style: normal;
+            font-size: 0.95rem;
+            color: #4f6f8f;
+            font-weight: 400;
+        }
+        .input-row {
+            display: flex;
+            align-items: center;
+            background: white;
+            border-radius: 24px;
+            border: 1.5px solid #cbd6e3;
+            transition: 0.15s;
+            box-shadow: inset 0 2px 4px rgba(0,0,0,0.02);
+        }
+        .input-row:focus-within {
+            border-color: #2a6b9e;
+            box-shadow: 0 0 0 4px rgba(42,107,158,0.2), inset 0 1px 3px #fff;
+        }
+        .input-row input {
+            flex: 1;
+            padding: 16px 18px;
+            font-size: 1.1rem;
+            border: none;
+            background: transparent;
+            border-radius: 24px;
+            outline: none;
+            font-weight: 500;
+            color: #0a2a44;
+            width: 0; /* flex basis fix */
+        }
+        .input-row input::placeholder {
+            color: #9aafc4;
+            font-weight: 400;
+            font-size: 1rem;
+        }
+        .unit-toggle {
+            display: flex;
+            align-items: center;
+            padding-right: 12px;
+            gap: 6px;
+        }
+        .unit-btn {
+            background: #eef3f9;
+            border: none;
+            padding: 6px 12px;
+            border-radius: 30px;
+            font-size: 0.85rem;
+            font-weight: 600;
+            color: #1d3f5e;
+            cursor: pointer;
+            transition: 0.1s;
+            border: 1px solid transparent;
+        }
+        .unit-btn.active {
+            background: #1e3b5c;
+            color: white;
+            box-shadow: 0 4px 6px -2px rgba(0,40,70,0.3);
+            border-color: #0d263b;
+        }
+        .unit-btn:hover {
+            background: #d6e2f0;
+        }
+        .reference-note {
+            font-size: 0.8rem;
+            color: #546e86;
+            margin-top: 6px;
+            margin-left: 18px;
+        }
+        .action-buttons {
+            display: flex;
+            gap: 16px;
+            margin: 28px 0 22px;
+        }
+        .primary-btn {
+            background: #1e3b5c;
+            color: white;
+            border: none;
+            padding: 16px 32px;
+            border-radius: 50px;
+            font-size: 1.2rem;
+            font-weight: 600;
+            flex: 2;
+            cursor: pointer;
+            box-shadow: 0 10px 18px -8px #143549;
+            transition: all 0.15s;
+            border: 1px solid #2c5a81;
+            letter-spacing: 0.3px;
+        }
+        .primary-btn:hover {
+            background: #254f73;
+            transform: scale(1.02);
+            box-shadow: 0 14px 22px -8px #0f2a40;
+        }
+        .secondary-btn {
+            background: white;
+            color: #1d3f5e;
+            border: 1.5px solid #b2c7de;
+            padding: 16px 20px;
+            border-radius: 50px;
+            font-size: 1.1rem;
+            font-weight: 500;
+            flex: 1;
+            cursor: pointer;
+            transition: 0.1s;
+        }
+        .secondary-btn:hover {
+            background: #ecf3fa;
+            border-color: #7fa0c2;
+        }
+        .result-panel {
+            background: linear-gradient(135deg, #eaf1fa, #dee9f3);
+            border-radius: 28px;
+            padding: 22px 26px;
+            border: 1px solid rgba(255,255,255,0.7);
+            box-shadow: inset 0 1px 5px rgba(255,255,255,0.8), 0 10px 15px -10px #1f3f5a;
+        }
+        .tyg-value {
+            display: flex;
+            align-items: baseline;
+            justify-content: space-between;
+            flex-wrap: wrap;
+            gap: 10px;
+            margin-bottom: 14px;
+        }
+        .tyg-value .label {
+            font-size: 1.3rem;
+            font-weight: 600;
+            color: #0a2a44;
+        }
+        .tyg-number {
+            font-size: 2.8rem;
+            font-weight: 700;
+            background: white;
+            padding: 6px 28px;
+            border-radius: 80px;
+            color: #0f3452;
+            letter-spacing: 1px;
+            box-shadow: 0 4px 12px rgba(33, 66, 99, 0.2);
+            line-height: 1.3;
+            border: 1px solid #c1d5ec;
+        }
+        .interpretation {
+            font-size: 1.25rem;
+            margin: 8px 0 16px 0;
+            padding: 8px 16px;
+            background: #ffffffc9;
+            border-radius: 50px;
+            display: inline-block;
+            font-weight: 550;
+            color: #1d4465;
+        }
+        .quartile-ref {
+            background: #1f3e5c;
+            padding: 16px 18px;
+            border-radius: 20px;
+            color: white;
+            margin-top: 18px;
+            font-size: 0.95rem;
+            box-shadow: inset 0 2px 5px #2d577b, 0 4px 8px #0000001a;
+        }
+        .quartile-ref table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 8px;
+            color: #eaf0f8;
+        }
+        .quartile-ref td {
+            padding: 6px 4px;
+            border-bottom: 1px solid #3f6080;
+        }
+        .quartile-ref td:first-child {
+            font-weight: 600;
+            width: 40%;
+        }
+        .quartile-ref td:last-child {
+            font-family: 'SF Mono', 'Fira Code', monospace;
+        }
+        .footnote {
+            font-size: 0.8rem;
+            margin-top: 18px;
+            color: #476481;
+            text-align: center;
+            border-top: 1px dashed #b1cae2;
+            padding-top: 16px;
+        }
+        .error-message {
+            color: #b13e3e;
+            font-weight: 500;
+            background: #ffe6e6;
+            padding: 6px 16px;
+            border-radius: 30px;
+            display: inline-block;
+            margin-bottom: 10px;
+        }
+    </style>
+</head>
+<body>
+    <div class="card" role="main">
+        <h1>
+            TyG 指数计算器
+            <span>胰岛素抵抗</span>
+        </h1>
+        <div class="sub">
+            <span>⚕️ 基于空腹甘油三酯 & 血糖 · 参考 <a href="#" target="_blank">MDCalc (Kevin Forey 理念)</a></span>
+        </div>
+
+        <!-- 输入区：甘油三酯 -->
+        <div class="input-group">
+            <label>
+                <span>🧪 甘油三酯 (TG)</span>
+                <i>— 空腹静脉血</i>
+            </label>
+            <div class="input-row">
+                <input type="number" id="tgInput" step="any" placeholder="例如: 1.7 或 150" value="1.5">
+                <div class="unit-toggle" id="tgUnitGroup">
+                    <button type="button" class="unit-btn active" data-unit="mmol">mmol/L</button>
+                    <button type="button" class="unit-btn" data-unit="mg">mg/dL</button>
+                </div>
+            </div>
+            <div class="reference-note">🔬 换算: 1 mmol/L ≈ 88.57 mg/dL</div>
+        </div>
+
+        <!-- 输入区：血糖 -->
+        <div class="input-group">
+            <label>
+                <span>🩸 血糖 (Glucose)</span>
+                <i>— 空腹血糖</i>
+            </label>
+            <div class="input-row">
+                <input type="number" id="gluInput" step="any" placeholder="例如: 5.5 或 100" value="5.2">
+                <div class="unit-toggle" id="gluUnitGroup">
+                    <button type="button" class="unit-btn active" data-unit="mmol">mmol/L</button>
+                    <button type="button" class="unit-btn" data-unit="mg">mg/dL</button>
+                </div>
+            </div>
+            <div class="reference-note">🔬 换算: 1 mmol/L = 18.02 mg/dL</div>
+        </div>
+
+        <!-- 操作按钮 -->
+        <div class="action-buttons">
+            <button class="primary-btn" id="calcBtn">📊 计算 TyG 指数</button>
+            <button class="secondary-btn" id="clearBtn">⟲ 重置</button>
+        </div>
+
+        <!-- 结果显示区 -->
+        <div class="result-panel" id="resultPanel">
+            <div class="tyg-value">
+                <span class="label">TyG 指数</span>
+                <span class="tyg-number" id="tygDisplay">—</span>
+            </div>
+            <div id="interpretBox" class="interpretation"></div>
+
+            <!-- 参考四分位 (基于高校教师研究) -->
+            <div class="quartile-ref">
+                <div style="display: flex; gap: 6px; align-items: center; margin-bottom: 8px;">
+                    <span style="font-size:1.2rem;">📊</span> 
+                    <span style="font-weight: 600;">参考四分位数 (高校教师人群)</span>
+                </div>
+                <table>
+                    <tr><td>总人群 Q1 (低)</td><td>&lt; 6.55</td><td>总人群 Q4 (高)</td><td>≥ 7.29</td></tr>
+                    <tr><td>男性 Q1</td><td>&lt; 6.74</td><td>男性 Q4</td><td>≥ 7.47</td></tr>
+                    <tr><td>女性 Q1</td><td>&lt; 6.43</td><td>女性 Q4</td><td>≥ 7.12</td></tr>
+                </table>
+                <div style="font-size:0.75rem; margin-top: 10px; opacity:0.9;">数值越高通常提示胰岛素抵抗可能性越大，具体需结合临床。</div>
+            </div>
+        </div>
+        <div class="footnote">
+            ⚠️ 本工具仅供医学参考，不替代临床诊断。公式：TyG = Ln[TG(mg/dL) × Glu(mg/dL)] / 2
+        </div>
+    </div>
+
+    <script>
+        (function() {
+            // DOM elements
+            const tgInput = document.getElementById('tgInput');
+            const gluInput = document.getElementById('gluInput');
+            const tgUnitBtns = document.querySelectorAll('#tgUnitGroup .unit-btn');
+            const gluUnitBtns = document.querySelectorAll('#gluUnitGroup .unit-btn');
+            const calcBtn = document.getElementById('calcBtn');
+            const clearBtn = document.getElementById('clearBtn');
+            const tygDisplay = document.getElementById('tygDisplay');
+            const interpretBox = document.getElementById('interpretBox');
+
+            // State
+            let tgUnit = 'mmol';   // 'mmol' or 'mg'
+            let gluUnit = 'mmol';
+
+            // 激活样式更新
+            function updateUnitUI() {
+                tgUnitBtns.forEach(btn => {
+                    const unit = btn.dataset.unit;
+                    if (unit === tgUnit) btn.classList.add('active');
+                    else btn.classList.remove('active');
+                });
+                gluUnitBtns.forEach(btn => {
+                    const unit = btn.dataset.unit;
+                    if (unit === gluUnit) btn.classList.add('active');
+                    else btn.classList.remove('active');
+                });
+            }
+
+            // 监听单位切换 (甘油三酯)
+            tgUnitBtns.forEach(btn => {
+                btn.addEventListener('click', () => {
+                    tgUnit = btn.dataset.unit;
+                    updateUnitUI();
+                });
+            });
+            // 血糖单位切换
+            gluUnitBtns.forEach(btn => {
+                btn.addEventListener('click', () => {
+                    gluUnit = btn.dataset.unit;
+                    updateUnitUI();
+                });
+            });
+
+            // 换算至 mg/dL
+            function convertToMgDL(value, unit, type) {
+                if (unit === 'mmol') {
+                    if (type === 'tg') return value * 88.57;   // 甘油三酯系数
+                    if (type === 'glu') return value * 18.02;  // 葡萄糖系数
+                }
+                return value; // 已经是 mg/dL
+            }
+
+            // 计算TyG
+            function calculateTyG() {
+                // 获取原始输入
+                let tgRaw = parseFloat(tgInput.value);
+                let gluRaw = parseFloat(gluInput.value);
+
+                // 校验
+                if (isNaN(tgRaw) || tgRaw <= 0) {
+                    interpretBox.innerHTML = '<span class="error-message">❌ 请输入有效的甘油三酯 (>0)</span>';
+                    tygDisplay.textContent = '—';
+                    return false;
+                }
+                if (isNaN(gluRaw) || gluRaw <= 0) {
+                    interpretBox.innerHTML = '<span class="error-message">❌ 请输入有效的血糖 (>0)</span>';
+                    tygDisplay.textContent = '—';
+                    return false;
+                }
+
+                // 转换为mg/dL
+                const tgMg = convertToMgDL(tgRaw, tgUnit, 'tg');
+                const gluMg = convertToMgDL(gluRaw, gluUnit, 'glu');
+
+                // 计算 TyG = Ln(tgMg * gluMg / 2) ? 等等 —— 公式是 Ln[TG(mg/dL) × GLU(mg/dL)] / 2
+                // 常见写法: Ln( (TG * GLU)/2 ) ？ 但根据MDCalc和原始文献：TyG指数 = Ln[空腹甘油三酯(mg/dL) × 空腹血糖(mg/dL)] / 2
+                // 注意：多数标准公式是 Ln[TG(mg/dL) * GLU(mg/dL)] / 2 ，没有除以2在乘积内部。
+                // 我们严格遵循: TyG = Ln(TG(mg/dL) * GLU(mg/dL)) / 2
+                const product = tgMg * gluMg;
+                if (product <= 0) {
+                    interpretBox.innerHTML = '<span class="error-message">❌ 乘积必须为正数</span>';
+                    tygDisplay.textContent = '—';
+                    return false;
+                }
+
+                const tyg = Math.log(product) / 2;   // 自然对数除以2
+
+                if (!isFinite(tyg)) {
+                    interpretBox.innerHTML = '<span class="error-message">❌ 计算错误，数值过大或过小</span>';
+                    tygDisplay.textContent = '—';
+                    return false;
+                }
+
+                // 保留三位小数显示
+                tygDisplay.textContent = tyg.toFixed(3);
+
+                // 简单解释（结合四分位模糊提示）
+                let interpretation = '';
+                if (tyg < 6.4) interpretation = '🟢 TyG 较低 (通常提示胰岛素敏感性较好)';
+                else if (tyg >= 6.4 && tyg < 6.9) interpretation = '🟡 TyG 中等 (可能存在胰岛素抵抗风险)';
+                else if (tyg >= 6.9 && tyg < 7.3) interpretation = '🟠 TyG 偏高 (胰岛素抵抗可能性增加)';
+                else if (tyg >= 7.3) interpretation = '🔴 TyG 很高 (强烈提示胰岛素抵抗，请进一步评估)';
+                else interpretation = 'TyG 指数计算完成';
+
+                // 附加单位信息
+                const tgUnitShow = tgUnit === 'mmol' ? 'mmol/L' : 'mg/dL';
+                const gluUnitShow = gluUnit === 'mmol' ? 'mmol/L' : 'mg/dL';
+                interpretation += `<span style="font-size:0.85rem; display:block; margin-top:5px; font-weight:400; color:#2b4d6f;">⚕️ 基于 TG: ${tgRaw.toFixed(2)} ${tgUnitShow} | 血糖: ${gluRaw.toFixed(2)} ${gluUnitShow}</span>`;
+
+                interpretBox.innerHTML = interpretation;
+                return true;
+            }
+
+            // 重置所有字段
+            function resetAll() {
+                tgInput.value = '1.5';
+                gluInput.value = '5.2';
+                tgUnit = 'mmol';
+                gluUnit = 'mmol';
+                updateUnitUI();
+                tygDisplay.textContent = '—';
+                interpretBox.innerHTML = '';   // 清空解释
+            }
+
+            // 绑定计算按钮
+            calcBtn.addEventListener('click', (e) => {
+                e.preventDefault();
+                calculateTyG();
+            });
+
+            // 绑定重置按钮
+            clearBtn.addEventListener('click', (e) => {
+                e.preventDefault();
+                resetAll();
+            });
+
+            // 键盘支持：回车计算
+            [tgInput, gluInput].forEach(input => {
+                input.addEventListener('keypress', (e) => {
+                    if (e.key === 'Enter') {
+                        e.preventDefault();
+                        calcBtn.click();
+                    }
+                });
+            });
+
+            // 初始时稍微展示一次默认计算（但不显示interpret？为了友好，默认显示一条提示）
+            window.addEventListener('load', () => {
+                // 初次自动计算，让显示有值
+                if (tgInput.value && gluInput.value) {
+                    calculateTyG();
+                } else {
+                    // 如果有空，就先清空
+                }
+            });
+        })();
+    </script>
+</body>
+</html>
