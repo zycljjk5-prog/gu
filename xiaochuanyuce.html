@@ -165,4 +165,352 @@
             color: #043349;
             font-weight: 500;
         }
-   
+        .progress-container {
+            background: #cbdde8;
+            height: 1rem;
+            border-radius: 30px;
+            overflow: hidden;
+            margin: 0.8rem 0 1.5rem;
+            width: 100%;
+        }
+        .progress-bar {
+            height: 100%;
+            width: 0%;
+            background: linear-gradient(90deg, #3da2c6, #12688f);
+            border-radius: 30px;
+            transition: width 0.25s ease;
+        }
+        .suggestion-box {
+            background: #ffffffc4;
+            border-radius: 1.5rem;
+            padding: 1.3rem 1.5rem;
+            border-left: 5px solid #1f7ca0;
+            color: #153e53;
+            font-size: 1rem;
+            line-height: 1.5;
+            box-shadow: 0 6px 10px rgba(0,0,0,0.02);
+        }
+        .footnote {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-top: 1.2rem;
+            color: #2b6885;
+            font-size: 0.9rem;
+            flex-wrap: wrap;
+            gap: 0.5rem;
+        }
+        .btn-reset {
+            background: none;
+            border: 1.5px solid #22749e;
+            color: #22749e;
+            padding: 0.4rem 1.4rem;
+            border-radius: 40px;
+            font-weight: 500;
+            font-size: 0.95rem;
+            cursor: pointer;
+            transition: 0.15s;
+        }
+        .btn-reset:hover {
+            background: #22749e10;
+            border-color: #0b4b6b;
+            color: #0b4b6b;
+        }
+        .ref {
+            color: #567e99;
+            font-size: 0.8rem;
+        }
+        hr {
+            border: none;
+            border-top: 2px dotted #a2c5da;
+            margin: 1rem 0;
+        }
+        .icon {
+            font-size: 1.3rem;
+        }
+    </style>
+</head>
+<body>
+<div class="card">
+    <h1>
+        ⚕️ 儿童哮喘风险自评
+        <span>mAPI 参照</span>
+    </h1>
+    <div class="subhead">根据改良哮喘预测指数(mAPI)及最新研究 · 点选以下危险因素</div>
+
+    <!-- 快速提醒 -->
+    <div class="badge-info">
+        <span class="icon">🔬</span> 高频因素 · 住院史/鼻病毒感染/过敏/烟草等权重最高
+    </div>
+
+    <!-- 危险因素分组 ================================= -->
+    <div class="section">
+        <div class="section-title">
+            <span>🧬 个体与遗传</span>
+        </div>
+        <div class="factor-grid">
+            <div class="factor-item">
+                <label>
+                    <input type="checkbox" class="risk-check" data-factor="gen_parent" data-weight="4.0">
+                    一级亲属哮喘史 (父母/兄弟姐妹哮喘)
+                </label>
+                <span class="factor-tag">OR≈4.07</span>
+            </div>
+            <div class="factor-item">
+                <label>
+                    <input type="checkbox" class="risk-check" data-factor="gen_male" data-weight="1.3">
+                    男性
+                </label>
+                <span class="factor-tag">风险略高</span>
+            </div>
+            <div class="factor-item">
+                <label>
+                    <input type="checkbox" class="risk-check" data-factor="gen_eczema" data-weight="2.2">
+                    个人湿疹/特应性皮炎
+                </label>
+                <span class="factor-tag">mAPI主要标准</span>
+            </div>
+            <div class="factor-item">
+                <label>
+                    <input type="checkbox" class="risk-check" data-factor="gen_ige" data-weight="1.8">
+                    嗜酸性粒细胞增高 / 血清IgE升高
+                </label>
+                <span class="factor-tag">次要标准</span>
+            </div>
+        </div>
+    </div>
+
+    <div class="section">
+        <div class="section-title">
+            <span>🦠 感染与过敏</span>
+        </div>
+        <div class="factor-grid">
+            <div class="factor-item">
+                <label>
+                    <input type="checkbox" class="risk-check" data-factor="inf_rv" data-weight="4.5">
+                    婴儿期鼻病毒(RV)感染住院
+                </label>
+                <span class="factor-tag">OR≈4.55</span>
+            </div>
+            <div class="factor-item">
+                <label>
+                    <input type="checkbox" class="risk-check" data-factor="inf_mp" data-weight="2.4">
+                    肺炎支原体(MP)感染史
+                </label>
+                <span class="factor-tag">中重度发作风险</span>
+            </div>
+            <div class="factor-item">
+                <label>
+                    <input type="checkbox" class="risk-check" data-factor="inf_food" data-weight="2.8">
+                    食物过敏 (经医生诊断)
+                </label>
+                <span class="factor-tag">mAPI次要标准</span>
+            </div>
+            <div class="factor-item">
+                <label>
+                    <input type="checkbox" class="risk-check" data-factor="inf_rhinitis" data-weight="2.1">
+                    过敏性鼻炎
+                </label>
+                <span class="factor-tag">小气道功能障碍关联</span>
+            </div>
+        </div>
+    </div>
+
+    <div class="section">
+        <div class="section-title">
+            <span>🌫️ 环境与围产期</span>
+        </div>
+        <div class="factor-grid">
+            <div class="factor-item">
+                <label>
+                    <input type="checkbox" class="risk-check" data-factor="env_smoke" data-weight="3.2">
+                    被动吸烟 (产前或产后二手烟)
+                </label>
+                <span class="factor-tag">明确高危</span>
+            </div>
+            <div class="factor-item">
+                <label>
+                    <input type="checkbox" class="risk-check" data-factor="env_preterm" data-weight="1.7">
+                    早产 / 低出生体重
+                </label>
+                <span class="factor-tag">OR↑</span>
+            </div>
+            <div class="factor-item">
+                <label>
+                    <input type="checkbox" class="risk-check" data-factor="env_csection" data-weight="1.3">
+                    剖宫产分娩
+                </label>
+                <span class="factor-tag">轻微风险</span>
+            </div>
+            <div class="factor-item">
+                <label>
+                    <input type="checkbox" class="risk-check" data-factor="env_pollution" data-weight="1.6">
+                    高污染/潮湿霉变环境
+                </label>
+                <span class="factor-tag">触发因素</span>
+            </div>
+        </div>
+    </div>
+
+    <div class="section">
+        <div class="section-title">
+            <span>🏥 临床病史与模型特征</span>
+        </div>
+        <div class="factor-grid">
+            <div class="factor-item">
+                <label>
+                    <input type="checkbox" class="risk-check" data-factor="clinic_hosp" data-weight="3.9">
+                    近期因喘息住院史
+                </label>
+                <span class="factor-tag">XGBoost 高贡献</span>
+            </div>
+            <div class="factor-item">
+                <label>
+                    <input type="checkbox" class="risk-check" data-factor="clinic_freq" data-weight="2.7">
+                    频繁用药 (每月>1次支气管扩张剂)
+                </label>
+                <span class="factor-tag">哮喘控制不佳</span>
+            </div>
+            <div class="factor-item">
+                <label>
+                    <input type="checkbox" class="risk-check" data-factor="clinic_antibio" data-weight="1.4">
+                    早期反复使用抗生素
+                </label>
+                <span class="factor-tag">可能相关</span>
+            </div>
+            <div class="factor-item">
+                <label>
+                    <input type="checkbox" class="risk-check" data-factor="clinic_age" data-weight="1.5">
+                    年龄>2岁且反复喘息
+                </label>
+                <span class="factor-tag">学龄前风险</span>
+            </div>
+        </div>
+    </div>
+
+    <!-- 合计与动态评估 -->
+    <div class="risk-summary" id="riskSummary">
+        <div class="risk-level">
+            <div class="risk-badge" id="riskLevelLabel">低风险</div>
+            <div class="risk-desc" id="riskDescription">未见明显高危因素</div>
+        </div>
+        <div class="progress-container">
+            <div class="progress-bar" id="riskProgressBar" style="width: 0%;"></div>
+        </div>
+        <div class="suggestion-box" id="suggestionText">
+            ✅ 目前评估风险较低。保持良好环境，避免烟草，按计划随访。
+        </div>
+    </div>
+
+    <div class="footnote">
+        <div class="ref">* 权重基于mAPI、OR值及文献综合赋值，仅供参考，不能替代临床诊断。</div>
+        <button class="btn-reset" id="resetBtn">↻ 全部重置</button>
+    </div>
+    <hr>
+    <div style="font-size:0.8rem; color:#3f6b85; display: flex; gap: 1rem; flex-wrap: wrap;">
+        <span>🔍 主要标准：父母哮喘、湿疹、吸入过敏原致敏</span>
+        <span>🔍 次要标准：食物过敏、嗜酸粒细胞增多、喘息无关感冒</span>
+    </div>
+</div>
+
+<script>
+    (function() {
+        // 获取所有复选框
+        const checkboxes = document.querySelectorAll('.risk-check');
+        const riskLevelLabel = document.getElementById('riskLevelLabel');
+        const riskDescription = document.getElementById('riskDescription');
+        const riskProgressBar = document.getElementById('riskProgressBar');
+        const suggestionText = document.getElementById('suggestionText');
+        const resetBtn = document.getElementById('resetBtn');
+
+        // 权重配置(可从data-weight读取，但也预设便于展示)
+        // 但实际我们从data-weight取
+
+        // 风险分级阈值 (总加权分)
+        const LOW_THRESHOLD = 4.0;
+        const MODERATE_THRESHOLD = 8.5;
+        // 高风险 > 8.5
+
+        // 更新风险评估
+        function updateRisk() {
+            let totalScore = 0;
+            checkboxes.forEach(cb => {
+                if (cb.checked) {
+                    const weight = parseFloat(cb.getAttribute('data-weight') || '1.0');
+                    totalScore += weight;
+                }
+            });
+
+            // 保留一位小数显示
+            const displayScore = totalScore.toFixed(1);
+
+            // 风险等级
+            let level = '低风险';
+            let desc = '';
+            let suggestion = '';
+
+            if (totalScore < LOW_THRESHOLD) {
+                level = '低风险';
+                desc = '风险因素较少';
+                suggestion = '✅ 目前评估风险较低。保持良好环境，避免烟草，注意营养，按计划随访。若有反复喘息及时记录。';
+            } else if (totalScore >= LOW_THRESHOLD && totalScore < MODERATE_THRESHOLD) {
+                level = '中风险';
+                desc = '存在部分高危因素';
+                suggestion = '⚠️ 存在中等风险信号。建议儿科呼吸专科评估，考虑过敏原检测，规避烟草及污染，观察有无感冒后喘息。';
+            } else {
+                level = '高风险';
+                desc = '多项高危因素叠加';
+                suggestion = '🔴 风险偏高，尤其合并遗传、感染或住院史。强烈建议儿童呼吸专科就诊，可能需预防性用药或进一步检查（肺功能、过敏评估）。';
+            }
+
+            // 特殊极端情况
+            if (totalScore > 18) {
+                suggestion = '❗ 非常多的危险因素集中，请立即咨询小儿呼吸科医生，进行系统干预。';
+            }
+
+            // 更新UI
+            riskLevelLabel.innerText = level;
+            riskDescription.innerText = desc + ' (加权分 ' + displayScore + ')';
+
+            // 进度条 最大按20分封顶，但稍微弹性，设定max=20
+            let percent = Math.min((totalScore / 20) * 100, 100);
+            riskProgressBar.style.width = percent + '%';
+
+            // 修改背景颜色根据风险等级微调（可选）
+            const summaryDiv = document.getElementById('riskSummary');
+            if (totalScore >= MODERATE_THRESHOLD) {
+                summaryDiv.style.background = 'linear-gradient(120deg, #fee9e7, #fadbd6)';
+            } else if (totalScore >= LOW_THRESHOLD) {
+                summaryDiv.style.background = 'linear-gradient(120deg, #fff4dd, #feefcf)';
+            } else {
+                summaryDiv.style.background = 'linear-gradient(120deg, #edf5fa, #ddecf5)';
+            }
+
+            // 更新建议
+            suggestionText.innerText = suggestion;
+        }
+
+        // 为每个复选框绑定change事件
+        checkboxes.forEach(cb => {
+            cb.addEventListener('change', updateRisk);
+        });
+
+        // 重置所有复选框
+        resetBtn.addEventListener('click', function() {
+            checkboxes.forEach(cb => {
+                cb.checked = false;
+            });
+            updateRisk();  // 重新计算
+        });
+
+        // 初始化一次(无选中时)
+        updateRisk();
+
+        // 附加小优化：双击标签偶尔可能不触发? change已够。
+        // 若需要全清除，reset完美。
+    })();
+</script>
+<!-- 说明：权重设计体现了不同因素对哮喘预测的贡献，例如一级亲属哮喘史权重4.0(OR≈4.07)、鼻病毒感染4.5(≈4.55)、住院史3.9，反映它们较强的预测能力。
+     改良哮喘预测指数(mAPI)逻辑隐含在主要/次要因素组合，但本工具使用加权求和以方便展示，>8.5提示高风险。 -->
+</body>
+</html>
