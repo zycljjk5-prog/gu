@@ -1,0 +1,621 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>儿童多动症 SNAP-IV 专业评定量表 · 父母/教师版</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Inter', 'Segoe UI', Roboto, system-ui, sans-serif;
+        }
+
+        body {
+            background: #f5f9ff;
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            padding: 2rem 1.5rem;
+        }
+
+        .card {
+            max-width: 1100px;
+            width: 100%;
+            background: rgba(255,255,255,0.9);
+            backdrop-filter: blur(8px);
+            -webkit-backdrop-filter: blur(8px);
+            border-radius: 48px;
+            box-shadow: 0 30px 50px -20px rgba(18, 52, 77, 0.3), 0 10px 20px -8px rgba(0,20,40,0.1);
+            padding: 2.5rem 2.2rem;
+            border: 1px solid rgba(255, 255, 255, 0.6);
+        }
+
+        /* 头部机构标识 */
+        .header-brand {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            margin-bottom: 1.8rem;
+            flex-wrap: wrap;
+            gap: 1rem;
+        }
+
+        .badge-clinic {
+            background: #1d4e6f;
+            color: white;
+            font-weight: 600;
+            font-size: 0.85rem;
+            padding: 0.4rem 1.3rem;
+            border-radius: 30px;
+            letter-spacing: 0.4px;
+            box-shadow: 0 6px 12px rgba(20,67,102,0.25);
+            border: 1px solid rgba(255,255,255,0.3);
+        }
+
+        .badge-version {
+            background: #e1eaf1;
+            color: #1d3f5c;
+            padding: 0.4rem 1.3rem;
+            border-radius: 30px;
+            font-size: 0.9rem;
+            font-weight: 500;
+        }
+
+        h1 {
+            font-size: 2.2rem;
+            font-weight: 650;
+            color: #0b2f47;
+            letter-spacing: -0.02em;
+            line-height: 1.2;
+            margin-bottom: 0.25rem;
+        }
+
+        .sub-head {
+            display: flex;
+            flex-wrap: wrap;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 2rem;
+            border-bottom: 2px dashed #b6ccda;
+            padding-bottom: 1.2rem;
+        }
+
+        .info-note {
+            background: #f0f6fb;
+            border-radius: 18px;
+            padding: 0.7rem 1.5rem;
+            display: flex;
+            gap: 1.8rem;
+            flex-wrap: wrap;
+            font-size: 0.95rem;
+            color: #1e4a6b;
+            box-shadow: inset 0 2px 4px rgba(0,0,0,0.02);
+        }
+
+        .info-note span {
+            display: flex;
+            align-items: center;
+            gap: 6px;
+        }
+
+        .info-note i {
+            font-style: normal;
+            background: #c5d9e9;
+            width: 24px;
+            height: 24px;
+            border-radius: 30px;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: 700;
+            color: #0b2f47;
+        }
+
+        .rater-toggle {
+            background: white;
+            border-radius: 100px;
+            padding: 0.3rem;
+            border: 1px solid #cbdae6;
+            display: inline-flex;
+            box-shadow: 0 2px 6px rgba(0,0,0,0.03);
+        }
+
+        .rater-btn {
+            padding: 0.5rem 1.5rem;
+            border-radius: 40px;
+            border: none;
+            background: transparent;
+            font-weight: 600;
+            font-size: 0.9rem;
+            color: #395f7a;
+            cursor: pointer;
+            transition: 0.15s;
+        }
+
+        .rater-btn.active {
+            background: #1d4e6f;
+            color: white;
+            box-shadow: 0 4px 8px rgba(23,75,115,0.3);
+        }
+
+        /* 量表说明 */
+        .scale-intro {
+            background: #e5f0fa;
+            padding: 1.2rem 1.8rem;
+            border-radius: 24px;
+            margin-bottom: 2.5rem;
+            color: #103a51;
+            border-left: 6px solid #3978a8;
+            font-size: 1rem;
+            line-height: 1.5;
+        }
+
+        .grid-header {
+            display: grid;
+            grid-template-columns: 4fr 0.8fr 0.8fr 0.8fr 0.8fr 0.8fr;
+            background: #1d3b51;
+            color: white;
+            padding: 0.9rem 1.2rem;
+            border-radius: 60px 60px 20px 20px;
+            font-weight: 600;
+            font-size: 0.9rem;
+            text-align: center;
+            margin-bottom: 0.8rem;
+            box-shadow: 0 6px 12px rgba(0,20,40,0.2);
+            border: 1px solid #5681a2;
+        }
+
+        .grid-header div:first-child {
+            text-align: left;
+        }
+
+        /* 题目行 */
+        .question-item {
+            display: grid;
+            grid-template-columns: 4fr 0.8fr 0.8fr 0.8fr 0.8fr 0.8fr;
+            align-items: center;
+            padding: 0.9rem 1.2rem;
+            background: #ffffffd4;
+            border-radius: 40px;
+            margin: 0.5rem 0;
+            box-shadow: 0 2px 6px rgba(0,0,0,0.02);
+            transition: 0.1s ease;
+            border: 1px solid transparent;
+        }
+
+        .question-item:hover {
+            border-color: #acc9e0;
+            background: white;
+            box-shadow: 0 6px 14px rgba(57, 104, 142, 0.08);
+        }
+
+        .q-text {
+            font-weight: 500;
+            color: #1b3b4f;
+            font-size: 1rem;
+            padding-right: 0.5rem;
+        }
+
+        .option-btn {
+            width: 44px;
+            height: 44px;
+            border-radius: 60px;
+            border: 2px solid #c2d6e8;
+            background: white;
+            font-weight: 600;
+            font-size: 1rem;
+            color: #1c4c6e;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin: 0 auto;
+            transition: 0.1s;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.02);
+        }
+
+        .option-btn.selected {
+            background: #1d4e6f;
+            border-color: #1d4e6f;
+            color: white;
+            box-shadow: 0 4px 10px rgba(23,75,115,0.4);
+        }
+
+        .option-btn:hover {
+            border-color: #3978a8;
+            transform: scale(1.02);
+        }
+
+        /* 维度分隔提示 */
+        .dimension-break {
+            display: grid;
+            grid-template-columns: 4fr 0.8fr 0.8fr 0.8fr 0.8fr 0.8fr;
+            align-items: center;
+            margin: 1.5rem 0 0.8rem;
+            background: transparent;
+        }
+
+        .dim-tag {
+            background: #d6e3f0;
+            color: #1b4762;
+            padding: 0.3rem 1.2rem;
+            border-radius: 40px;
+            font-weight: 600;
+            font-size: 0.85rem;
+            letter-spacing: 0.3px;
+            width: fit-content;
+            border: 1px solid #a1bed6;
+        }
+
+        .foot-note {
+            font-size: 0.8rem;
+            color: #576e82;
+            margin-top: 0.3rem;
+            margin-left: 1.2rem;
+        }
+
+        /* 结果面板 */
+        .results-panel {
+            margin-top: 2.5rem;
+            background: #e2edf9;
+            border-radius: 40px;
+            padding: 2rem 2rem;
+            border: 1px solid white;
+            box-shadow: inset 0 1px 4px rgba(255,255,255,0.8), 0 10px 20px rgba(29, 62, 88, 0.1);
+        }
+
+        .scores-row {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 1.8rem 3rem;
+            align-items: center;
+            justify-content: space-between;
+        }
+
+        .score-item {
+            background: white;
+            border-radius: 70px;
+            padding: 0.9rem 2rem 0.9rem 2.2rem;
+            box-shadow: 0 6px 14px rgba(40,70,100,0.15);
+            border: 1px solid #cfdeed;
+            min-width: 170px;
+        }
+
+        .score-label {
+            font-size: 0.9rem;
+            color: #1b4a6b;
+            text-transform: uppercase;
+            letter-spacing: 0.4px;
+            font-weight: 500;
+        }
+
+        .score-number {
+            font-size: 2.6rem;
+            font-weight: 700;
+            color: #0b2f47;
+            line-height: 1.2;
+        }
+
+        .score-avg {
+            font-size: 1.1rem;
+            color: #3978a8;
+            font-weight: 500;
+        }
+
+        .interpret-box {
+            margin-top: 2rem;
+            background: #ffffffd6;
+            border-radius: 40px;
+            padding: 1.6rem 2.2rem;
+            border-left: 10px solid #1d4e6f;
+            font-size: 1.1rem;
+            line-height: 1.6;
+            color: #103a51;
+            font-weight: 500;
+        }
+
+        .interpret-box small {
+            font-weight: 400;
+            font-size: 0.9rem;
+            color: #476f8c;
+            display: block;
+            margin-top: 0.5rem;
+        }
+
+        .action-buttons {
+            display: flex;
+            gap: 1.2rem;
+            margin-top: 2rem;
+            flex-wrap: wrap;
+        }
+
+        .btn-primary {
+            background: #1d4e6f;
+            border: none;
+            color: white;
+            padding: 1rem 2.8rem;
+            border-radius: 60px;
+            font-weight: 600;
+            font-size: 1.1rem;
+            cursor: pointer;
+            box-shadow: 0 10px 16px rgba(22,75,120,0.3);
+            transition: 0.1s;
+            border: 1px solid #6893b5;
+        }
+
+        .btn-primary:hover {
+            background: #235f85;
+            transform: scale(1.02);
+        }
+
+        .btn-secondary {
+            background: white;
+            border: 2px solid #1d4e6f;
+            color: #1d4e6f;
+            padding: 1rem 2.8rem;
+            border-radius: 60px;
+            font-weight: 600;
+            font-size: 1.1rem;
+            cursor: pointer;
+            transition: 0.1s;
+        }
+
+        .btn-secondary:hover {
+            background: #e1eefb;
+        }
+
+        .footnote-clinical {
+            margin-top: 1.5rem;
+            font-size: 0.85rem;
+            color: #4f677b;
+            text-align: center;
+            border-top: 1px solid #c2d4e5;
+            padding-top: 1.2rem;
+        }
+    </style>
+</head>
+<body>
+<div class="card">
+    <!-- 头部 -->
+    <div class="header-brand">
+        <div class="badge-clinic">🧠 儿童发育行为中心 · 专业版 SNAP-IV</div>
+        <div class="badge-version">父母/教师用 ·  DSM-5 一致</div>
+    </div>
+
+    <h1>注意缺陷/多动障碍评定量表</h1>
+    <!-- 副标题与评定者切换 -->
+    <div class="sub-head">
+        <div class="info-note">
+            <span><i>①</i> 注意力不集中 (1-9)</span>
+            <span><i>②</i> 多动/冲动 (10-18)</span>
+            <span><i>👤</i> 基于过去一周行为</span>
+        </div>
+        <div class="rater-toggle" id="raterToggle">
+            <button class="rater-btn active" id="raterParent">👪 父母评定</button>
+            <button class="rater-btn" id="raterTeacher">🏫 教师评定</button>
+        </div>
+    </div>
+
+    <!-- 简要说明 -->
+    <div class="scale-intro" id="raterHint">
+        请根据您过去一周对孩子的观察，选择最符合的频率。0=完全没有，1=偶尔，2=经常，3=非常频繁。
+    </div>
+
+    <!-- 量表表头 -->
+    <div class="grid-header">
+        <div>观察项目</div>
+        <div>0</div>
+        <div>1</div>
+        <div>2</div>
+        <div>3</div>
+        <div></div> <!-- 占位对齐，无妨 -->
+    </div>
+
+    <!-- 题目容器 -->
+    <div id="questionsContainer"></div>
+
+    <!-- 结果区域 -->
+    <div class="results-panel" id="resultsPanel">
+        <div class="scores-row">
+            <div class="score-item">
+                <div class="score-label">注意力不集中</div>
+                <span class="score-number" id="inattentionScore">0</span><span class="score-avg"> /27</span>
+            </div>
+            <div class="score-item">
+                <div class="score-label">多动/冲动</div>
+                <span class="score-number" id="hyperScore">0</span><span class="score-avg"> /27</span>
+            </div>
+            <div class="score-item">
+                <div class="score-label">总分</div>
+                <span class="score-number" id="totalScore">0</span><span class="score-avg"> /54</span>
+            </div>
+        </div>
+        <div class="interpret-box" id="interpretation">
+            请完成所有题目以查看临床提示。
+        </div>
+        <div class="action-buttons">
+            <button class="btn-primary" id="calculateBtn">更新评分与解读</button>
+            <button class="btn-secondary" id="resetBtn">重置所有选项</button>
+        </div>
+    </div>
+
+    <div class="footnote-clinical">
+        ⚕️ SNAP-IV 基于 DSM-5 标准，仅作为科研与初步筛查工具，不能替代临床诊断。建议由儿科或精神科医生综合评估。
+    </div>
+</div>
+
+<script>
+    (function() {
+        // ----- 题目数据 -----
+        const questions = [
+            // 注意力不集中 1-9
+            "1. 经常无法密切关注细节，或在作业、工作中粗心犯错",
+            "2. 经常难以保持注意力（在任务或活动中）",
+            "3. 经常似乎听不见别人直接对他/她说话",
+            "4. 经常不遵循指示，无法完成作业、家务或职责",
+            "5. 经常难以组织任务和活动",
+            "6. 经常逃避、不喜欢或不愿从事需要持续脑力的任务",
+            "7. 经常丢失任务或活动所需物品（如玩具、作业、笔）",
+            "8. 经常容易受外界刺激分心",
+            "9. 经常在日常活动中健忘",
+            // 多动冲动 10-18
+            "10. 经常手脚动个不停或在座位上扭动",
+            "11. 经常在需要保持坐位的场合离开座位",
+            "12. 经常在不适宜的场合奔跑或爬上爬下（青少年可能仅主观坐立不安）",
+            "13. 经常无法安静地玩耍或从事休闲活动",
+            "14. 经常‘忙个不停’，好像‘被发动机驱动’",
+            "15. 经常说话过多",
+            "16. 经常在问题未说完时脱口回答",
+            "17. 经常难以等待轮流",
+            "18. 经常打断或侵扰他人（如插入谈话或游戏）"
+        ];
+
+        // 存储每个题目的选择 (0-3)，初始null
+        let selections = new Array(18).fill(null);
+
+        // 当前评定者模式 'parent' / 'teacher' (仅微调文本，不影响计分)
+        let raterMode = 'parent'; 
+
+        // 渲染题目
+        function renderQuestions() {
+            const container = document.getElementById('questionsContainer');
+            if (!container) return;
+            let html = '';
+            for (let i = 0; i < questions.length; i++) {
+                const qIdx = i;
+                const qText = questions[i];
+                // 维度分隔符：第10题前（索引9）加多动标题
+                if (i === 9) {
+                    html += `<div class="dimension-break"><div class="dim-tag">⚠️ 多动/冲动维度 (10-18)</div></div>`;
+                }
+
+                html += `<div class="question-item" data-q="${i}">`;
+                html += `<div class="q-text">${qText}</div>`;
+                // 选项 0,1,2,3
+                for (let opt = 0; opt <= 3; opt++) {
+                    const isSelected = (selections[i] === opt);
+                    html += `<div><button class="option-btn ${isSelected ? 'selected' : ''}" data-q="${i}" data-opt="${opt}">${opt}</button></div>`;
+                }
+                html += `<div></div>`; // 占位空列
+                html += `</div>`;
+            }
+            container.innerHTML = html;
+
+            // 重新绑定按钮事件
+            document.querySelectorAll('.option-btn').forEach(btn => {
+                btn.addEventListener('click', function(e) {
+                    e.preventDefault();
+                    const qIdx = parseInt(this.dataset.q);
+                    const optVal = parseInt(this.dataset.opt);
+                    if (!isNaN(qIdx) && !isNaN(optVal)) {
+                        // 更新数据
+                        selections[qIdx] = optVal;
+                        // 重新渲染所有高亮 (简单重新渲染题目区，保留其他状态)
+                        renderQuestions();
+                        // 可选自动计算？不自动，点击“更新评分”再计算
+                    }
+                });
+            });
+        }
+
+        // 计算分数与解读
+        function calculateScores() {
+            // 检查是否所有题目都已选
+            const allSelected = selections.every(val => val !== null);
+            if (!allSelected) {
+                document.getElementById('interpretation').innerText = '⚠️ 还有题目未完成，请完成所有18项以确保准确性。';
+                // 但已选的分数仍然显示
+            }
+
+            let inattentionSum = 0;
+            let hyperSum = 0;
+            for (let i = 0; i < 9; i++) {
+                if (selections[i] !== null) inattentionSum += selections[i];
+            }
+            for (let i = 9; i < 18; i++) {
+                if (selections[i] !== null) hyperSum += selections[i];
+            }
+
+            // 更新数字
+            document.getElementById('inattentionScore').innerText = inattentionSum;
+            document.getElementById('hyperScore').innerText = hyperSum;
+            document.getElementById('totalScore').innerText = (inattentionSum + hyperSum);
+
+            // 平均维度分 (仅当全选时比较严谨)
+            if (allSelected) {
+                const inattAvg = (inattentionSum / 9).toFixed(2);
+                const hyperAvg = (hyperSum / 9).toFixed(2);
+
+                let msg = '';
+                // 简单临界值: 每个条目平均≥1.5 经常提示阳性 (参考SNAP-IV常用界值)
+                if (inattentionSum >= 14 && hyperSum >= 14) { // 平均1.56
+                    msg = '🔴 注意力不集中与多动冲动维度平均分均超过1.5，提示注意缺陷多动障碍(ADHD)混合表现可能。建议由儿童精神科医生进行进一步结构化评估。';
+                } else if (inattentionSum >= 14) {
+                    msg = '🟠 注意力不集中维度平均分超过1.5，多动冲动维度在界值以下，提示注意缺陷为主型(ADHD-I)可能。需结合临床访谈。';
+                } else if (hyperSum >= 14) {
+                    msg = '🟠 多动/冲动维度平均分超过1.5，注意力不集中维度低于界值，提示多动冲动为主型(ADHD-HI)可能。需排除其他行为障碍。';
+                } else {
+                    msg = '🟢 两个维度平均分均低于1.5，与DSM-5 ADHD症状筛查阈值尚有距离。但如果功能受损明显，仍建议专业咨询。';
+                }
+
+                // 附加评定者提示
+                const raterText = (raterMode === 'parent') ? '父母版' : '教师版';
+                document.getElementById('interpretation').innerHTML = `${msg} <small>基于${raterText}数据，平均分 注意: ${inattAvg}，多动: ${hyperAvg}。临界值仅供参考，需结合临床访谈。</small>`;
+            } else {
+                let missingCount = selections.filter(v => v === null).length;
+                document.getElementById('interpretation').innerHTML = `⏳ 还有 ${missingCount} 题未选择。完成所有题目后可获得参考解读。<br><small>目前已选部分的分数已更新，但解读需完整数据。</small>`;
+            }
+        }
+
+        // 重置所有选项
+        function resetAll() {
+            selections = new Array(18).fill(null);
+            renderQuestions();
+            document.getElementById('inattentionScore').innerText = '0';
+            document.getElementById('hyperScore').innerText = '0';
+            document.getElementById('totalScore').innerText = '0';
+            document.getElementById('interpretation').innerHTML = '请完成所有题目以查看临床提示。';
+        }
+
+        // 切换评定者 (仅提示变化)
+        function setRaterMode(mode) {
+            raterMode = mode;
+            const hint = document.getElementById('raterHint');
+            const parentBtn = document.getElementById('raterParent');
+            const teacherBtn = document.getElementById('raterTeacher');
+            if (mode === 'parent') {
+                parentBtn.classList.add('active');
+                teacherBtn.classList.remove('active');
+                hint.innerHTML = '👪 请根据过去一周您对孩子在家中的观察，选择最符合的频率。0=完全没有，1=偶尔，2=经常，3=非常频繁。';
+            } else {
+                teacherBtn.classList.add('active');
+                parentBtn.classList.remove('active');
+                hint.innerHTML = '🏫 请根据过去一周孩子在学校的表现（课堂、课间）选择。0=完全没有，1=偶尔，2=经常，3=非常频繁。';
+            }
+            // 可以保持原数据不变
+        }
+
+        // 初始化
+        window.addEventListener('DOMContentLoaded', () => {
+            renderQuestions();
+
+            // 绑定更新按钮
+            document.getElementById('calculateBtn').addEventListener('click', calculateScores);
+            document.getElementById('resetBtn').addEventListener('click', resetAll);
+
+            // 评定者切换
+            document.getElementById('raterParent').addEventListener('click', () => setRaterMode('parent'));
+            document.getElementById('raterTeacher').addEventListener('click', () => setRaterMode('teacher'));
+
+            // 初始计算一下可能全空 -> 显示提示
+            calculateScores(); // 会显示未完成提示
+        });
+
+    })();
+</script>
+</body>
+</html>
