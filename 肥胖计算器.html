@@ -1,0 +1,290 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>CDC-2000 儿童肥胖分级计算器</title>
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24'%3E%3Crect x='2' y='4' width='20' height='16' rx='3' fill='%2314606B'/%3E%3Ccircle cx='9' cy='12' r='3.4' fill='%23fff'/%3E%3Ccircle cx='16' cy='12' r='3.4' fill='none' stroke='%23fff' stroke-width='1.6'/%3E%3C/svg%3E" />
+<script src="https://fastly.jsdelivr.net/npm/echarts@5.5.0/dist/echarts.min.js"></script>
+<style>
+:root{
+  --bg:#EEF2F6; --card:#FFFFFF; --ink:#1C2B33; --mut:#5C6B74;
+  --brand:#14606B; --brand-d:#0E4850; --line:#DDE5EB;
+  --ok:#2E7D5B; --over:#C98A1B; --c1:#D96A1B; --c2:#C83C3C; --c3:#8E1F1F;
+}
+*{box-sizing:border-box;margin:0;padding:0}
+html{-webkit-text-size-adjust:100%}
+body{
+  font-family:"PingFang SC","Microsoft YaHei","Source Han Sans SC","Noto Sans CJK SC",system-ui,sans-serif;
+  background:linear-gradient(180deg,#E6EDF3 0%,var(--bg) 320px);
+color:var(--ink); min-height:100vh; padding:24px 14px 48px;
+}
+.wrap{max-width:1000px;margin:0 auto}
+header{text-align:center;margin-bottom:22px}
+header .kicker{font-size:12px;letter-spacing:.18em;color:var(--brand);font-weight:600;margin-bottom:8px}
+h1{font-size:clamp(20px,3.5vw,26px);font-weight:700;letter-spacing:.01em}
+header p{color:var(--mut);font-size:13px;margin-top:8px}
+.grid{display:grid;grid-template-columns:1fr;gap:16px}
+@media(min-width:768px){.grid{grid-template-columns:400px 1fr;align-items:start}}
+.card{background:var(--card);border-radius:14px;box-shadow:0 1px 0 #fff inset,0 8px 24px rgba(28,43,51,.06);border:1px solid var(--line);padding:20px}
+.card h2{font-size:14px;font-weight:600;margin-bottom:16px;color:var(--brand);display:flex;align-items:center;gap:8px}
+.card h2::before{content:"";width:4px;height:14px;border-radius:2px;background:var(--brand)}
+.field{margin-bottom:14px}
+.field label{display:block;font-size:13px;font-weight:600;margin-bottom:6px}
+.field .hint{font-size:11px;color:var(--mut);font-weight:400;margin-left:6px}
+.ages{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+select,input[type=number]{width:100%;padding:11px 12px;border:1px solid var(--line);border-radius:9px;font-size:16px;color:var(--ink);background:#FBFCFE;outline:none}
+select:focus,input[type=number]:focus{border-color:var(--brand);box-shadow:0 0 0 3px rgba(20,96,107,.12)}
+.sex{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+.sex button{padding:11px;border:1px solid var(--line);border-radius:9px;background:#FBFCFE;font-size:15px;cursor:pointer;color:var(--ink);font-weight:600}
+.sex button.on{background:var(--brand);border-color:var(--brand);color:#fff}
+.cta{width:100%;padding:13px;border:none;border-radius:9px;background:var(--brand);color:#fff;font-size:16px;font-weight:600;cursor:pointer;margin-top:6px}
+.cta:active{background:var(--brand-d)}
+.result{display:none}
+.result.show{display:block}
+.heroband{display:flex;align-items:center;gap:14px;flex-wrap:wrap;padding-bottom:16px;border-bottom:1px dashed var(--line)}
+.bmi-big{font-size:46px;font-weight:800;line-height:1}
+.bmi-big small{font-size:14px;font-weight:600;color:var(--mut);margin-left:4px}
+.badge{font-size:15px;font-weight:700;padding:7px 14px;border-radius:999px;color:#fff}
+.badge.normal{background:var(--ok)}.badge.over{background:var(--over)}.badge.c1{background:var(--c1)}.badge.c2{background:var(--c2)}.badge.c3{background:var(--c3)}
+.sev{margin-top:10px;font-size:13px;font-weight:700;color:var(--c2)}
+table{width:100%;border-collapse:collapse;margin-top:14px;font-size:13px}
+th,td{padding:8px 10px;text-align:left;border-bottom:1px solid var(--line)}
+th{color:var(--mut);font-weight:600;font-size:12px}
+td b{font-weight:700}
+td .bar{height:6px;border-radius:3px;margin-top:6px;background:var(--line)}
+td .bar i{display:block;height:100%;border-radius:3px}
+.note{margin-top:14px;font-size:12px;color:var(--mut);line-height:1.6}
+.note b{color:var(--ink)}
+.chartbox{height:300px;width:100%}
+.err{color:var(--c2);font-size:13px;padding:12px;border:1px solid #F2C1C1;background:#FDECEC;border-radius:8px;margin-top:6px;display:none}
+footer{margin-top:20px;font-size:11px;color:var(--mut);line-height:1.7;text-align:center}
+</style>
+</head>
+<body>
+<div class="wrap">
+<header>
+  <div class="kicker">CLINICAL CALCULATOR</div>
+  <h1>CDC-2000 儿童肥胖分级计算器</h1>
+  <p>适用 2–12 岁 · BMI-for-Age · 数据源 CDC/NCHS 2000 生长曲线（LMS 参数，按月插值）</p>
+</header>
+
+<div class="grid">
+  <div class="card">
+    <h2>输入参数</h2>
+    <div class="field">
+      <label>性别 <span class="hint">按 CDC 分性别曲线</span></label>
+      <div class="sex">
+        <button id="sexBoy" type="button" class="on">男孩</button>
+        <button id="sexGirl" type="button">女孩</button>
+      </div>
+    </div>
+    <div class="field">
+      <label>年龄 <span class="hint">周岁 + 月份</span></label>
+      <div class="ages">
+        <select id="ageYr"></select>
+        <select id="ageMo"></select>
+      </div>
+    </div>
+    <div class="field">
+      <label>身高 <span class="hint">厘米</span></label>
+      <input id="h" type="number" min="60" max="180" step="0.1" placeholder="例如 132.5" inputmode="decimal" />
+</div>
+    <div class="field">
+      <label>体重 <span class="hint">千克</span></label>
+      <input id="w" type="number" min="8" max="120" step="0.1" placeholder="例如 42.0" inputmode="decimal" />
+    </div>
+    <button class="cta" id="calc">计算肥胖分级</button>
+    <div class="err" id="err"></div>
+  </div>
+
+  <div class="card">
+    <h2>评估结果</h2>
+    <div class="result" id="result"></div>
+    <div class="chartbox" id="chart"></div>
+  </div>
+</div>
+
+<footer>
+  本工具依据 CDC 2000 生长曲线分级，仅供临床参考，不能替代医师综合诊断。分级判定中 2/3 级与重度肥胖的「BMI≥35/40 取较低值」规则已在 2–12 岁范围内实现。有错误可以联系作者修正。张永超医生设计。
+</footer>
+</div>
+
+<script>
+// ---- CDC-2000 LMS 月度数据 (Agemos, L, M, S) 内联嵌入 ----
+const BOYS=[[24.0,-2.0111811,16.575028,0.0805925],[24.5,-1.9823736,16.547775,0.0801274],[25.5,-1.9241002,16.494428,0.079234],[26.5,-1.8654979,16.442596,0.0783894],[27.5,-1.8072619,16.392243,0.0775935],[28.5,-1.7501189,16.343337,0.0768465],[29.5,-1.6948158,16.295841,0.0761483],[30.5,-1.6421068,16.249724,0.0754991],[31.5,-1.5927444,16.204953,0.074899],[32.5,-1.5474424,16.161499,0.074348],[33.5,-1.5069026,16.119333,0.0738461],[34.5,-1.47177,16.078428,0.0733934],[35.5,-1.442629,16.038759,0.0729896],[36.5,-1.4199913,16.000304,0.0726344],[37.5,-1.4042776,15.963043,0.0723276],[38.5,-1.3958632,15.926954,0.0720686],[39.5,-1.3949353,15.892026,0.0718568],[40.5,-1.4016716,15.858241,0.0716913],[41.5,-1.4161003,15.825588,0.0715711],[42.5,-1.4381649,15.794057,0.0714951],[43.5,-1.467669,15.763643,0.0714621],[44.5,-1.5043763,15.734337,0.0714706],[45.5,-1.5479428,15.706136,0.0715192],[46.5,-1.5978964,15.679041,0.0716063],[47.5,-1.6537323,15.653052,0.0717302],[48.5,-1.7148693,15.628173,0.0718892],[49.5,-1.7806732,15.604408,0.0720817],[50.5,-1.8504685,15.581765,0.0723061],[51.5,-1.9235519,15.560251,0.0725606],[52.5,-1.9992204,15.539875,0.0728438],[53.5,-2.0767072,15.52065,0.0731543],[54.5,-2.155348,15.502584,0.0734907],[55.5,-2.2344386,15.48569,0.0738517],[56.5,-2.3133217,15.469977,0.0742362],[57.5,-2.3913813,15.455457,0.0746434],[58.5,-2.4680325,15.44214,0.0750723],[5
+9.5,-2.5427815,15.430032,0.0755221],[60.5,-2.615166,15.419142,0.0759922],[61.5,-2.6847895,15.409474,0.0764821],[62.5,-2.7513169,15.401031,0.0769912],[63.5,-2.8144595,15.393818,0.0775191],[64.5,-2.8740248,15.387831,0.0780654],[65.5,-2.9298405,15.383069,0.0786296],[66.5,-2.9817968,15.37953,0.0792114],[67.5,-3.0298313,15.377206,0.0798103],[68.5,-3.0739242,15.376091,0.0804261],[69.5,-3.1140935,15.376177,0.0810582],[70.5,-3.15039,15.377453,0.0817062],[71.5,-3.182893,15.379909,0.0823697],[72.5,-3.2117051,15.383532,0.0830482],[73.5,-3.2369483,15.38831,0.083741],[74.5,-3.2587601,15.394229,0.0844477],[75.5,-3.2772815,15.401275,0.0851677],[76.5,-3.2926838,15.409433,0.0859002],[77.5,-3.3051241,15.418687,0.0866447],[78.5,-3.314769,15.429023,0.0874004],[79.5,-3.321786,15.440424,0.0881667],[80.5,-3.3263458,15.452876,0.0889429],[81.5,-3.3286027,15.466362,0.0897282],[82.5,-3.3287253,15.480867,0.0905219],[83.5,-3.3268702,15.496375,0.0913232],[84.5,-3.3231889,15.512869,0.0921313],[85.5,-3.317827,15.530336,0.0929455],[86.5,-3.3109239,15.548758,0.0937651],[87.5,-3.3026123,15.568121,0.0945893],[88.5,-3.2930184,15.588411,0.0954172],[89.5,-3.2822608,15.609611,0.0962483],[90.5,-3.2704546,15.631707,0.0970817],[91.5,-3.2577036,15.654686,0.0979167],[92.5,-3.2441082,15.678531,0.0987526],[93.5,-3.2297617,15.703231,0.0995887],[94.5,-3.2147513,15.728769,0.1004243],[95.5,-3.1991582,15.755133,0.1012586],[96.5,-3.1830579,15.78231,0.1020912],[97.5,-3.1665207,15.810286,0.1029212],[98.5,-3.1496103,15.839047,0.1037482],[99.5,-3.1323896,15.868581,0.1045714],[100.5,-3.1149112,15.898876,0.1053903],[101.5,-3.0972264,15.929918,0.1062043],[102.5,-3.0793831,15.961695,0.1070128],[103.5,-3.0614238,15.994195,0.1078153],[104.5,-3.0433861,16.027406,0.1086114],[105.5,-3.02531,16.061316,0.1094004],[106.5,-3.0072257,16.095913,0.1101819],[107.5,-2.9891646,16.131185,0.1109555],[108.5,-2.9711482,16.167122,0.1117207],[109.5,-2.953208,16.203712,0.1124771],[110.5,-2.935364,16.240942,0.1132242],[111.5,-2.9176352,16.278803,0.1
+139617],[112.5,-2.9000398,16.317284,0.1146893],[113.5,-2.8825938,16.356373,0.1154065],[114.5,-2.8653113,16.396059,0.1161131],[115.5,-2.8482047,16.436333,0.1168087],[116.5,-2.8312851,16.477183,0.117493],[117.5,-2.8145619,16.518598,0.1181658],[118.5,-2.7980435,16.56057,0.1188268],[119.5,-2.7817369,16.603087,0.1194758],[120.5,-2.765648,16.646138,0.1201125],[121.5,-2.7497822,16.689715,0.1207367],[122.5,-2.7341424,16.733807,0.1213482],[123.5,-2.7187329,16.778404,0.1219468],[124.5,-2.7035555,16.823495,0.1225325],[125.5,-2.688612,16.869072,0.123105],[126.5,-2.6739032,16.915125,0.1236642],[127.5,-2.6594294,16.961643,0.12421],[128.5,-2.6451905,17.008618,0.1247422],[129.5,-2.6311856,17.056039,0.1252609],[130.5,-2.6174135,17.103897,0.1257659],[131.5,-2.6038724,17.152183,0.1262571],[132.5,-2.5905601,17.200887,0.1267346],[133.5,-2.5774743,17.250001,0.1271983],[134.5,-2.5646118,17.299514,0.1276481],[135.5,-2.5519697,17.349417,0.128084],[136.5,-2.53954,17.399703,0.1285062],[137.5,-2.5273257,17.450361,0.1289145],[138.5,-2.5153202,17.501382,0.129309],[139.5,-2.5035194,17.552757,0.1296897],[140.5,-2.4919189,17.604477,0.1300568],[141.5,-2.4805141,17.656534,0.1304101],[142.5,-2.4693003,17.708918,0.1307499],[143.5,-2.4582727,17.761621,0.1310762],[144.5,-2.4474261,17.814634,0.131389]];
+const GIRLS=[[24.0,-0.9866085,16.423397,0.0854518],[24.5,-1.0244968,16.388041,0.0850258],[25.5,-1.1026984,16.318972,0.0842141],[26.5,-1.1839663,16.25208,0.0834551],[27.5,-1.268071,16.187347,0.0827483],[28.5,-1.3547515,16.124754,0.0820927],[29.5,-1.4436897,16.064288,0.0814877],[30.5,-1.5345419,16.00593,0.0809324],[31.5,-1.6269281,15.949666,0.0804262],[32.5,-1.7204348,15.895482,0.0799682],[33.5,-1.8146353,15.843362,0.0795577],[34.5,-1.9090763,15.793291,0.0791942],[35.5,-2.0032961,15.745256,0.0788769],[36.5,-2.0968289,15.699242,0.0786053],[37.5,-2.1892119,15.655233,0.0783787],[38.5,-2.279992,15.613214,0.0781967],[39.5,-2.3687329,15.573168,0.0780587],[40.5,-2.4550213,15.53508,0.0779642],[41.5,-2.538472,15.498931,0.0779127],[42.5,-2.6187329,15.464704,0.0779037],[43.5,-2.695489,15.432378,0.0779368],[44.5,-2.7684648,15.401934,0.0780113],[45.5,-2.8374267,15.373352,0.0781268],[46.5,-2.9021782,15.346608,0.0782827],[47.5,-2.9625804,15.321682,0.0784784],[48.5,-3.018522,15.298549,0.0787133],[49.5,-3.0699366,15.277186,0.0789867],[50.5,-3.1167959,15.257569,0.0792978],[51.5,-3.1591073,15.239673,0.079646],[52.5,-3.1969111,15.223474,0.0800304],[53.5,-3.2302768,15.208945,0.0804501],[54.5,-3.2593002,15.196062,0.0809044],[55.5,-3.2841,15.184798,0.0813922],[56.5,-3.3048141,15.175129,0.0819126],[57.5,-3.321597,15.167028,0.0824647],[58.5,-3.3346156,15.160471,0.0830473],[59.5,-3.3440476,15.155431,0.0836595],[60.5,-3.3500777,15.151884,0.0843001],[61.5,-3.3528938,15.149805,0.0849682],[62.5,-3.3526914,15.149168,0.0856625],[63.5,-3.3496644,15.14995,0.086382],[64.5,-3.3439988,15.152126,0.0871256],[65.5,-3.3358896,15.155672,0.087892],[66.5,-3.3255225,15.160564,0.0886803],[67.5,-3.3130785,15.166779,0.0894891],[68.5,-3.2987326,15.174295,0.0903174],[69.5,-3.2826538,15.183087,0.0911641],[70.5,-3.2650039,15.193134,0.092028],[71.5,-3.2459375,15.204413,0.092908],[72.5,-3.2256065,15.216903,0.093803],[73.5,-3.2041461,15.230581,0.0947119],[74.5,-3.1816902,15.245427,0.0956336],[75.5,-3.1583635,15.26142,0.096
+567],[76.5,-3.1342828,15.278537,0.097511],[77.5,-3.1095579,15.29676,0.0984647],[78.5,-3.0842909,15.316066,0.099427],[79.5,-3.0585773,15.336437,0.1003968],[80.5,-3.0325055,15.357853,0.1013732],[81.5,-3.0061576,15.380293,0.1023552],[82.5,-2.9796094,15.403738,0.1033418],[83.5,-2.952931,15.428168,0.1043321],[84.5,-2.9261866,15.453565,0.1053253],[85.5,-2.8994353,15.47991,0.1063203],[86.5,-2.8727312,15.507184,0.1073164],[87.5,-2.8461237,15.535368,0.1083127],[88.5,-2.8196577,15.564444,0.1093084],[89.5,-2.7933741,15.594394,0.1103026],[90.5,-2.76731,15.625199,0.1112945],[91.5,-2.7414989,15.656841,0.1122835],[92.5,-2.7159709,15.689303,0.1132688],[93.5,-2.6907532,15.722567,0.1142496],[94.5,-2.6658701,15.756616,0.1152253],[95.5,-2.6413434,15.791431,0.1161952],[96.5,-2.6171922,15.826995,0.1171587],[97.5,-2.5934306,15.863292,0.1181151],[98.5,-2.570076,15.900305,0.1190638],[99.5,-2.5471415,15.938015,0.1200043],[100.5,-2.5246352,15.976408,0.120936],[101.5,-2.5025697,16.015465,0.1218584],[102.5,-2.4809519,16.05517,0.1227709],[103.5,-2.4597856,16.095507,0.1236731],[104.5,-2.4390801,16.136459,0.1245645],[105.5,-2.4188383,16.17801,0.1254446],[106.5,-2.3990637,16.220143,0.1263131],[107.5,-2.3797569,16.262843,0.1271695],[108.5,-2.3609205,16.306093,0.1280135],[109.5,-2.3425577,16.349878,0.1288446],[110.5,-2.3246633,16.394181,0.1296626],[111.5,-2.3072407,16.438987,0.1304671],[112.5,-2.2902877,16.484281,0.1312579],[113.5,-2.2738038,16.530046,0.1320345],[114.5,-2.2577821,16.576267,0.1327968],[115.5,-2.2422277,16.622929,0.1335445],[116.5,-2.2271328,16.670016,0.1342774],[117.5,-2.2124956,16.717513,0.1349953],[118.5,-2.1983127,16.765405,0.135698],[119.5,-2.1845808,16.813677,0.1363853],[120.5,-2.1712959,16.862314,0.137057],[121.5,-2.1584542,16.9113,0.137713],[122.5,-2.1460518,16.960622,0.1383533],[123.5,-2.1340843,17.010264,0.1389775],[124.5,-2.1225476,17.060212,0.1395858],[125.5,-2.1114374,17.110451,0.1401779],[126.5,-2.1007493,17.160967,0.1407539],[127.5,-2.0904788,17.211744,0.1413137],[128.5,-
+2.0806215,17.26277,0.1418572],[129.5,-2.0711729,17.314029,0.1423844],[130.5,-2.0621286,17.365507,0.1428953],[131.5,-2.0534842,17.417191,0.14339],[132.5,-2.0452351,17.469066,0.1438683],[133.5,-2.0373769,17.521118,0.1443305],[134.5,-2.0299067,17.573333,0.1447764],[135.5,-2.0228179,17.625699,0.1452061],[136.5,-2.0161071,17.6782,0.1456198],[137.5,-2.0097699,17.730823,0.1460175],[138.5,-2.0038021,17.783556,0.1463992],[139.5,-1.9981996,17.836383,0.1467652],[140.5,-1.9929581,17.889293,0.1471154],[141.5,-1.9880735,17.942272,0.14745],[142.5,-1.9835418,17.995306,0.1477691],[143.5,-1.979359,18.048382,0.1480729],[144.5,-1.9755212,18.101488,0.1483615]];
+
+// 人口学辅助
+const AGE_YEARS=[];for(let y=2;y<=12;y++)AGE_YEARS.push(y);
+
+// ---- 归一累积分布 (erf 近似)，用于算百分位 ----
+function erf(x){
+  const s=x<0?-1:1;x=Math.abs(x);
+  const a1=0.254829592,a2=-0.284496736,a3=1.421413741,a4=-1.453152027,a5=1.061405429,p=0.3275911;
+  const t=1/(1+p*x);const y=1-((((a5*t+a4)*t+a3)*t+a2)*t+a1)*t*Math.exp(-x*x);
+  return s*y;
+}
+function normCdf(z){return 0.5*(1+erf(z/Math.SQRT2));}
+// ---- LMS 按月线性插值 ----
+function interp(table, months){
+  if(months<=table[0][0])return table[0];
+  if(months>=table[table.length-1][0])return table[table.length-1];
+  for(let i=0;i<table.length-1;i++){
+    const a=table[i],b=table[i+1];
+    if(months>=a[0]&&months<=b[0]){
+      const t=(months-a[0])/(b[0]-a[0]);
+      return [months, a[1]+(b[1]-a[1])*t, a[2]+(b[2]-a[2])*t, a[3]+(b[3]-a[3])*t];
+    }
+  }
+  return table[table.length-1];
+}
+
+// 由 LMS 求给定 z 对应的 BMI：X = M(1+LSZ)^(1/L)
+function bmiAtZ(l,m,s,z){
+  if(Math.abs(l)<1e-8)return m*Math.exp(s*z);
+  return m*Math.pow(1+l*s*z, 1/l);
+}
+// 由 BMI 求 z 与百分位
+function zFromBMI(l,m,s,bmi){
+  if(Math.abs(l)<1e-8)return Math.log(bmi/m)/s;
+  return (Math.pow(bmi/m, l)-1)/(l*s);
+}
+
+const Z85=1.036, Z95=1.645;
+
+function compute(){
+  const sex=state.sex;
+  const months=state.yr*12+state.mo;
+  const h=parseFloat(document.getElementById('h').value);
+  const w=parseFloat(document.getElementById('w').value);
+  const err=document.getElementById('err');
+err.style.display='none';
+  document.getElementById('result').className='result';
+  if(isNaN(h)||isNaN(w)||h<=0||w<=0){err.textContent='请填写有效的身高和体重。';err.style.display='block';return;}
+  if(h<60||h>200){err.textContent='身高超出常见范围（60–200 cm），请核对。';err.style.display='block';return;}
+  if(w<5||w>150){err.textContent='体重超出常见范围（5–150 kg），请核对。';err.style.display='block';return;}
+  if(months<24||months>144){err.textContent='本计算器仅适用 2–12 岁（24–144 月龄）。';err.style.display='block';return;}
+
+  const bmi=w/Math.pow(h/100,2);
+  const table=sex==='boy'?BOYS:GIRLS;
+  const [ag,l,m,s]=interp(table, months);
+  const P85=bmiAtZ(l,m,s,Z85);
+  const P95=bmiAtZ(l,m,s,Z95);
+  const thr120=1.20*P95, thr140=1.40*P95;
+  const lvl2Lo=Math.min(thr120,35), lvl2Hi=Math.min(thr140,40);
+  const lvl3Lo=Math.min(thr140,40);
+  const sevLo=Math.min(thr120,35);
+  const z=zFromBMI(l,m,s,bmi);
+  const pct=normCdf(z)*100;
+
+  // 分级
+  let grade, cls, label;
+  if(bmi<P85){grade='正常体重';cls='normal';}
+  else if(bmi<P95){grade='超重';cls='over';}
+else if(bmi<thr120){grade='肥胖 · 1级';cls='c1';}
+  else if(bmi<lvl2Hi){grade='肥胖 · 2级';cls='c2';}
+  else {grade='肥胖 · 3级';cls='c3';}
+  const severe = bmi>=sevLo;
+
+  // 等级在 85→95→120→140 谱带上的位置（用于结果条）
+  const segs=[{v:0,t:'P85'},{v:P85,t:'P85'},{v:P95,t:'P95'},{v:thr120,t:'120%'},{v:Math.max(thr120,thr140),t:'140%'}];
+  const maxX=Math.max(thr140, bmi*1.02);
+  const p85p=(P85/maxX)*100, p95p=(P95/maxX)*100, p120p=(thr120/maxX)*100;
+
+  let out='';
+  out+='<div class="heroband">';
+  out+='<div class="bmi-big">'+bmi.toFixed(2)+'<small>kg/m²</small></div>';
+  out+='<div class="badge '+cls+'">'+grade+'</div>';
+  out+='</div>';
+  out+='<table>';
+  out+='<tr><th>指标</th><th>本患儿</th><th>百分位/阈值</th></tr>';
+  out+='<tr><td>BMI</td><td><b>'+bmi.toFixed(2)+'</b></td><td>约 P'+pct.toFixed(1)+'（'+z.toFixed(2)+' SD）</td></tr>';
+  out+='<tr><td>年龄性别</td><td>'+state.yr+'岁'+state.mo+'个月 · '+ (sex==='boy'?'男':'女') +'</td><td>月龄 '+months+'</td></tr>';
+  out+='<tr><td>P85 界值</td><td>'+P85.toFixed(2)+'</td><td>超重起点</td></tr>';
+out+='<tr><td>P95 界值</td><td>'+P95.toFixed(2)+'</td><td>肥胖起点</td></tr>';
+  out+='<tr><td>120% × P95</td><td>'+thr120.toFixed(2)+'</td><td>重度肥胖（或 BMI≥35）</td></tr>';
+  out+='<tr><td>140% × P95</td><td>'+thr140.toFixed(2)+'</td><td>3级肥胖（或 BMI≥40）</td></tr>';
+  out+='</table>';
+  // 谱带定位条
+  out+='<table><tr><th>当前在百分位谱带中的位置（P85 → P95 → 120% → 140%）</th></tr>';
+  out+='<tr><td><div class="bar" style="position:relative;height:14px;background:#F0F3F6">'
+    +'<i style="position:absolute;left:0;width:'+p85p+'%;background:var(--ok)"></i>'
+    +'<i style="position:absolute;left:'+p85p+'%;width:'+(p95p-p85p)+'%;background:var(--over)"></i>'
+    +'<i style="position:absolute;left:'+p95p+'%;width:'+(p120p-p95p)+'%;background:var(--c1)"></i>'
+    +'<i style="position:absolute;left:'+p120p+'%;width:'+(100-p120p)+'%;background:var(--c2)"></i>'
+    +'<i style="position:absolute;left:'+Math.min(100,(bmi/maxX)*100)+'%;width:4px;height:14px;background:#111;border-radius:2px;top:0"></i>'
+    +'</div></td></tr></table>';
+if(severe){
+    out+='<div class="sev">重度肥胖：BMI ≥ 120%×P95（'+thr120.toFixed(2)+'）或 BMI≥35，需专科强化干预</div>';
+  }
+  out+='<div class="note">参考（AAP/USPSTF）：强化生活方式干预 IHBLT 为一线；3–12 个月累计 ≥26 学时；重度肥胖可考虑专科评估。本结果仅作筛查定位，请结合临床。</div>';
+  document.getElementById('result').innerHTML=out;
+  document.getElementById('result').className='result show';
+
+  drawChart(sex, months, bmi, P85, P95);
+}
+
+// ---- ECharts 生长曲线 ----
+let chartInst=null;
+function drawChart(sex, months, bmi, P85, P95){
+  const dom=document.getElementById('chart');
+  const table=sex==='boy'?BOYS:GIRLS;
+  const xs=[],p5=[],p85=[],p95=[];
+  for(let ag=24;ag<=144;ag++){
+    const [a,l,m,s]=interp(table, ag);
+    xs.push((ag/12).toFixed(1));
+    p5.push(+bmiAtZ(l,m,s,-1.645).toFixed(2));
+    p85.push(+bmiAtZ(l,m,s,1.036).toFixed(2));
+    p95.push(+bmiAtZ(l,m,s,1.645).toFixed(2));
+  }
+  if(!chartInst){chartInst=echarts.init(dom);}
+  chartInst.setOption({
+    grid:{left:46,right:18,top:36,bottom:30},
+    tooltip:{trigger:'axis',valueFormatter:v=>v+' kg/m²'},
+title:{text:'BMI-for-Age 生长曲线（'+ (sex==='boy'?'男':'女') +'）',left:0,top:0,textStyle:{fontSize:13,color:'#1C2B33'}},
+    legend:{data:['P5','P85','P95','本患儿'],top:0,right:0,icon:'roundRect',itemWidth:12,itemHeight:8,textStyle:{fontSize:11}},
+    xAxis:{type:'category',data:xs,name:'岁',nameLocation:'middle',nameGap:28,axisLabel:{fontSize:10,interval:11},boundaryGap:false},
+    yAxis:{type:'value',name:'BMI',nameTextStyle:{fontSize:11},axisLabel:{fontSize:10},scale:true},
+    series:[
+      {name:'P5',type:'line',data:p5,showSymbol:false,lineStyle:{width:1.2,color:'#9FB3C8'},itemStyle:{color:'#9FB3C8'}},
+      {name:'P85',type:'line',data:p85,showSymbol:false,lineStyle:{width:1.6,color:'#C98A1B'},itemStyle:{color:'#C98A1B'}},
+      {name:'P95',type:'line',data:p95,showSymbol:false,lineStyle:{width:1.6,color:'#C83C3C'},itemStyle:{color:'#C83C3C'}},
+      {name:'本患儿',type:'scatter',symbolSize:16,itemStyle:{color:'#14606B',borderColor:'#fff',borderWidth:2},data:[[(months/12).toFixed(1),+bmi.toFixed(2)]]}
+]
+  });
+}
+window.addEventListener('resize',()=>{chartInst&&chartInst.resize();});
+
+// ---- 状态与交互 ----
+const state={sex:'boy',yr:8,mo:0};
+function fillAge(){
+  const ys=document.getElementById('ageYr'), ms=document.getElementById('ageMo');
+  ys.innerHTML='';ms.innerHTML='';
+  AGE_YEARS.forEach(y=>{const o=document.createElement('option');o.value=y;o.textContent=y+' 岁';ys.appendChild(o);});
+  for(let m=0;m<12;m++){const o=document.createElement('option');o.value=m;o.textContent=m+' 月';ms.appendChild(o);}
+  ys.value=state.yr;ms.value=state.mo;
+}
+function init(){
+  fillAge();
+  document.getElementById('ageYr').addEventListener('change',e=>{state.yr=+e.target.value;});
+  document.getElementById('ageMo').addEventListener('change',e=>{state.mo=+e.target.value;});
+  document.getElementById('sexBoy').addEventListener('click',()=>setSex('boy'));
+  document.getElementById('sexGirl').addEventListener('click',()=>setSex('girl'));
+  document.getElementById('calc').addEventListener('click',compute);
+  ['h','w'].forEach(id=>document.getElementById(id).addEventListener('input',()=>{if(document.getElementById('h').value&&document.getElementById('w').value)compute();}));
+}
+function setSex(s){
+  state.sex=s;
+  document.getElementById('sexBoy').className=s==='boy'?'on':'';
+  document.getElementById('sexGirl').className=s==='girl'?'on':'';
+  compute();
+}
+init();
+</script>
+</body>
+</html>
